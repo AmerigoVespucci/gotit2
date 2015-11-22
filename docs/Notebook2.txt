@@ -1,0 +1,401 @@
+How do we integrate checkers?
+
+Words, deps and their counts
+Recs
+Groups
+
+Words: 5x5 samples (fivers), ValidMoves
+Recs, each board-state, all fivers. LeadsTo is a dep that relates a fiver in one rec to a fiver in the next. No. perhaps the move itself (say, 1.-1) is the dep. So "w-1+1" relates two fivers. Another dep is FollowedBy relating a fiver in one rec to a fiver in the next. Again, perhaps we should use a specific relation instead of generic "FollowedBy".
+We need two sub-groups of deps: LeadsTo and Followed by. For now  we group them both as deps.
+We have "lw-1+1" and "fw-1+1"
+
+
+Groups. 
+MoveLeadsTo[%0%w-1+1][%1%s5555504000003000000000000] is a group. It has a number of members
+MoveFollowedBy[%0%b+1+1][%1%s0400000300000000000055555] is a group with members
+we could also have groups:
+BlackTakeMove with elements such as b+2+2 b+2-2 etc.
+WhiteScoringSample with elements such as s0400000300000000000055555
+
+Deps are usually binary. We therefore need a generic unary relation. We have POS and NER but they are hard-coded. For now we can create pseudo-binary by making both dep and gov nodes the same. Thus to say that a specific fiver allows a "White takes", we could use this.
+
+I want to express a relationship with multiple components: A leads to B when C (and D). Specifically: move m0 leads from state sA to sB but only when sA has neighbor n+1+1 sC, otherwise not.
+
+Potential solutions
+1. Groups with 4+ seeds. There is a base group for [fm0][sA] which includes sB. This means that doing move m0 is followed by many instances of sB. However, there are many other s in the group. Therefore if my goal is sB or !sB, I don't know whether in the current situation a sA doing m0 will be followed by sB. So I create a group such as [fm0][sA][n+1+1][sC] which means that an element in this group, sB follows an example of move m0 being done on state sA while sC is a +1+1 neighbor of sA. Of course the group template (patternfinder) and its name must indicate that that is how the 4 seeds were used. Furthermore, the app using this group will have to look at the nature of fm0 to find fm0 and not say lm0. (move following and not move leading to). It may also look to see whether the move/dep belongs to some group it is interested in.
+
+This solution requires: a. Solving the problem of how long it takes to save groups. Currently measured at 13 groups/sec. 20k groups takes a long time. This solution will increase the number of groups by a few orders of magnitude. b. Make groups cannot just multiply all first param by second etc. At the very least only related params are used to create groups. Further down we might allow extending relationships. 
+
+Negatives for solution: Way more groups. Not clear how to reason over the groups. 
+
+2. Go back to corpus to determine complex relationship. Say you have [fm0][sA] and [n+1+1][sA]. sB is an element in both. That's not enough. sB might never appear in the first at the same time as the second. Testing the groups on the corpus could deteremine this question. Almost no recoding in the system required. This can be applied either in the app, or we can provide a generic way to find the overlap of two groups. Reasoning over this method is intuitive since we can see that some elements are in both while some are in one but never in the other. Negqative: You have to keep the whole corpus aailable (storage) and loading and processing the corpus may take time (lazy learning), 
+
+Seed this up by storing a list of sentences IDs (Instance IDs later) for each word in the BaseWordTbl. This allows 
+us to look at only sentences
+
+3. Add instance IDs to groups. Every time b occurs in group A, don't just increase the NumOccurs. Keep a vector 
+for every element. Each element of the vector is an Instance ID (and each vector is one member of an element of 
+the group). The lngth of the vector is equivalent to NumOccurs. The Instance ID can be a reference to the source in 
+the corpus. For eaxmple, create an ID for each book and each sentece within it. Combining [fm0][sA] and [n+1+1][sA] 
+now becomes a procedure for comparing the two lists to find if the same instances are found in both. Most probably we
+sort the vectors by instance id first. (sort and unique each list. do list::merge, find connsequtive identical 
+elements . easy peasy). Will require a lot of work on the guts of groups. Disruption may be minimized by leaving the
+original members and only adding new members that the old code need not access.
+
+
+https://en.wikipedia.org/wiki/Deep_learning
+http://vision.stanford.edu/teaching/cs231n/slides/lecture3.pdf
+https://cs231n.github.io/neural-networks-2/
+http://www.umiacs.umd.edu/~joseph/channel_out_ICANN.pdf
+http://arxiv.org/pdf/1312.6184v7.pdf
+http://cs231n.stanford.edu/syllabus.html
+https://karpathy.github.io/neuralnets/
+
+Here's thr plan for group file
+initally all groups are streamed to one file. There is the groups table all of which is kept in memory. The rntry in the 
+group tbl stores the location in the group file of his group. This is equivalent to ftell but should be 
+calculated by counting bytes to avoid accessing disk.
+the group entry in the group tbl also stores a flag for whether the group data is loaded or not
+next run of gotit, load only group data if you need it. No regular cleaning
+when it comes time to store. First store all the loaded group data in a new file. Update file locations.
+Now load all the rest of the groups data and write it out to the new file wi the new locations
+If a groups data hasn't been touvhed for a long time, delete it from memory after saving
+if you load a group that was already live, read the data from disk but thow it away.
+Free the groups data as soon as it is loaded
+Write out a new copy of the group tbl
+rename the two old files
+rename the two new files to the official name
+delete the two old files
+
+***
+
+http://www-personal.umich.edu/~rickl/pubs/guo-singh-lee-lewis-wang-2014-nips.pdf
+http://www.arcadelearningenvironment.org/demos/
+http://vision.stanford.edu/teaching/cs231n/slides/jon_talk.pdf
+http://cs231n.stanford.edu/syllabus.html
+https://karpathy.github.io/neuralnets/
+
+****
+
+26.4.15
+
+checkers. Add experience instead of deep search trees. Use searches of sources. 
+checkers. Learn positions with programmable patterns
+checkers. Search for combinations of potential moves. (Might be little better than guessing)
+text. Search for structures in the text, instead of just words.
+text. find simple groupings across sentence recs. hurt goes with hit
+
+checkers. 
+	Turn the minimax into alpha-beta. 
+	Play many games with a 7-8 ply search. 
+	Build records of these games.
+	Start a game. 
+		Consider the first option, 
+		Build list of records for all instances of that sample with that move
+		Consider second move-option
+		Find in list of records just built whether the second moves plays too
+		Do this with other options
+		try to find rules for which move is plaued. 
+		(eg. If MoveA is avail and MoveB, use MOveA unless MoveC is also there)
+		Apply same for results of moves, the moves that the opponent responds with
+		This might work better for programmatic samples instead of fixed 5x5
+		
+Programmable patterns.
+
+
+instructions
+
+incrx, incry, decrx, decry
+SaveValAtPosToA, SaveValAtPosToB
+JumpIfEqA <param> (skips one onstr)
+Goto <param> (set PC  a few lines before or after)
+ret <param> (end returning a param as val)
+SetA <p>, IncrA <p>. DecrA <p>
+
+Start off with a library of code blocks that return 1 or 0
+Stride across board (image) finding blocks that return 1
+these are valid moves
+for more complex games, other than checkers, we will need to permute code blocks to find valid
+
+here's what the set might look like
+
+incrx, incry, decrx, decry
+JumpIfValAtPos <p> (skips one instr if val at pos = <p>)
+Goto <p> (set PC  a few lines before or after)
+ret <param> (end returning a param as val)
+SetA <p>, IncrA <p>. DecrA <p>
+
+VAP = Value at Current Position		
+FV = Future value at Current position
+SetA1IfVAP <p>
+SetA1IfFV <p> 
+if in learning mode makes A 1. if in doing mode, if A = 1, set value at pos to <p>
+
+// code for moving a piece +1+1 for white reg. 0 = blank 1 = white reg 
+JumpIfEVAP 1 // for all vals other than 1 at the start pos, we reach the next lne which ends with fail
+ret 0
+SetFV 0
+IncrX, IncrY
+JumpIfEVAP 0 // make sure position is empty
+ret 0
+SetFV 1
+ret 1
+(total: 16 bytes/instrs)
+
+in learning mode the instruction SetFV 0 is compared to the given result. In doing mode it's simply accepted
+
+Can break previous code down
+CodeA
+	JumpIfEVAP 1 // for all vals other than 1 at the start pos, we reach the next lne which ends with fail
+	ret 0
+CodeB
+	SetFV 0
+CodeC
+	IncrX, IncrY
+CodeD
+	JumpIfEVAP 0 // make sure position is empty
+	ret 0
+CodeE
+	SetFV 1
+CodeF
+	ret 1
+
+Now our code is 
+	A & B & C & D & E & F
+
+Note: & means Logical AND but the order matters. so A & B <> B & A
+
+Modify to 
+	A & B & C & C & D & E & F // move two up instead of 1
+
+Requirements needed so that, e.g: 
+	There must be a ret 1 somewhere
+	There must be at least one SetFV
+
+We could have alternates forms of C
+C0: IncrX, IncrY
+C1: IncrX, DecrY
+C2: DecrX, IncrY
+C3: DecrX,DecrY
+so that all legal moves are the same except for which form of C they include
+
+Code can consist of basic instructions or other code blocks. The expressed form though contains only basic instructions
+The expressed form is used to determine if a point in the image makes a code block return 1
+THe source for is used for mutating
+
+Code for bishop in chess
+1x - white, 2x - black. 1 - pawn, 2 - knight, 3 - bishop, 4 - 
+
+JumpIfEVAP 13
+ret 0
+SetFV 0
+SetA 5 // code for 5 blank squares
+CodePoint 1 // set point for goto return
+DecrA
+IncrX, IncrY
+JumpIfEVAP 0
+ret 0
+JumpIfA 0
+Goto 1
+IncrX,IncrY
+JumpIfEVAP 21 // code for taking pawn only
+ret 0
+SetFV 13
+ret 1
+
+we can do this without the goto, but I suspect it could get very hairy for go
+
+Go:
+
+0 - blank, 1 - white, 2 - black
+
+JumpIfEVAP 0 // not ruling out a JumpIfNEVAP soon, so keep the long acronym
+ret 0
+SetFV 1
+ret 1
+.... incomplete but simple
+
+JumpIfEVAP 0
+ret 0
+SetA 4
+IncrX
+JEP 0 // JumpIfEVAP
+DecrA // means A- - if val at pos <> 0
+DecrX // back to src
+IncrY
+JEP 0
+DecrA
+DecrY
+
+Code223;
+	CP 1
+	EndC
+
+
+2D fsm/regular expressions
+
+requires a state macine that produces the same result whichever order array is processed.
+
+extensible to any n dimensions
+
+same fsm, just the input is not one string but n-dim array. stops processing on terminal state but others may continue
+
+can spcify if all terminal, some or none. multiple terminal states possible.
+
+state are not a function of time but rather a value at a specific location of the input data
+
+all positions of the aray must start off in unexamined state. start at any position in array,
+all unexamined neigbors are fed into state machine until halt state reached.
+
+init state
+
+code from above for checkers
+JEP 1 
+ret 0
+SetFV 0
+IncrX, IncrY
+JEP 0 // make sure position is empty
+ret 0
+SetFV 1
+ret 1
+
+I: 1->S1%SetFV 0%, 0->E0 2->E0 (might make shortct for *else*)
+S1: h/*->S2 v/*->S3
+S2: h/*->E0 v/0->E1%SetFV 1%
+
+checkers nearby move
+^1%SetFV 0%(h/.v/0|v/.h/0)%SetFV 1%
+
+checkers take move - p0 is previous direction for input, p1 is move before that
+^1%%(h/0v/(2|4)|v/0h(2|4))%%p1/0p1/0%%
+
+Go connected group:
+^0%%1*
+group with liberties
+^0%%1*
+
+Valid move
+^1%{setA 0; setB 0;%}1%{Incr A%}*0%{IncrB%}%[B > 1%]
+
+Here %[...%] Are instruction executed after expression has played out.
+n this case the expression will not reach completion unless there was at least one 0
+
+I: 0->S1 // else not specified means means exit 0
+S1: 0->E0 1->S1
+
+must allow the concept of playing an expression out before looking for another initial state 
+ - make that the defaut in fact
+
+Image recognition
+The 2-D regular expression can be used to identify basic shapes, circles with hollows in them,
+ovals, flat narrow ovals, triangles, identifying color combinations etc.
+We can combine these with, next to, left of, above, further away than above etc.
+This latter requires and, or, predicates, and common, but not universal, co-occurence
+This can be extended to the time dimension. So very little information is required to recognize a 
+wave cresting
+We can use powerful search technology to accumulate large experience-sets and apply lots of options to an image
+This is the heart of human image-recognition, but as a specialized skill it can be applied to NLP, games, causality and planning.
+
+***
+
+recent paper on 2D reglar expressions 2D automata. Previos papers see references
+http://www.image-net.org/index
+search: Two-dimensional languages
+
+***
+
+How should I manage having rules that differ in consequences despite meeting the same conditions?
+
+Example while moves to the back row to become king. Same as any white move. Why is it different this time.
+
+First see if move aready has  a rule validating it? Use the standard valid move check, then check consequences
+
+If it does, say rule X fulfils all the conditions, does it have the correct consequece?
+
+If X has the wrong consequences we need to find an extended version of X, say X' that matches the rule and has the right consequences
+
+Further, mark X as Conflicted. 
+ 
+***
+
+Stanford bookmarks
+
+http://nlp.stanford.edu:8080/parser/index.jsp
+http://nlp.stanford.edu/software/dependencies_manual.pdf
+http://nlp.stanford.edu/software/corenlp.shtml
+
+http://en.wikipedia.org/wiki/General_game_playing
+
+http://www.micronautomata.com/documentation/anml_documentation/c_overview_anml_elements.html
+http://www.cap.virginia.edu/sites/cap.virginia.edu/files/kwang_arm_submitted.pdf
+https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
+
+
+***
+
+
+
+http://www.micronautomata.com/documentation/anml_documentation/c_overview_anml_elements.html
+http://nn.cs.utexas.edu/downloads/papers/hausknecht.gecco12.pdf
+http://www.cse.unr.edu/~bdbryant/papers/parker-2012-tciaig.pdf
+
+^21*(2|0 [][SE Incr GA []] ) [][G GA = 0 []] 
+
+***
+
+Stage A
+
+1. Check whether a move fits on all of the learned moves
+
+2. If it does, nothing to do. Goto Stage B
+
+3. create a new rule. 
+
+4. Generate all poss moves from old table based on rule
+
+5. Send each move for confirmation against stored rules 
+
+6. If all moves now generated are valid, add rule to learned rules and Goto stage B
+
+7. If some of the newly gen rules fail, add specifity to rule.
+
+8. Goto 4
+
+Stage B
+
+1. Generate all moves possible with all learned rules
+
+2. Send each gen move from step 1 for confirmation against stored rules
+
+3. If all gen moves, pass. Goto Stage C
+
+4. For each rule that fails, add specificity
+
+5. If moves still fail, move rules to conflicted rules (for now abandon rule). Goto stage C
+
+6. (If all moves pass, ) test whether rule is identical to database. If it is abandon rule. Goto stage C
+
+7. Add modified rule to learned database instead of original version
+
+Stage C
+
+1. For each rule in learned rules, compare to all other rules
+
+2. if two rules are equal except for a merge criterion, create new rule
+
+3. For each new rule goto stage A step 3
+
+***
+
+How do we merge rules?
+
+Add to history the index of the rule applied, whether accepted or not, and the xSrc-ySrc applied.
+
+Go through all history. 
+
+	Take the starting board
+	apply rule at xSrc-ySrc of history
+	test for match with final board
+
+	if accepted, ok
+	if it turns out to be an invalid, it's a bust

@@ -1,0 +1,1232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config>
+  <NameLists>
+    <NameListItem name="AllDepList">
+      <li item-name="acomp" />
+      <li item-name="advcl" />
+      <li item-name="advmod" />
+      <li item-name="amod" />
+      <li item-name="appos" />
+      <li item-name="aux" />
+      <li item-name="auxpass" />
+      <li item-name="cc" />
+      <li item-name="ccomp" />
+      <li item-name="conj" />
+      <li item-name="cop" />
+      <li item-name="csubj" />
+      <li item-name="csubjpass" />
+      <li item-name="dep" />
+      <li item-name="det" />
+      <li item-name="discourse" />
+      <li item-name="dobj" />
+      <li item-name="expl" />
+      <li item-name="iobj" />
+      <li item-name="mark" />
+      <li item-name="mwe" />
+      <li item-name="neg" />
+      <li item-name="nn" />
+      <li item-name="npadvmod" />
+      <li item-name="nsubj" />
+      <li item-name="nsubjpass" />
+      <li item-name="num" />
+      <li item-name="number" />
+      <li item-name="parataxis" />
+      <li item-name="pcomp" />
+      <li item-name="pobj" />
+      <li item-name="poss" />
+      <li item-name="possessive" />
+      <li item-name="preconj" />
+      <li item-name="predet" />
+      <li item-name="prep" />
+      <li item-name="prt" />
+      <li item-name="punct" />
+      <li item-name="quantmod" />
+      <li item-name="rcmod" />
+      <li item-name="root" />
+      <li item-name="tmod" />
+      <li item-name="vmod" />
+      <li item-name="xcomp" />
+    </NameListItem>
+    <NameListItem name="AllPOSList">
+      <li item-name="CC" />
+      <li item-name="CD" />
+      <li item-name="DT" />
+      <li item-name="EX" />
+      <li item-name="FW" />
+      <li item-name="IN" />
+      <li item-name="JJ" />
+      <li item-name="JJR" />
+      <li item-name="JJS" />
+      <li item-name="LS" />
+      <li item-name="MD" />
+      <li item-name="NN" />
+      <li item-name="NNS" />
+      <li item-name="NNP" />
+      <li item-name="NNPS" />
+      <li item-name="PDT" />
+      <li item-name="POS" />
+      <li item-name="PRP" />
+      <li item-name="PRP$" />
+      <li item-name="RB" />
+      <li item-name="RBR" />
+      <li item-name="RBS" />
+      <li item-name="RP" />
+      <li item-name="SYM" />
+      <li item-name="TO" />
+      <li item-name="UH" />
+      <li item-name="VB" />
+      <li item-name="VBD" />
+      <li item-name="VBG" />
+      <li item-name="VBN" />
+      <li item-name="VBP" />
+      <li item-name="VBZ" />
+      <li item-name="WDT" />
+      <li item-name="WP" />
+      <li item-name="WP$" />
+      <li item-name="WRB" />
+      <li item-name="," />
+      <li item-name=":" />
+      <li item-name="." />
+    </NameListItem>
+    <NameListItem name="VerbList">
+      <li item-name="VB" />
+      <li item-name="VBD" />
+      <li item-name="VBG" />
+      <li item-name="VBN" />
+      <li item-name="VBP" />
+      <li item-name="VBZ" />
+    </NameListItem>
+    <NameListItem name="NounList">
+      <li item-name="NN" />
+      <li item-name="NNS" />
+      <li item-name="NNP" />
+      <li item-name="NNPS" />
+      <li item-name="PRP" />
+    </NameListItem>
+    <NameListItem name="InList">
+      <li item-name="IN" />
+    </NameListItem>
+    <NameListItem name="StopList">
+      <li item-name="," />
+      <li item-name="CC" />
+    </NameListItem>
+    <!-- interposes a noun before a IN unless we're at the end -->
+    <NameListItem name="NounStopList">
+      <li item-name="NN" />
+      <li item-name="NNS" />
+      <li item-name="NNP" />
+      <li item-name="NNPS" />
+      <li item-name="PRP" />
+      <li item-name="," />
+      <li item-name="CC" />
+    </NameListItem>
+    <NameListItem name="INStopList">
+      <li item-name="IN" />
+      <li item-name="," />
+      <li item-name="CC" />
+    </NameListItem>
+  </NameLists>
+  <!-- 
+  NodeListItem is the Pattern Creator
+  GrpCreator = true makes the Pattern Creator create groups
+    The names of the groups created will be the group-name of the Patter Crator appended with
+    the vales of the Group Params
+  GrpCreator = false or default, make the pattern creator only add entries to a single group
+    named as group-name
+  When creating a group, the parameters (called members) are bound for each group
+  SrcType can be a constant, NameListItem (any string from the list), Group (member of spcifically named group),
+    AncGroup (a group name from the set of groups descendent from an ancestor (specific Pattern Creator)
+  Which param is bound is set by the idx param, as many as you want of these are created
+    when a group is being built these parameters can be set
+  Req refers to the value that must match the sel for the group member to be added
+  The value to be matched will either be from word, pos, wordbase, ner or anything else defined for word rec.
+    This is selected by the sel parameter
+  Req can be of type, constant, GrpParam, NameListItem, Group (member of a specically named group), GrpNamedByParam, 
+    (a member of a group named by param), AncGrp (can't imagine needing this, any member of any group descended)
+  
+  SrcTextType = dep or serial (default)
+  Serial text search uses the sentence-based word record array only and looks for patterns where each node in a node list item
+    is a word in a series. The whole series must succeed to create an entry or member for the group. Once a series is found
+    search will restart in the same sentence with the first node in the list. i.e. multiple enries may be added to the group
+    from the same sentence
+  Dep text search uses a set of binary relations for each sentence. Each entry must match the governor or dependent side of the
+    relation and the relation. 
+  For Dep, SelType is one of rel, gov or dep. Meaning that any one of the dep records for the sentence may match
+  SelType may also be node which is the data stored in a previous node of this search
+  SelTYpe rel can only refer to the name of the relationship 
+  SelType gov or dep refer to a record in the word records, and you need to specify which element of the word record.
+  Sel will select which element in the word record. Thus sel="word" will get the word, sel="POS" or "wordbase" or "NER" etc.
+  StoreType works similarly to SelType needing store to specify the actual element from 
+  
+    -->
+  <NodeLists >
+    <NodeListItem group-name="AllPOSWords" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="AllPOSList"  comment="Goes into members array" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchNextRec" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    <!--
+    <NodeListItem group-name="AllPOSWords" num-stores="1" create-freq="0" run-freq="1.0">
+      <node options="AllPOSList"  optas="oneitem" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="GovsOfDep" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="SentenceRec" Src="dep" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="gov" store="word" store-idx="0" />
+    </NodeListItem>
+    <NodeListItem group-name="DepsOfGovsOfDep" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="SentenceRec" Src="dep" />
+      <GrpParam idx="1" SrcType="SentenceRec" Src="word" FillPercentile="100"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="GovsOfDepsOfDep" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="SentenceRec" Src="dep" />
+      <GrpParam idx="1" SrcType="SentenceRec" Src="word" FillPercentile="1"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DepsOfGovsOfDepLtd" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="SentenceRec" Src="dep" />
+      <GrpParam idx="1" SrcType="SentenceRec" Src="word" FillPercentile="1"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="AllDepGovs" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="gov" store="word" store-idx="0" />
+    </NodeListItem>
+    <NodeListItem group-name="AllDepDeps" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="dep" store="word" store-idx="0" />
+    </NodeListItem>
+    <NodeListItem group-name="PairsByDep" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" SortType="count" FillType="number" FillNumber="1" FillPercentile="10"/>
+      <GrpParam idx="1" SrcType="GrpAnc" Src="AllDepGovs" SrcStore="word" FillType="number" FillNumber="20" FillPercentile="10" >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+      </GrpParam>
+      <SurpriseQ GrpAnc="AllDepDeps" GrpParamMatchType0="MyGrpParam" GrpParamMatchArg0="0"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DetGovs" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="PatGrp" Src="AllDepDeps[%0%det]" />
+      <SurpriseQ GrpAnc="AllDepGovs" GrpParamMatchType0="const" GrpParamMatchArg0="det"/>
+      <node Req="det" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="1"  />
+      <node Req="0" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DepNears" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <GrpParam idx="1" SrcType="NameListItem" Src="word" SortType="count" FillType="number" FillNumber="1500" FillPercentile="9"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DepNearsOnGov" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <GrpParam idx="1" SrcType="NameListItem" Src="word" SortType="count" FillType="number" FillNumber="1500" FillPercentile="9"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DepNearsForTesting" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <GrpParam idx="1" SrcType="NameListItem" Src="word" SortType="count" FillType="number" FillNumber="2" FillPercentile="50"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="FindAllTheNSubjDepsForOneExtParam" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="ExtParam" /> 
+      <node Req="nsubj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="0" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="CollapsedDepExample" SrcTextType="dep" GrpCreator="false" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Shows we can build complex structures ourselves, eg, find all govs of prep-in">
+       <node Req="prep" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="1"  />
+      <node Req="in" ReqType="const" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="inLocationExample" SrcTextType="dep" GrpCreator="false" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="All govs of prep that prep-in a LOCATION">
+      <node Req="prep" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="1"  />
+      <node Req="in" ReqType="const" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="idx" node-idx="2"  />
+      <node Req="pobj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="3"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="gov" store="idx" node-idx="4"  />
+      <node Req="2" ReqType="NodeMem" SelType="NodeMem" sel="4"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="dep" store="idx" node-idx="5"  />
+      <node Req="" ReqType="none" SelType="NodeRecLookup" sel="5" StoreType="rec" store="ner" node-idx="6"  />
+      <node Req="LOCATION" ReqType="const" SelType="NodeMem" sel="6"   />
+    </NodeListItem>
+    <NodeListItem group-name="WordsWithTwoDeps" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Find words that relate to two other words in the sentence with different deps. Greate groups that express a relationship through that source word">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" SortType="count" FillType="number" FillNumber="5" FillPercentile="20" />
+      <GrpParam idx="1" SrcType="NameListItem" Src="depcount" MatchType="GrpParamNot"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0" SortType="count" FillType="number" FillNumber="5" FillPercentile="20"  />
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="idx" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="2"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="2" StoreType="gov" store="idx" node-idx="3"  />
+      <node Req="1" ReqType="NodeMem" SelType="NodeMem" sel="3"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="TwoDepGrpSeed" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Create a list of groups, each one side of a releationship through WordsWithTwoDeps middleman">
+      <GrpParam idx="0" SrcType="GrpAnc" Src="WordsWithTwoDeps" SrcStore="SrcGrpParam" SrcStoreWhich="0"  />
+      <GrpParam idx="1" SrcType="GrpAnc" Src="WordsWithTwoDeps" SrcStore="SrcGrpParam" SrcStoreWhich="1"  >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+      </GrpParam>
+      <GrpParam idx="2" SrcType="GrpAnc" Src="WordsWithTwoDeps" SortType="count" FillType="number" FillNumber="3" FillPercentile="10" >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+        <GrpParamMatchNode MatchType="GrpParam"  Match="1" MatchWhat="SrcGrpParam" MatchWhich="1"  />
+      </GrpParam>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="2" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="TwoDepGrp" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Create groups based on a relationship with a member of TwoDepGrpSeed through an intermediary from WordsWithTwoDeps">
+      <GrpParam idx="0" SrcType="GrpAnc" Src="TwoDepGrpSeed" SrcStore="SrcGrpParam" SrcStoreWhich="0"  />
+      <GrpParam idx="1" SrcType="GrpAnc" Src="TwoDepGrpSeed" SrcStore="SrcGrpParam" SrcStoreWhich="1"  >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+      </GrpParam>
+      <GrpParam idx="2" SrcType="GrpAnc" Src="TwoDepGrpSeed" SrcStore="SrcGrpParam" SrcStoreWhich="2" >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+        <GrpParamMatchNode MatchType="GrpParam"  Match="1" MatchWhat="SrcGrpParam" MatchWhich="1"  />
+      </GrpParam>
+      <GrpParam idx="3" SrcType="GrpAnc" Src="TwoDepGrpSeed" SrcStore="word" >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+        <GrpParamMatchNode MatchType="GrpParam"  Match="1" MatchWhat="SrcGrpParam" MatchWhich="1"  />
+        <GrpParamMatchNode MatchType="GrpParam"  Match="2" MatchWhat="SrcGrpParam" MatchWhich="2"  />
+      </GrpParam>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="2" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="2"  />
+      <node Req="3" ReqType="GrpParam" SelType="NodeMem" sel="2"   />
+      <node Req="1" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="3"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="gov" store="idx" node-idx="4"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="idx" node-idx="5"  />
+      <node Req="5" ReqType="NodeMem" SelType="NodeMem" sel="4"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="NSubjWithDObj" SrcTextType="dep" GrpCreator="false" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Find all verbs that have a subject and take direct objects. Greate groups that express a relationship through a verb">
+      <node Req="nsubj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="idx" node-idx="1"  />
+      <node Req="dobj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="2"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="2" StoreType="gov" store="idx" node-idx="3"  />
+      <node Req="1" ReqType="NodeMem" SelType="NodeMem" sel="3"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="NSubjGrps" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Find subjects of NSubjWithDObj">
+      <GrpParam idx="0" SrcType="PatGrp" Src="NSubjWithDObj" SortType="count" FillType="number" FillNumber="3" FillPercentile="1" />
+      <node Req="nsubj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="0" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <NodeListItem group-name="DObjOfNSubjGrps" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0"
+      comment="Find dobj of groups of subjects of NSubjWithDObj">
+      <GrpParam idx="0" SrcType="GrpAnc" Src="NSubjGrps" SrcStore="SrcGrpParam" SrcStoreWhich="0"  />
+      <GrpParam idx="1" SrcType="GrpAnc" Src="NSubjGrps" SrcStore="word" >
+        <GrpParamMatchNode MatchType="GrpParam"  Match="0" MatchWhat="SrcGrpParam" MatchWhich="0"  />
+      </GrpParam>
+      <node Req="nsubj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="0" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" node-idx="2"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="2"   />
+      <node Req="dobj" ReqType="const" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="3"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="gov" store="idx" node-idx="4"  />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="idx" node-idx="5"  />
+      <node Req="5" ReqType="NodeMem" SelType="NodeMem" sel="4"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="3" StoreType="dep" store="word" store-idx="0"  />
+    </NodeListItem>
+    <!--
+    <NodeListItem group-name="GrpSeedAncPrec" GrpType="SeedGrp" num-stores="1" stop-list="INStopList" create-freq="0" run-freq="1.0">
+      <node options="AllPOSList" stop-action="no stop" optas="oneof" sel="pos" store="word" store-idx="0"  />
+      <node optas="oneof" stop-action="no stop" sel="word" store="word" />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="GrpSeedAncPrec" SrcTextType="dep" GrpCreator="true" GrpType="SeedGrp" num-stores="1" stop-list="INStopList" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="AllPOSList" /> 
+      <GrpParam idx="1" SrcType="ExtParam" /> 
+      <node Req="0" ReqType="GrpParam" SelType="SearchNextRec" sel="pos" store="word" store-idx="0"  />
+      <node Req="1" ReqType="GrpParam" SelType="SearchNextRec" sel="word"  />
+    </NodeListItem>
+    <!--
+    <NodeListItem group-name="GrpSeedAncAfter" GrpType="SeedGrp" num-stores="1" stop-list="INStopList" create-freq="0" run-freq="1.0">
+      <node optas="oneof" stop-action="no stop" sel="word" store="word" />
+      <node options="AllPOSList" optas="oneof" stop-action="no stop" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="GrpSeedAncAfter" GrpCreator="true" GrpType="SeedGrp" num-stores="1" stop-list="INStopList" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="AllPOSList" /> 
+      <GrpParam idx="1" SrcType="ExtParam" /> 
+      <node Req="1" ReqType="GrpParam" SelType="SearchNextRec" sel="word"  />
+      <node Req="0" ReqType="GrpParam" SelType="SearchNextRec" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    <!-- 
+    <NodeListItem group-name="InWords" num-stores="1" create-freq="-1" run-freq="1.0">
+      <node options="InList" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="InWords" GrpCreator="false" num-stores="1" create-freq="-1" run-freq="1.0">
+      <node ReqType="NameListItem" Req="InList" SelType="SearchNextRec" sel="pos" store="word" store-idx="0"  />
+    </NodeListItem>
+    <!-- 
+    <NodeListItem group-name="VB[Base]->IN[true]" num-stores="1" stop-list="NounStopList" create-freq="-1" run-freq="1.0">
+      <node options="VerbList" sel="pos" store="word" store-idx="0" />
+      <node options="InList" sel="pos" store="word"  />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="VB[Base]->IN[true]" GrpCreator="false" num-stores="1" stop-list="NounStopList" create-freq="-1" run-freq="1.0">
+      <node Req="VerbList" ReqType="NameListItem" SelType="SearchNextRec" sel="pos" store="word" store-idx="0" />
+      <node Req="InList" ReqType="NameListItem" SelType="SearchNextRec" sel="pos" store="word"  />
+    </NodeListItem>
+    <!-- 
+    <NodeListItem group-name="VB[Base]->InWords[Base]" num-stores="1" stop-list="NounStopList" create-freq="-1.0" run-freq="0.8">
+      <node options="VerbList" sel="pos" store="word" store-idx="0" />
+      <node ancestor="InWords" optas="oneof" sel="word" store="word"  />
+    </NodeListItem>
+    -->
+    <NodeListItem group-name="VB[Base]->InWords[Base]" GrpCreator="true" num-stores="1" stop-list="NounStopList" create-freq="-1.0" run-freq="0.8">
+      <GrpParam idx="0" SrcType="GrpEls" Src="Inwords" /> 
+      <node Req="VerbList" ReqType="NameListItem" SelType="SearchNextRec" sel="pos" store="word" store-idx="0" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchNextRec" sel="word"  />
+    </NodeListItem>
+    <!-- No alternatives for these yet
+    <NodeListItem group-name="VB[Base]->NN[true]" num-stores="1" stop-list="INStopList" create-freq="-1.0" run-freq="1.0">
+      <node options="VerbList" sel="pos" store="word" store-idx="0" />
+      <node options="NounList" sel="pos" store="word" />
+    </NodeListItem>
+    <NodeListItem group-name="VBOnNoun[Base]FromNN[true]" num-stores="1" stop-list="INStopList" create-freq="-1.0" run-freq="0.98">
+      <node ancestor="VB[Base]->NN[true]" optas="oneof" sel="word" store="word" />
+      <node options="NounList" sel="pos" store="word" store-idx="0"/>
+    </NodeListItem>
+    -->
+  </NodeLists>
+  <GrpCreateList>
+    <GrpCreateItem group-name="AllDepGovs" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="gov" store="word" store-idx="0" />
+    </GrpCreateItem>
+    <GrpCreateItem group-name="DepNears" SrcTextType="dep" GrpCreator="true" num-stores="1" create-freq="0" run-freq="1.0">
+      <GrpParam idx="0" SrcType="NameListItem" Src="depcount" />
+      <GrpParam idx="1" SrcType="NameListItem" Src="word" SortType="count" FillType="number" FillNumber="1500" FillPercentile="9"/>
+      <node Req="0" ReqType="GrpParam" SelType="SearchAllDeps" sel="rel" StoreType="rec" store="idx" node-idx="0" />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="gov" store="word" node-idx="1"  />
+      <node Req="1" ReqType="GrpParam" SelType="NodeMem" sel="1"   />
+      <node Req="" ReqType="none" SelType="NodeDepLookup" sel="0" StoreType="dep" store="word" store-idx="0"  />
+    </GrpCreateItem>
+  </GrpCreateList>
+  <TaskLists>
+    <TaskNode name="TaskNode.InitFromNLP">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
+    </TaskNode>
+    <TaskNode name="TaskNode.StartWork">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SeeGroups">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="DepsOfGovsOfDepLtd" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.NumStrong" val="4" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.LoopTest">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="DepNears" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.NumStrong" val="12" />
+      <TaskItem TaskType="SetParam" do="Task.Param.LoopTest.Loop2" val="2" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.LoopTest.Loop2" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.LoopTest.Loop2" />
+      <TaskItem TaskType="SetParam" do="Task.Param.LoopTest.Loop0" val="3" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.LoopTest.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.LoopTest.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.LoopTest.Loop1" val="1" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.LoopTest.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.LoopTest.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.LoopTest.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.LoopTest.Loop0" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.LoopTest.Loop2" />
+    </TaskNode>
+    <TaskNode name="TaskNode.RemoveGroups">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="DepNears" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="DepNearsOnGov" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="AllDepGovs" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="AllDepDeps" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.RemoveTesting">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="DepNearsForTesting" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.MakeDets">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="DetGovs" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.MakeDets.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.MakeDets.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.MakeDets.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="DetGovs" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.CreatePOSLists.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForLearn">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForLearn.Loop0" val="2" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForLearn.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForLearn.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForLearn.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.Mode" val="word phrases" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/SimpleWords/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForLearn.Loop1" val="2" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForLearn.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForLearn.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForLearn.Loop1" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/SimpleWords/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveWordsForLearn">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.Mode" val="words" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/words/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/words/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SavePOSForLearn">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SavePOSForLearn.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SavePOSForLearn.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SavePOSForLearn.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SavePOSForLearn.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.Mode" val="POS" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/POS/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SavePOSForLearn.Loop1" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SavePOSForLearn.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SavePOSForLearn.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SavePOSForLearn.Loop1" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveSimple.H5FileName" val="/devlink/caffe/data/LSTMTrain/POS/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="SaveSimple" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForWordEmbed">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForWordEmbed.Loop0" val="100" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.Mode" val="init" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TrainFileName" val="/devlink/caffe/data/WordEmbed/FirstPass/data/train.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TestFileName" val="/devlink/caffe/data/WordEmbed/FirstPass/data/test.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordListFileName" val="/devlink/caffe/data/WordEmbed/FirstPass/data/WordList.txt" />
+      <TaskItem TaskType="NoArgsFn" do="SaveNGrams" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForWordEmbedVecPredict">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForWordEmbed.Loop0" val="100" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForWordEmbed.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.Mode" val="vec predict" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TrainFileName" val="/devlink/caffe/data/WordEmbed/VecPredict/data/train.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TestFileName" val="/devlink/caffe/data/WordEmbed/VecPredict/data/test.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordListFileName" val="/devlink/caffe/data/WordEmbed/VecPredict/data/WordList.txt" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordVecFileName" val="/ExtDownloads/glove.6B.50d.txt" /> 
+      <!-- <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordVecFileName" val="/devlink/caffe/data/LSTMTrain/AEWordVec/data/WordVectors.txt" /> -->
+      <TaskItem TaskType="NoArgsFn" do="SaveNGrams" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForGramValid">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForGramValid.Loop0" val="1" should_be_val="40" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForGramValid.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForGramValid.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForGramValid.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.Mode" val="gram valid" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TrainFileName" val="/devlink/caffe/data/WordEmbed/GramValid/data/train.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.H5TestFileName" val="/devlink/caffe/data/WordEmbed/GramValid/data/test.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordListFileName" val="/devlink/caffe/data/WordEmbed/GramValid/data/WordList.txt" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordVecFileName" val="/ExtDownloads/glove.6B.50d.txt" /> 
+      <!-- <TaskItem TaskType="SetParam" do="Task.Param.SaveNGrams.WordVecFileName" val="/devlink/caffe/data/LSTMTrain/AEWordVec/data/WordVectors.txt" /> -->
+      <TaskItem TaskType="NoArgsFn" do="SaveNGrams" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.DoCaffeFn">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="10" should_be_val="40" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.DoCaffeFn.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.DoCaffeFn.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="CaffeFn" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForAEWordVec">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForAEWordVec.Loop0" val="1" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForAEWordVec.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForAEWordVec.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForAEWordVec.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveAEWordVec.Mode" val="ae words vecs" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveAEWordVec.H5TrainFileName" val="/devlink/caffe/data/LSTMTrain/AEWordVec/data/train.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveAEWordVec.H5TestFileName" val="/devlink/caffe/data/LSTMTrain/AEWordVec/data/test.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveAEWordVec.WordListFileName" val="/devlink/caffe/data/LSTMTrain/AEWordVec/data/WordList.txt" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveAEWordVec.WordVecFileName" val="/ExtDownloads/glove.6B.50d.txt" />
+      <TaskItem TaskType="NoArgsFn" do="SaveAEWordVec" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.SaveForWordToPos">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveForWordToPos.Loop0" val="30" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.SaveForWordToPos.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.SaveForWordToPos.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.SaveForWordToPos.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveWordToPos.Mode" val="words to pos" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveWordToPos.H5TrainFileName" val="/devlink/caffe/data/LSTMTrain/WordToPos/data/train.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveWordToPos.H5TestFileName" val="/devlink/caffe/data/LSTMTrain/WordToPos/data/test.h5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveWordToPos.WordListFileName" val="/devlink/caffe/data/LSTMTrain/WordToPos/data/WordList.txt" />
+      <TaskItem TaskType="SetParam" do="Task.Param.SaveWordToPos.WordVecFileName" val="/ExtDownloads/glove.6B.50d.txt" />
+      <TaskItem TaskType="NoArgsFn" do="SaveWordToPos" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+    </TaskNode>
+    <TaskNode name="TaskNode.CreatePOSLists">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="AllPOSWords" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.Seed" val="me" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="SetParam" do="Task.Param.CreatePOSLists.Loop0" val="90" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.CreatePOSLists.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.CreatePOSLists.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <!-- <TaskItem TaskType="LoopContinue" do="Task.Param.CreatePOSLists.Loop0" /> -->
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.CreatePOSLists.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.AssocGroups" comment="Equiv to CreateGrpsFromSeed.  Pre-requisite TaskNode.CreatePOSLists">
+      <TaskItem TaskType="SetParam" do="Implem.Param.TaskParam.AssocGroups" val="me" />
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="Implem.Param.TaskParam.AssocGroups" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="GrpSeedAncPrec" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.Seed" val="Implem.Param.TaskParam.AssocGroups" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="GrpSeedAncPrec" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="GrpSeedAncAfter" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.Seed" val="Implem.Param.TaskParam.AssocGroups" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="GrpSeedAncAfter" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestSwap" comment="Test for Swap sentence test code. Pre-requisite TaskNode.AssocGroups">
+      <TaskItem TaskType="SetParam" do="Task.Param.TaskNode.TestSwap" val="me" />
+      <TaskItem TaskType="SetParam" do="Task.Param.TaskNode.TestSwap2nd" val="this" />
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="CopyParam" do="Task.Param.InitSGrpSeed.SeedName" val="Task.Param.TaskNode.TestSwap" />
+      <TaskItem TaskType="NoArgsFn" do="InitSGrpSeed" />
+      <TaskItem TaskType="CopyParam" do="Task.Param.InitSGrpSeed1.SeedName" val="Task.Param.TaskNode.TestSwap2nd" />
+      <TaskItem TaskType="NoArgsFn" do="InitSGrpSeed1" />
+      <TaskItem TaskType="SetParam" do="Task.Param.TestSwap.Loop0" val="2" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.TestSwap.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.TestSwap.Loop0" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="Task.Param.TaskNode.TestSwap" />
+      <TaskItem TaskType="AppendParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="Task.Param.TaskNode.TestSwap2nd" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="NoArgsFn" do="TestByWordSwap" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.TestSwap.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="RunRF" />
+    </TaskNode>
+    <TaskNode name="TaskNode.MakeDepGovs" comment="Creates the dep govs">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="AllDepGovs" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="AllDepDeps" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.MakeDepGovs.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.MakeDepGovs.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.MakeDepGovs.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="AllDepGovs" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="AllDepDeps" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.MakeDepGovs.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestDep" comment="Creates a group based on a test dep">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="PairsByDep" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.TestDep.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.TestDep.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.TestDep.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="PairsByDep" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.TestDep.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.MainDepsCreate" comment="Creates a lsrge number of near relations to popular words">
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="AllDepGovs" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local2" val="AllDepDeps" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local3" val="DepNears" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local4" val="DepNearsOnGov" />
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local2" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local3" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local4" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="10" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local2" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local3" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local4" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestingDepsCreate" comment="Creates a lsrge number of near relations to popular words">
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="DepNearsForTesting" />
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop0" val="3" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="3" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.PrepsForLocation">
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="inLocationExample" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.PrepsForLocation.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.PrepsForLocation.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.PrepsForLocation.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="inLocationExample" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.PrepsForLocation.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayExa">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="NSubjWithDObj" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayExa.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayExa.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayExa.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="NSubjWithDObj" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayExa.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="NSubjWithDObj" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayExb">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="NSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayExb.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayExb.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayExb.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="NSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayExb.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="NSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayExc">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="DObjOfNSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayExc.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayExc.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayExc.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="DObjOfNSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayExc.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="DObjOfNSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayEx">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="CallTask" do="TaskNode.3WayExa" />
+      <TaskItem TaskType="CallTask" do="TaskNode.3WayExb" />
+      <TaskItem TaskType="CallTask" do="TaskNode.3WayExc" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayClean">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="NSubjWithDObj" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="NSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="DObjOfNSubjGrps" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayGrpa">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="WordsWithTwoDeps" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayGrpa.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayGrpa.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayGrpa.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="WordsWithTwoDeps" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayGrpa.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="WordsWithTwoDeps" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayGrpb">
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="TwoDepGrpSeed" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayGrpb.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayGrpb.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayGrpb.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayGrpb.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.PrintGroups.AncGrp" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayGrpc">
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="TwoDepGrp" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="CreateGroups" />
+      <TaskItem TaskType="SetParam" do="Task.Param.3WayGrpc.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.3WayGrpc.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.3WayGrpc.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.FillGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="FillGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.3WayGrpc.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.PrintGroups.AncGrp" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayGrp">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="CallTask" do="TaskNode.3WayGrpc" />
+    </TaskNode>
+    <TaskNode name="TaskNode.3WayGrpClean">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="WordsWithTwoDeps" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="TwoDepGrpSeed" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="TwoDepGrp" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+     <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestWordAligned">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="NoArgsFn" do="FindAlignedWord" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestWordCorrect">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="NoArgsFn" do="WordCorrect" />
+    </TaskNode>
+    <TaskNode name="TaskNode.LearnCheckers1" comment="Learn the game of checkers">
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/state/CheckersNamedCounts.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsFileName" val="/guten/state/CheckersGroups.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsDataFileName" val="/guten/state/CheckersGroupsData.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="GovsOfDep" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local2" val="DepsOfGovsOfDep" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CleanGroups.ParentName" val="Implem.Param.Local2" />
+      <TaskItem TaskType="NoArgsFn" do="CleanGroups" />
+      <TaskItem TaskType="NoArgsFn" do="InitCheckers" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop0" val="1" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="30" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayCheckers" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="WordsCreated" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="NoArgsFn" do="MakeGroupsFromData" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local2" />
+      <!-- <TaskItem TaskType="NoArgsFn" do="MakeGroupsFromData" /> -->
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.PlayCheckers" comment="Play checkers">
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/state/CheckersNamedCounts.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsFileName" val="/guten/state/CheckersGroups.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsDataFileName" val="/guten/state/CheckersGroupsData.bin" />
+      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <TaskItem TaskType="NoArgsFn" do="InitCheckers" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.PlayCheckers.CalcMoves" val="Yes" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop0" val="300" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="PlayCheckers" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.CheckersSeeGroups">
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/state/CheckersNamedCounts.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsFileName" val="/guten/state/CheckersGroups.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsDataFileName" val="/guten/state/CheckersGroupsData.bin" />
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.AncGrp" val="DepsOfGovsOfDep" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrintGroups.NumStrong" val="4" />
+      <TaskItem TaskType="NoArgsFn" do="PrintGroups" />
+    </TaskNode>
+    <TaskNode name="TaskNode.TestMakeGroups">
+      <TaskItem TaskType="CallTask" do="TaskNode.StartWork" />      
+      <!-- <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="DepsOfGovsOfDepLtd" /> -->
+      <!-- <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="GovsOfDepsOfDep" /> -->
+      <TaskItem TaskType="SetParam" do="Implem.Param.Local1" val="DepsOfGovsOfDepLtd" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop0" val="20" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop0" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="10" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="CopyParam" do="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" val="Implem.Param.Local1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.MakeGroupsFromData.WordsFromPercentile" val="1" />
+      <TaskItem TaskType="NoArgsFn" do="MakeGroupsFromData" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="SaveGroups" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.Subtask.GameSetup" comment="Standard game setup">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.PlayGame.CalcMoves" val="No" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BoardSize" val="5" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhiteDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BlackDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhoStarts" val="white" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.DoBestMove" val="no" comment="if yes, use minimax to select best move" /> 
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.LearnValids" val="no" comment="if yes, learns valid moves as an observer " />
+    </TaskNode>
+    <TaskNode name="TaskNode.Subtask.PlayGame" comment="Standard game run">
+      <TaskItem TaskType="NoArgsFn" do="InitGame" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="3" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayGame" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+    </TaskNode>
+    <TaskNode name="TaskNode.LearnCheckers" comment="Play Checkers without groups intelligence">
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.PlayGame.CalcMoves" val="No" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BoardSize" val="5" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.Which" val="Checkers" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhiteDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BlackDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhoStarts" val="white" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.StartBoard" val="1,0,1,0,1,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       2,0,2,0,2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.DoBestMove" val="no" comment="if yes, use minimax to select best move" /> 
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.LearnValids" val="no" comment="if yes, learns valid moves as an observer " />
+      <TaskItem TaskType="NoArgsFn" do="InitGame" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="300" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayGame" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="300" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayGame" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+    </TaskNode>
+    <TaskNode name="TaskNode.LearnGo" comment="Play Go without groups intelligence">
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/state/GoNamedCounts.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsFileName" val="/guten/state/GoGroups.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.GroupsDataFileName" val="/guten/state/GoGroupsData.bin" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.PlayGame.CalcMoves" val="No" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BoardSize" val="5" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.Which" val="Go" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhiteDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.BlackDepth" val="2" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.WhoStarts" val="white" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.StartBoard" val="0,0,0,1,2,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0" />
+       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.DoBestMove" val="no" comment="if yes, use minimax to select best move" /> 
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.LearnValids" val="no" comment="if yes, learns valid moves as an observer " />
+     <TaskItem TaskType="NoArgsFn" do="InitGame" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="300" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayGame" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+      <TaskItem TaskType="SetParam" do="Task.Param.Local.Loop1" val="300" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="NoArgsFn" do="PlayGame" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.Local.Loop1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+    </TaskNode>
+    <TaskNode name="TaskNode.LearnChess" comment="Play Chess and save records">
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.GameSetup"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.Which" val="Chess" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.GameMode" val="RecordScore" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.StartBoard" val="2,0,6,0,5,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,8,12,11,0" />
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.PlayGame"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/ElsValid/data/train.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.PlayGame"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/ElsValid/data/test.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+    </TaskNode>
+    <TaskNode name="TaskNode.ChessScore" comment="Play Chess getting score from caffe">
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.GameSetup"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.Which" val="Chess" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.GameMode" val="UseCaffe" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.StartBoard" val="2,0,6,0,5,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,8,12,11,0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.HostName" val="0.0.0.0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.PortNum" val="1544" comment="not in use for now"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.NumPieceTypes" val="14"  comment="not in use for now"/>
+      <TaskItem TaskType="NoArgsFn" do="GameConnectToCaffe" />
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.PlayGame"  />
+    </TaskNode>
+    <TaskNode name="TaskNode.ImproveChess" comment="Play Chess recording errors from Caffe">
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.GameSetup"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.Which" val="Chess" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.GameMode" val="RecordClicksValidError" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.InitGame.StartBoard" val="2,0,6,0,5,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,0,0,0,0,  
+                                                                                       0,8,12,11,0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.HostName" val="0.0.0.0" />
+      <TaskItem TaskType="NoArgsFn" do="GameConnectToCaffe" />
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.PlayGame"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/ValidClicks/data/traine.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+      <TaskItem TaskType="CallTask" do="TaskNode.Subtask.PlayGame"  />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.HD5.FileName" val="/guten/data/ValidClicks/data/teste.h5" />
+      <TaskItem TaskType="NoArgsFn" do="GameCreateHD5" />
+    </TaskNode>
+  </TaskLists>
+  <ImplementationParameterList>
+    <ImplementationParameter name="bOrderWordsOnLearnSwap" type="constant" val="false" comment="if true, perform a word sort before LearnWordSwap" />
+    <!-- 
+    <ImplementationParameter name="bInitLoadFromMASC" type="constant" val="false" comment="if true, start off by loading the original files from MASC" />
+    <ImplementationParameter name="bInitLoadFromNLP" type="constant" val="false" comment="if true, start off by loading the original files from NLP" />
+    <ImplementationParameter name="bInitLoadFromGotit" type="constant" val="true" comment="if true, start off by loading the original files from NLP" />
+    <ImplementationParameter name="bRecreateInitialGroups" type="constant" val="true" comment="if true, start off by loading the original files from NLP" />
+    -->
+    <ImplementationParameter name="Implem.Param.LoadGotitFilesLimit" type="constant" val="500" comment="Limit for the number of gotit modules we load. -1 means no limit" />
+    <ImplementationParameter name="Implem.Param.LoadNLPFilesLimit" type="constant" val="300" comment="Limit for the number of Stanford NLP xml files we load. -1 means no limit" />
+    <ImplementationParameter name="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" type="ExtSet" val="" comment="Name of Pat Grp Finder. empty means try them all" />
+    <ImplementationParameter name="Implem.Param.FnParam.CreateGroups.Seed" type="ExtSet" val="" comment="Passed as an enternal param. empty should be used only if there is no external param" />
+    <ImplementationParameter name="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" type="ExtSet" val="" comment="Only use sentences that conain this word. empty means load all senteces" />
+    <ImplementationParameter name="Implem.Param.FnParam.LoadSentenceListOneMod.ModName" type="ExtSet" val="" comment="Module file name from which to extract sentences" />
+    <ImplementationParameter name="Implem.Param.FnParam.FillGroups.GrpParam0" type="ExtSet" val="" comment="Exclude groups whose value doesn't match this. Empty means don't filter." />
+    <ImplementationParameter name="Implem.Param.FnParam.FillGroups.ParentName" type="ExtSet" val="" comment="Exclude groups whose value doesn't match this. Empty means don't filter." />
+    <ImplementationParameter name="Task.Param.CreatePOSLists.Loop0" type="Internal" val="0" />
+    <ImplementationParameter name="Task.Param.InitSGrpSeed.SeedName" type="Internal" val="" />
+    <ImplementationParameter name="Task.Param.InitSGrpSeed1.SeedName" type="Internal" val="" />
+    <ImplementationParameter name="Task.Param.TestByWordSwap.iOverLoop" type="Internal" val="0" />
+    <!-- 
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitFromNLP" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.StartWork" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SeeGroups" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.CreatePOSLists" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestSwap" not so important />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.MainDepsCreate" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestDep" test of RF not for now />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.CreateDepNears" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.MakeDets"  commment="small start" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.3WayClean" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.3WayEx" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.3WayGrp" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.3WayGrpClean" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.RemoveGroups" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestWordAligned" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestingDepsCreate" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.RemoveTesting" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestWordCorrect" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LearnCheckers1" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.PlayCheckers" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.CheckersSeeGroups" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.TestMakeGroups" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LearnCheckers" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LearnGo" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LearnChess" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.CheckersScore" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.ChessScore" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.ImproveChess" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForLearn"  commment="for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveWordsForLearn"  commment="word list for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SavePOSForLearn"  commment="POS structures of sentences for for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForWordEmbed"  commment="saving ngrams for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForWordEmbedVecPredict"  commment="saving ngrams for caffe vector predict" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForWordToPos"  commment="saving sentences and their pos for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForAEWordVec"  commment="saving sentences and their pos for caffe" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForGramValid"  commment="saving valid and invalid ngrams for caffe learn" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="Conditional compilation of desired function" />
+    -->
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="Conditional compilation of desired function" />
+
+  </ImplementationParameterList>
+</Config>

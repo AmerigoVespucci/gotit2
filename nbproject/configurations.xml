@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>/media/truecrypt6/MascReader/CheckersIntf.h</itemPath>
+      <itemPath>/media/truecrypt6/MascReader/MascReader.h</itemPath>
+      <itemPath>/media/truecrypt6/MascReader/Regex2D.h</itemPath>
+      <itemPath>/media/truecrypt6/MascReader/RegexInternal.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>CaffeSrc/WordEmbed/GramPosValid/CaffeFn.cpp</itemPath>
+      <itemPath>CheckersIntf.cpp</itemPath>
+      <itemPath>CheckersText.cpp</itemPath>
+      <itemPath>DepGrps.cpp</itemPath>
+      <itemPath>ForLearn.cpp</itemPath>
+      <itemPath>Gamer.cpp</itemPath>
+      <itemPath>GrpsCntrl.cpp</itemPath>
+      <itemPath>GrpsCreate.cpp</itemPath>
+      <itemPath>GrpsFile.cpp</itemPath>
+      <itemPath>MascFiles.cpp</itemPath>
+      <itemPath>MascReader.cpp</itemPath>
+      <itemPath>NodeConfig.cpp</itemPath>
+      <itemPath>Regex2D.cpp</itemPath>
+      <itemPath>RegexLearn.cpp</itemPath>
+      <itemPath>StanfordReader.cpp</itemPath>
+      <itemPath>TaskFns.cpp</itemPath>
+      <itemPath>TaskLists.cpp</itemPath>
+      <itemPath>WordAligned.cpp</itemPath>
+      <itemPath>WordCorrect.cpp</itemPath>
+      <itemPath>WordGroup.cpp</itemPath>
+      <itemPath>WordSwap.cpp</itemPath>
+      <itemPath>XmlParser.cpp</itemPath>
+      <itemPath>RF/discrete_dist.cc</itemPath>
+      <itemPath>RF/instance_set.cc</itemPath>
+      <itemPath>../TestCaffe/ipc.pb.cc</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>RF/random_forest.cc</itemPath>
+      <itemPath>RF/test.cc</itemPath>
+      <itemPath>RF/tree.cc</itemPath>
+      <itemPath>RF/tree_node.cc</itemPath>
+      <itemPath>RF/weights.cc</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>/media/truecrypt6/MascReader/CaffeSrc/WordEmbed/GramPosValid/GramPosValid.cpp</itemPath>
+      <itemPath>Makefile</itemPath>
+      <itemPath>/media/truecrypt6/MascReader/NodeConfig.xml</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <incDir>
+            <pElem>/media/truecrypt6/MascReader/RF</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>boost_system</linkerLibLibItem>
+            <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_cpp</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
+            <linkerLibLibItem>protobuf</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../TestCaffe/ipc.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/CheckersIntf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/MascReader.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/Regex2D.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/RegexInternal.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="CaffeSrc/WordEmbed/GramPosValid/CaffeFn.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckersText.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="DepGrps.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ForLearn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Gamer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsCntrl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsCreate.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MascFiles.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MascReader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="NodeConfig.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/discrete_dist.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/instance_set.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/random_forest.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/test.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/tree.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/tree_node.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/weights.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Regex2D.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RegexLearn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StanfordReader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskFns.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskLists.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordAligned.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordCorrect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordSwap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="XmlParser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>8</standard>
+          <incDir>
+            <pElem>RF</pElem>
+          </incDir>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>boost_system</linkerLibLibItem>
+            <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
+            <linkerLibLibItem>hdf5</linkerLibLibItem>
+            <linkerLibLibItem>hdf5_cpp</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
+            <linkerLibLibItem>protobuf</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <item path="../TestCaffe/ipc.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/CheckersIntf.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/MascReader.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/Regex2D.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/media/truecrypt6/MascReader/RegexInternal.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="CaffeSrc/WordEmbed/GramPosValid/CaffeFn.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckersText.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="DepGrps.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ForLearn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Gamer.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsCntrl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsCreate.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GrpsFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MascFiles.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MascReader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="NodeConfig.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/discrete_dist.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/instance_set.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/random_forest.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/test.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/tree.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/tree_node.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RF/weights.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Regex2D.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RegexLearn.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StanfordReader.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskFns.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TaskLists.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordAligned.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordCorrect.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordGroup.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WordSwap.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="XmlParser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
