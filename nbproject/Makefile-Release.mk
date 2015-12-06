@@ -35,13 +35,15 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o \
 	${OBJECTDIR}/_ext/738675558/ipc.pb.o \
-	${OBJECTDIR}/CaffeSrc/WordEmbed/GramPosValid/CaffeFn.o \
+	${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
 	${OBJECTDIR}/DepGrps.o \
 	${OBJECTDIR}/ForLearn.o \
 	${OBJECTDIR}/Gamer.o \
+	${OBJECTDIR}/GenData.pb.o \
 	${OBJECTDIR}/GrpsCntrl.o \
 	${OBJECTDIR}/GrpsCreate.o \
 	${OBJECTDIR}/GrpsFile.o \
@@ -92,15 +94,20 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o: ../CaffeR/GenSeed.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2095212026
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o ../CaffeR/GenSeed.pb.cc
+
 ${OBJECTDIR}/_ext/738675558/ipc.pb.o: ../TestCaffe/ipc.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}/_ext/738675558
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/738675558/ipc.pb.o ../TestCaffe/ipc.pb.cc
 
-${OBJECTDIR}/CaffeSrc/WordEmbed/GramPosValid/CaffeFn.o: CaffeSrc/WordEmbed/GramPosValid/CaffeFn.cpp 
-	${MKDIR} -p ${OBJECTDIR}/CaffeSrc/WordEmbed/GramPosValid
+${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o: CaffeSrc/NetGen/WordToPos/CaffeFn.cpp 
+	${MKDIR} -p ${OBJECTDIR}/CaffeSrc/NetGen/WordToPos
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeSrc/WordEmbed/GramPosValid/CaffeFn.o CaffeSrc/WordEmbed/GramPosValid/CaffeFn.cpp
+	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o CaffeSrc/NetGen/WordToPos/CaffeFn.cpp
 
 ${OBJECTDIR}/CheckersIntf.o: CheckersIntf.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -126,6 +133,11 @@ ${OBJECTDIR}/Gamer.o: Gamer.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Gamer.o Gamer.cpp
+
+${OBJECTDIR}/GenData.pb.o: GenData.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenData.pb.o GenData.pb.cc
 
 ${OBJECTDIR}/GrpsCntrl.o: GrpsCntrl.cpp 
 	${MKDIR} -p ${OBJECTDIR}

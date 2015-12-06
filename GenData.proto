@@ -1,0 +1,41 @@
+message CaffeGenData {
+	required string name = 1;
+	enum IterateType {
+		ITERATE_WORD = 1;
+		ITERATE_REC = 2;
+	}
+	required IterateType iterate_type = 2;
+	enum DataSrc {
+		DATA_SRC_BOOKS = 1;
+	}
+	required DataSrc data_src = 3;
+	message DataField {
+		required string var_name = 1;
+		required string field_name = 2;
+	}
+	repeated DataField data_fields = 4;
+	message FieldTranslate {
+		optional string var_name = 1;
+		required string table_name = 2;
+		optional bool b_can_replace = 3;
+		optional int32 max_instances = 4;
+		// 0 - 1 propability of replacing another record if the max_instances has been exceeded
+		// needed for making sure all source files participate in high usage examples and not 
+		// only first and last
+		optional float replace_prob = 5; 
+	}
+	repeated FieldTranslate input_field_translates = 5;
+	repeated FieldTranslate output_field_translates = 6;
+	required string files_core_dir = 7;
+	required string test_list_file_name = 8;
+	required string train_list_file_name = 9;
+	enum NetEndType {
+		END_VALID = 1; // end will be yes or no
+		END_ONE_HOT = 2; // output of hd5 will be an integer but matched in net by as many nodes as the highest integer
+		END_MULTI_HOT = 3; // output in hd5 file looks the same as net output layer
+	}
+	required NetEndType net_end_type = 10;
+	required string proto_file_name = 11;
+	required string model_file_name = 12;
+	required string config_file_name = 13;
+}

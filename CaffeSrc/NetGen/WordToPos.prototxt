@@ -1,0 +1,7 @@
+name: "WordToPos"
+iterate_type: ITERATE_WORD
+data_src: DATA_SRC_BOOKS
+data_fields {
+  var_name: "Word1"
+  field_name: "Word"
+}

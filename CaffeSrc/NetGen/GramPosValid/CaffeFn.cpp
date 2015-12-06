@@ -1,14 +1,21 @@
 // CaffeFn.cpp : 
-// CaffeSrc/WordEmbed/WordToVec
-// Saving words with an associated pos
+// /home/abba/NetBeansProjects/gotit2/CaffeSrc/NetGen/GramPosValid
+// Saving ngrams as doubled GloVe vectors with pos
+// control is auto net gen instead of prototxt
 //
 
 
  
+#include <fcntl.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/text_format.h>
 #include "../../../stdafx.h"
 
 #include "../../../MascReader.h"
 #include "H5Cpp.h"
+
+#include "../../../../CaffeR/GenSeed.pb.h"
 
 #ifndef H5_NO_NAMESPACE
     using namespace H5;
@@ -21,16 +28,15 @@
 
 void CGotitEnv::CaffeFn()
 {
-    string H5TrainFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/train.h5";
-    string H5TestFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/test.h5";
-    string H5TrainListFileName=	"/devlink/caffe/data/NetGen/WordToPos/data/train_list.txt";
-    string H5TestListFileName=	"/devlink/caffe/data/NetGen/WordToPos/data/test_list.txt";
-	string ProtoFileName=		"/devlink/caffe/data/NetGen/WordToPos/models/train.prototxt";
-	string ModelFileName=		"/devlink/caffe/data/NetGen/WordToPos/models/w_best.caffemodel";
-	string ConfigFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/config.prototxt";
-	string WordListFileName=	"/devlink/caffe/data/NetGen/WordToPos/data/WordList.txt";
+    string H5TrainFileName=		"/devlink/caffe/data/NetGen/GramPosValid/data/train.h5";
+    string H5TestFileName=		"/devlink/caffe/data/NetGen/GramPosValid/data/test.h5";
+    string H5TrainListFileName=	"/devlink/caffe/data/NetGen/GramPosValid/data/train_list.txt";
+    string H5TestListFileName=	"/devlink/caffe/data/NetGen/GramPosValid/data/test_list.txt";
+	string ProtoFileName=		"/devlink/caffe/data/NetGen/GramPosValid/models/train.prototxt";
+	string ModelFileName=		"/devlink/caffe/data/NetGen/GramPosValid/models/g_best.caffemodel";
+	string ConfigFileName=		"/devlink/caffe/data/NetGen/GramPosValid/data/config.prototxt";
+	string WordListFileName=	"/devlink/caffe/data/NetGen/GramPosValid/data/WordList.txt";
 	string WordVecFileName=		"/ExtDownloads/glove.6B.50d.txt" ;
-
 
 	const bool cbDoubleWordVecs = true; // false for autoencode thin vector
 	const int cNumValsPerVecSrc = 50; // 10 - size of thin vector
@@ -157,7 +163,7 @@ void CGotitEnv::CaffeFn()
 					RevWordMapClean.push_back("<na>");
 				}
 				else {
-					cerr << "no vec found for " <<RevWordMap[iwv] << endl;
+					cerr << "no vec found for " <<RevWordMap[iwv] << std::endl;
 				}
 				
 
@@ -174,7 +180,7 @@ void CGotitEnv::CaffeFn()
 						auto wv = OneVec[iwv];
 						strNames << wv;
 						if (iwv == OneVec.size() - 1) {
-							strNames << endl;
+							strNames << std::endl;
 						}
 						else {
 							strNames << " ";
@@ -374,6 +380,8 @@ void CGotitEnv::CaffeFn()
 		ofstream config_ofs(ConfigFileName);
 		google::protobuf::io::OstreamOutputStream* config_output 
 			= new google::protobuf::io::OstreamOutputStream(&config_ofs);
+//		int fd = open(ConfigFileName.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+//		google::protobuf::io::FileOutputStream* output = new google::protobuf::io::FileOutputStream(fd);
 		ofstream f_config(ConfigFileName);
 		if (f_config.is_open()) {
 			CaffeGenSeed config;
@@ -386,7 +394,11 @@ void CGotitEnv::CaffeFn()
 			config.set_proto_file_name(ProtoFileName);
 			google::protobuf::TextFormat::Print(config, config_output);
 			delete config_output;
+			//close(fd);
+
+			//config.SerializeToOstream(&f_config);
 		}
+		
 	}
 }
 

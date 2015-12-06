@@ -44,7 +44,7 @@ typedef unsigned char uchar;
 #define MODULE "The_Black_Willow"
 
 #ifdef GOTIT_LINUX
-#define CODE_SRC "/media/truecrypt6/MascReader/"
+#define CODE_SRC "./"
 //#define GOTIT_ROOT "/media/abba/Seagate Backup Plus Drive/guten/"
 #define GOTIT_ROOT "/guten/"
 #define GRPS_ROOT GOTIT_ROOT "GrpsRoot"

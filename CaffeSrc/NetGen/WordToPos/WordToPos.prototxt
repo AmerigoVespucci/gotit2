@@ -1,0 +1,29 @@
+name: "WordToPos"
+iterate_type: ITERATE_WORD
+data_src: DATA_SRC_BOOKS
+data_fields {
+  var_name: "Word1"
+  field_name: "Word"
+}
+data_fields {
+  var_name: "Pos1"
+  field_name: "POS"
+}
+input_field_translates {
+  var_name: "Word1"
+  table_name: "WordVecTbl"
+  max_instances: 8
+}
+output_field_translates {
+  var_name: "Pos1"
+  table_name: "POSNumTbl" # PosNum and not vec which means the output is a single integer
+}
+files_core_dir: "/devlink/caffe/data/NetGen/WordToPos/"
+test_list_file_name: "data/test_list.txt"
+train_list_file_name: "data/train_list.txt"
+net_end_type: END_ONE_HOT
+proto_file_name: "models/train.prototxt" # name passed on to caffe to produce file
+model_file_name: "models/g_best.caffemodel"
+config_file_name: "data/config.prototxt"
+
+	
