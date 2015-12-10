@@ -16,7 +16,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>CaffeSrc/NetGen/WordToPos/CaffeFn.cpp</itemPath>
+      <itemPath>CaffeFn.cpp</itemPath>
       <itemPath>CheckersIntf.cpp</itemPath>
       <itemPath>CheckersText.cpp</itemPath>
       <itemPath>DepGrps.cpp</itemPath>
@@ -113,10 +113,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="CaffeSrc/NetGen/WordToPos/CaffeFn.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
+      <item path="CaffeFn.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -237,10 +234,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="CaffeSrc/NetGen/WordToPos/CaffeFn.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
+      <item path="CaffeFn.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
       </item>

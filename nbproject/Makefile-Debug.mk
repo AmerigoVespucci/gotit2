@@ -37,7 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o \
 	${OBJECTDIR}/_ext/738675558/ipc.pb.o \
-	${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o \
+	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
 	${OBJECTDIR}/DepGrps.o \
@@ -104,10 +104,10 @@ ${OBJECTDIR}/_ext/738675558/ipc.pb.o: ../TestCaffe/ipc.pb.cc
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/738675558/ipc.pb.o ../TestCaffe/ipc.pb.cc
 
-${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o: CaffeSrc/NetGen/WordToPos/CaffeFn.cpp 
-	${MKDIR} -p ${OBJECTDIR}/CaffeSrc/NetGen/WordToPos
+${OBJECTDIR}/CaffeFn.o: CaffeFn.cpp 
+	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeSrc/NetGen/WordToPos/CaffeFn.o CaffeSrc/NetGen/WordToPos/CaffeFn.cpp
+	$(COMPILE.cc) -g -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeFn.o CaffeFn.cpp
 
 ${OBJECTDIR}/CheckersIntf.o: CheckersIntf.cpp 
 	${MKDIR} -p ${OBJECTDIR}

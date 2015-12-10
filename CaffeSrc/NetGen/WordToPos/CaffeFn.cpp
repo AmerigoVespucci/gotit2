@@ -88,7 +88,7 @@ int GetIdxFromFieldName (const string& name) {
 
 void CGotitEnv::CaffeFn()
 {
-    string H5TrainFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/train.h5";
+    //string H5TrainFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/train.h5";
     string H5TestFileName=		"/devlink/caffe/data/NetGen/WordToPos/data/test.h5";
     string H5TrainListFileName=	"/devlink/caffe/data/NetGen/WordToPos/data/train_list.txt";
     string H5TestListFileName=	"/devlink/caffe/data/NetGen/WordToPos/data/test_list.txt";
@@ -116,7 +116,7 @@ void CGotitEnv::CaffeFn()
 //	}
 	
 	{
-		ifstream proto_ifs("/home/abba/NetBeansProjects/gotit2/CaffeSrc/NetGen/WordToPos/WordToPos.prototxt");
+		ifstream proto_ifs("/devlink/caffe/models/CaffeFnModels/WordToPos.prototxt");
 		if (proto_ifs.is_open()) {
 			google::protobuf::io::IstreamInputStream* proto_input 
 				= new google::protobuf::io::IstreamInputStream(&proto_ifs);
@@ -687,6 +687,7 @@ void CGotitEnv::CaffeFn()
 		config.set_num_output_nodes(NumOutputNodesNeeded);
 		config.set_model_file_name(CoreDir + gen_data.model_file_name());
 		config.set_proto_file_name(CoreDir + gen_data.proto_file_name());
+		config.set_num_accuracy_candidates(gen_data.num_accuracy_candidates());
 		google::protobuf::TextFormat::Print(config, config_output);
 		delete config_output;
 	}

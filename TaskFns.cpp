@@ -47,6 +47,8 @@ void CGotitEnv::RegisterCallableFunctions()
 //	TaskFnMap["SaveWordToPos"] = &CGotitEnv::SaveWordToPos;
 //	TaskFnMap["SaveAEWordVec"] = &CGotitEnv::SaveAEWordVec;
 	TaskFnMap["CaffeFn"] = &CGotitEnv::CaffeFn;
+	TaskFnMap["CaffeFnInit"] = &CGotitEnv::CaffeFnInit;
+	TaskFnMap["CaffeFnComplete"] = &CGotitEnv::CaffeFnComplete;
 }
 
 
