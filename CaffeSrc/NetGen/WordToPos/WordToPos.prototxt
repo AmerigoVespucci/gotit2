@@ -25,5 +25,6 @@ net_end_type: END_ONE_HOT
 proto_file_name: "models/train.prototxt" # name passed on to caffe to produce file
 model_file_name: "models/g_best.caffemodel"
 config_file_name: "data/config.prototxt"
+num_accuracy_candidates: 4
 
 	

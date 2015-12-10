@@ -38,4 +38,5 @@ message CaffeGenData {
 	required string proto_file_name = 11;
 	required string model_file_name = 12;
 	required string config_file_name = 13;
+	optional int32 num_accuracy_candidates = 14; // passed right on to caffe's config. Only relevant for some EndTypes
 }

@@ -149,7 +149,7 @@ void CGotitEnv::CaffeFn()
 	int NumWords = 0;
 	map<string, int> WordMap;
 	vector<string> RevWordMap;
-	vector<int> GramsFound(cNumWords, 0); 
+//	vector<int> GramsFound(cNumWords, 0); 
 	vector<vector<float> > WordsVecs(cNumWords+1); // indexed by the same as WordMap
 
 	map<string, int> WordMapClean;
@@ -188,10 +188,12 @@ void CGotitEnv::CaffeFn()
 	
 	vector<NameItem>& PosCount = BasicTypeLists["POSCount"];
 	map<string, int> PosMap;
+	int ini = -1;
 	for (NameItem ni : PosCount) {
-		PosMap[ni.Name] = PosMap.size();
+		ini++;
+		PosMap[ni.Name] = ini;
 	}
-	PosMap["<na>"] = PosMap.size();
+	PosMap["<na>"] = ini;
 
 
 
@@ -541,29 +543,29 @@ void CGotitEnv::CaffeFn()
 		}
 	} // end loop over sentence recs
 
-		{
-			cerr << "Num candidates " << NumCandidates << " resulting in " << DataForVecs.size() << endl;
-			// this goes outside Rec Loop
-			//something is wrong here. Too few records get here. Count the candidates and see why this is happenining
-			sort(DataForVecs.begin(), DataForVecs.end());
-			for (auto idata : DataForVecs) {
-				for (int iBoth=0; iBoth<2; iBoth++) {
-					auto pTranslateTbl = &InputTranslateTbl;
-					auto pData = &(get<1>(idata));
-					if (iBoth == 1) {
-						pTranslateTbl = &OutputTranslateTbl;
-						pData = &(get<3>(idata));
-					}
-					int ii = 0;
-					for (auto itt : (*pTranslateTbl)) {
-						vector<float>& vec = (*VecTblPtrs[itt.second])[(*pData)[ii]];
-						ii++;
-					}
-				}
-				bool bValid = get<2>(idata);
-			}
-		}
+//		{
+//			// this goes outside Rec Loop
+//			//something is wrong here. Too few records get here. Count the candidates and see why this is happenining
+//			sort(DataForVecs.begin(), DataForVecs.end());
+//			for (auto idata : DataForVecs) {
+//				for (int iBoth=0; iBoth<2; iBoth++) {
+//					auto pTranslateTbl = &InputTranslateTbl;
+//					auto pData = &(get<1>(idata));
+//					if (iBoth == 1) {
+//						pTranslateTbl = &OutputTranslateTbl;
+//						pData = &(get<3>(idata));
+//					}
+//					int ii = 0;
+//					for (auto itt : (*pTranslateTbl)) {
+//						vector<float>& vec = (*VecTblPtrs[itt.second])[(*pData)[ii]];
+//						ii++;
+//					}
+//				}
+//				bool bValid = get<2>(idata);
+//			}
+//		}
 
+	cerr << "Num candidates " << NumCandidates << " resulting in " << DataForVecs.size() << endl;
 	// use the random int in the first field to sort
 	sort(DataForVecs.begin(), DataForVecs.end());
 	
@@ -571,10 +573,10 @@ void CGotitEnv::CaffeFn()
 	int NumLabelVals = 0;
 	NumItemsPerRec = 0;
 	for (auto itt : InputTranslateTbl) {
-		NumItemsPerRec += VecTblPtrs[itt.second]->size();
+		NumItemsPerRec += (*VecTblPtrs[itt.second])[0].size();
 	}
-	for (auto ott : InputTranslateTbl) {
-		NumLabelVals += VecTblPtrs[ott.second]->size();
+	for (auto ott : OutputTranslateTbl) {
+		NumLabelVals += (*VecTblPtrs[ott.second])[0].size();
 	}
 
 //	for (auto Gram : DataForVecs) {
@@ -660,33 +662,33 @@ void CGotitEnv::CaffeFn()
 
 		delete plabels;
 
-		{
-			ofstream test_list(H5TestListFileName);
-			if (test_list.is_open()) {
-				test_list << H5TestFileName << endl;
-			}
-			ofstream train_list(H5TrainListFileName);
-			if (train_list.is_open()) {
-				train_list << H5TrainFileName << endl;
-			}
+	}
+	{
+		ofstream test_list(H5TestListFileName);
+		if (test_list.is_open()) {
+			test_list << H5TestFileName << endl;
 		}
-		const string& CoreDir = gen_data.files_core_dir();
-		ofstream config_ofs(CoreDir + gen_data.config_file_name());
-		google::protobuf::io::OstreamOutputStream* config_output 
-			= new google::protobuf::io::OstreamOutputStream(&config_ofs);
-		//ofstream f_config(ConfigFileName); // I think this one is wrong
-		if (config_ofs.is_open()) {
-			CaffeGenSeed config;
-			config.set_test_list_file_name(H5TestListFileName);
-			config.set_train_list_file_name(H5TrainListFileName);
-			config.set_num_test_cases(NumRecords);
-			config.set_net_end_type(EndType);
-			config.set_num_output_nodes(NumOutputNodesNeeded);
-			config.set_model_file_name(CoreDir + gen_data.model_file_name());
-			config.set_proto_file_name(CoreDir + gen_data.proto_file_name());
-			google::protobuf::TextFormat::Print(config, config_output);
-			delete config_output;
+		ofstream train_list(H5TrainListFileName);
+		if (train_list.is_open()) {
+			train_list << H5TrainFileName << endl;
 		}
+	}
+	const string& CoreDir = gen_data.files_core_dir();
+	ofstream config_ofs(CoreDir + gen_data.config_file_name());
+	google::protobuf::io::OstreamOutputStream* config_output 
+		= new google::protobuf::io::OstreamOutputStream(&config_ofs);
+	//ofstream f_config(ConfigFileName); // I think this one is wrong
+	if (config_ofs.is_open()) {
+		CaffeGenSeed config;
+		config.set_test_list_file_name(H5TestListFileName);
+		config.set_train_list_file_name(H5TrainListFileName);
+		config.set_num_test_cases(NumRecords);
+		config.set_net_end_type(EndType);
+		config.set_num_output_nodes(NumOutputNodesNeeded);
+		config.set_model_file_name(CoreDir + gen_data.model_file_name());
+		config.set_proto_file_name(CoreDir + gen_data.proto_file_name());
+		google::protobuf::TextFormat::Print(config, config_output);
+		delete config_output;
 	}
 }
 
