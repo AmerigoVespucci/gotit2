@@ -619,9 +619,9 @@
     <TaskNode name="TaskNode.DoCaffeFn">
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
-      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/WordToPos.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/DepValid.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
-      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="5" should_be_val="40" />
+      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="1" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="DecrParam" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />

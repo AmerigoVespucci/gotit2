@@ -72,8 +72,9 @@ string GetRecFieldByIdx(WordRec& rec, int FieldID, bool& bRetValid)
 			return rec.POS;
 		default:
 			bRetValid = false;
-			return string();
+			break;
 	}
+	return string();
 }
 
 int GetIdxFromFieldName (const string& name) {
@@ -437,15 +438,17 @@ void CGotitEnv::CaffeFn()
 			else {
 				pTran = &(gen_data->output_field_translates(ift));
 			}
-			map<string, int>::iterator itvnm = VarNamesMap.end();
+			int VarNameIdx = -1;
 			const string& TableName = pTran->table_name();
 			if (pTran->has_var_name()) {
+				map<string, int>::iterator itvnm = VarNamesMap.end();
 				const string& VarName = pTran->var_name();
 				itvnm = VarNamesMap.find(VarName);
 				if (itvnm == VarNamesMap.end()) {
 					cerr << "Error parsing prototxt data. Translate table field " << VarName << " is not defined previously\n";
 					return;
 				}
+				VarNameIdx = itvnm->second;
 			}
 			else if (TableName != "YesNoTbl") {
 				cerr << "Error parsing prototxt data. Translate table field must be provided unless the table name is \"YesNoTbl\"\n";
@@ -456,7 +459,7 @@ void CGotitEnv::CaffeFn()
 				cerr << "Error parsing prototxt data. Translate table name " << TableName << " does not exist.\n";
 				return;
 			}
-			pTranslateTbl->push_back(make_pair(itvnm->second, itttnm->second));
+			pTranslateTbl->push_back(make_pair(VarNameIdx, itttnm->second));
 			bool bThisCanReplace = pTran->b_can_replace();
 			if (bThisCanReplace) bCanReplace = true;
 			pCanReplaceTbl->push_back(bThisCanReplace);
@@ -514,16 +517,22 @@ void CGotitEnv::CaffeFn()
 	vector<tuple<int, vector<int>, bool, vector<int> > > DataForVecs;
 	int NumCandidates = 0;
 	
+	int * po = &(OutputTranslateTbl[0].second);
+	vector<string> VarTbl(VarNamesMap.size()); 
+	
 	for (SSentenceRec Rec : SentenceRec) {
 		auto& WordRecs = Rec.OneWordRec;
 		if (Rec.OneWordRec.size() < cMinRealLength) {
 			continue;
 		}
 		for (auto wrec : WordRecs) {
-			vector<string> VarTbl(VarNamesMap.size()); 
 			bool bAllFieldsFound = true;
 			for (auto access : FirstAccessFieldsIdx) {
 				bool bValid = true;
+				if (access.second >= VarTbl.size()) {
+					cerr << "Serious error!\n";
+					return;
+				}
 				VarTbl[access.second] = GetRecFieldByIdx(wrec, access.first, bValid);
 				if (!bValid) {
 					bAllFieldsFound = false;
