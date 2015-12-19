@@ -29,6 +29,12 @@ enum FieldNameID {
 	fniWord,
 	fniWordCore,
 	fniPOS,
+	fniIndex,
+	fniDepType,
+	fniGov,
+	fniDep,
+	fniRecAndGov,
+	fniRecAndDep,
 };
 
 struct SFieldNameToID {
@@ -38,7 +44,13 @@ struct SFieldNameToID {
 
 SFieldNameToID FieldNameToIDTbl[] = {	{"Word", fniWord}, 
 										{"WordCore", fniWordCore},  
-										{"POS", fniPOS}   
+										{"POS", fniPOS},
+										{"index", fniIndex},
+										{"DepType", fniDepType},
+										{"Gov", fniGov},
+										{"Dep", fniDep},										
+										{"RecAndGov", fniRecAndGov},
+										{"RecAndDep", fniRecAndDep}										
 									};
 
 int FieldNamesTblSize = sizeof(FieldNameToIDTbl) / sizeof(FieldNameToIDTbl[0]);
@@ -70,6 +82,29 @@ string GetRecFieldByIdx(WordRec& rec, int FieldID, bool& bRetValid)
 			return rec.WordCore;
 		case fniPOS:
 			return rec.POS;
+		case fniIndex:
+			return to_string(FieldID);
+		default:
+			bRetValid = false;
+			break;
+	}
+	return string();
+}
+
+string GetDepRecFieldByIdx(int SRecID, DepRec& rec, int FieldID, bool& bRetValid)
+{
+	bRetValid = true;
+	switch(FieldID) {
+		case fniDepType: 
+			return (to_string((int)rec.iDep)) ;
+		case fniGov: 
+			return (to_string((int)rec.Gov)) ;
+		case fniDep: 
+			return (to_string((int)rec.Dep)) ; 
+		case fniRecAndGov: 
+			return (to_string(SRecID) + ":" + to_string((int)rec.Gov)) ;
+		case fniRecAndDep: 
+			return (to_string(SRecID) + ":" + to_string((int)rec.Dep)) ; 
 		default:
 			bRetValid = false;
 			break;
@@ -202,7 +237,7 @@ void CGotitEnv::CaffeFn()
 	int NumValsPerVec = cNumValsPerVecSrc * (cbDoubleWordVecs ? 2 : 1);
 
 	
-	const int cNumWords = 2047;
+	const int cNumWords = 10000; //2047;
 	const int cNOfNGrams = 5; // the value of N in NGram
 	const int cMinRealLength = (cNOfNGrams / 2) + 1; // 3, can't be less
 	const int cCenterGram = cNOfNGrams / 2; // 2. center of 5-gram= in 0 based index
@@ -264,7 +299,9 @@ void CGotitEnv::CaffeFn()
 	}
 	PosMap["<na>"] = ini;
 
-
+	//int NumDepTypes = BasicTypeLists["AllDepList"].size();
+	int NumDepTypes = DepTypes.size();
+	// dobj == 8
 
 	const int cVocabLimit = 400000;
 	{
@@ -373,6 +410,15 @@ void CGotitEnv::CaffeFn()
 	vector<vector<float> > YesNoTbl;
 	YesNoTbl.push_back(vector<float>(1, 0.0f));
 	YesNoTbl.push_back(vector<float>(1, 1.0f));
+
+	map<string, int> DepMap;
+	vector<vector<float> > DepVecTbl(NumDepTypes, vector<float>(NumDepTypes, 0.0f));
+	vector<vector<float> > DepNumTbl;
+	for (int idt = 0; idt < NumDepTypes; idt++) {
+		DepMap[to_string(idt)] = idt;
+		DepVecTbl[idt][idt] = 1.0f;
+		DepNumTbl.push_back(vector<float>(1, (float)idt));
+	}
 	
 	int YesNoTblIdx = -1;
 	vector<map<string, int>*> TranslateTblPtrs;
@@ -391,6 +437,12 @@ void CGotitEnv::CaffeFn()
 	TranslateTblNameMap["YesNoTbl"] = YesNoTblIdx;
 	TranslateTblPtrs.push_back(NULL);
 	VecTblPtrs.push_back(&YesNoTbl);
+	TranslateTblNameMap["DepVecTbl"] = TranslateTblPtrs.size();
+	TranslateTblPtrs.push_back(&DepMap);
+	VecTblPtrs.push_back(&DepVecTbl);
+	TranslateTblNameMap["DepNumTbl"] = TranslateTblPtrs.size();
+	TranslateTblPtrs.push_back(&DepMap);
+	VecTblPtrs.push_back(&DepNumTbl);
 	// each pair in the table: first - idx of rec to access. second: idx of VarTbl to put it into
 	vector<pair<int, int> > FirstAccessFieldsIdx; 
 	map<string, int> VarNamesMap;
@@ -407,6 +459,70 @@ void CGotitEnv::CaffeFn()
 		int FieldID = GetIdxFromFieldName(Field.field_name());
 		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
 	}
+//	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
+//		const CaffeGenData::DataTranslate& Field = gen_data->data_translates(idt);
+//		const string& VarName = Field.var_name();
+//		map<string, int>::iterator itvnm = VarNamesMap.find(VarName);
+//		if (itvnm != VarNamesMap.end()) {
+//			cerr << "Error parsing prototxt data. " << VarName << " defined twice\n";
+//			return;
+//		}
+//		int NextVarNamesMapPos = VarNamesMap.size();
+//		VarNamesMap[VarName] = NextVarNamesMapPos;
+//		int FieldID = GetIdxFromFieldName(Field.field_name());
+//		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
+//	}
+	enum DataTranslateEntryType {
+		dtetDep,
+	};
+	struct SDataTranslateEntry {
+		DataTranslateEntryType dtet;
+		int VarTblIdx; // index of field of var tbl to write result to 
+		int VarTblMatchIdx; // index of search field to retrieve from var tbl
+		int TargetTblMatchIdx; // index of field in target to match
+		int TargetTblOutputIdx; // idx of field in target table to output
+	};
+	vector<SDataTranslateEntry> DataTranslateTbl;
+	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
+		SDataTranslateEntry DataTranslateEntry ;
+		DataTranslateEntry.dtet = dtetDep;
+		const CaffeGenData::DataTranslate& GenDataTranslateEntry 
+			= gen_data->data_translates(idt);
+		const string& MatchName = GenDataTranslateEntry.match_name();
+		auto itVarNamesMap = VarNamesMap.find(MatchName);
+		if (itVarNamesMap == VarNamesMap.end()) {
+			cerr << "Error parsing prototxt data. Translate data match_name " << MatchName << " does not exist.\n";
+			return;
+		}
+		DataTranslateEntry.VarTblMatchIdx = itVarNamesMap->second;
+
+		int FieldID = GetIdxFromFieldName(GenDataTranslateEntry.field_name());
+		DataTranslateEntry.TargetTblOutputIdx = FieldID;
+		const string& OutputVarName = GenDataTranslateEntry.var_name();
+		auto itvnm = VarNamesMap.find(OutputVarName);
+		if (itvnm != VarNamesMap.end()) {
+			cerr << "Error parsing prototxt data. " << OutputVarName << " defined twice\n";
+			return;
+		}
+		int VarNamesMapSize = VarNamesMap.size();
+		VarNamesMap[OutputVarName] = VarNamesMapSize;
+		DataTranslateEntry.VarTblIdx = VarNamesMapSize;
+
+		DataTranslateTbl.push_back(DataTranslateEntry);
+	}
+	// first field the index of the var to be matched in var tbl, second, the string to match
+	vector<pair<int, string> > DataFilterTbl;
+	for (int idf = 0; idf < gen_data->data_filters_size(); idf++) {
+		const CaffeGenData::DataFilter& GenDataFilter = gen_data->data_filters(idf);
+		const string& MatchName = GenDataFilter.var_name();
+		auto itVarNamesMap = VarNamesMap.find(MatchName);
+		if (itVarNamesMap == VarNamesMap.end()) {
+			cerr << "Error parsing prototxt data. Filter data var_name " << MatchName << " does not exist.\n";
+			return;
+		}
+		DataFilterTbl.push_back(make_pair(itVarNamesMap->second, GenDataFilter.match_string()));
+	}
+	
 	// for each pair in table: first - idx of VarTbl. second - index of translate tbl
 	vector<pair<int, int> > InputTranslateTbl;
 	vector<pair<int, int> > OutputTranslateTbl;
@@ -518,31 +634,152 @@ void CGotitEnv::CaffeFn()
 	int NumCandidates = 0;
 	
 	int * po = &(OutputTranslateTbl[0].second);
-	vector<string> VarTbl(VarNamesMap.size()); 
-	
-	for (SSentenceRec Rec : SentenceRec) {
-		auto& WordRecs = Rec.OneWordRec;
-		if (Rec.OneWordRec.size() < cMinRealLength) {
-			continue;
-		}
-		for (auto wrec : WordRecs) {
-			bool bAllFieldsFound = true;
-			for (auto access : FirstAccessFieldsIdx) {
-				bool bValid = true;
-				if (access.second >= VarTbl.size()) {
-					cerr << "Serious error!\n";
-					return;
-				}
-				VarTbl[access.second] = GetRecFieldByIdx(wrec, access.first, bValid);
-				if (!bValid) {
-					bAllFieldsFound = false;
+	vector<vector<string> > VarTblsForGo; 
+
+	bool bContinueWithMainLoop = true;
+	int isr = 0;
+	while (bContinueWithMainLoop) {
+		VarTblsForGo.clear();
+		if (gen_data->iterate_type() == CaffeGenData::ITERATE_DEP) {
+			const int cNumSentenceRecsPerDepGo = 1;
+			for (int iisr = 0; iisr < cNumSentenceRecsPerDepGo; iisr++, isr++) {
+				if (isr >= SentenceRec.size()) {
+					bContinueWithMainLoop = false;
 					break;
 				}
+				SSentenceRec Rec = SentenceRec[isr];
+				if (Rec.Deps.size() < cMinRealLength) {
+					continue;
+				}
+				auto& DepRecs = Rec.Deps;
+				for (auto drec : DepRecs) {
+					VarTblsForGo.push_back(vector<string> (VarNamesMap.size()));
+					vector<string>& VarTbl = VarTblsForGo.back(); 
+					bool bAllFieldsFound = true;
+					for (auto access : FirstAccessFieldsIdx) {
+						bool bValid = true;
+						if (access.second >= VarTbl.size()) {
+							cerr << "Serious error!\n";
+							return;
+						}
+						VarTbl[access.second] = GetDepRecFieldByIdx(iisr, drec, access.first, bValid);
+						if (!bValid) {
+							bAllFieldsFound = false;
+							break;
+						}
+					}
+					NumCandidates++;
+				}
 			}
-			if (!bAllFieldsFound) {
-				continue;
+		}	
+		else if (gen_data->iterate_type() == CaffeGenData::ITERATE_REC) {
+			const int cNumSentenceRecsPerGo = 1;
+			for (int iisr = 0; iisr < cNumSentenceRecsPerGo; iisr++, isr++) {
+				if (isr >= SentenceRec.size()) {
+					bContinueWithMainLoop = false;
+					break;
+				}
+				SSentenceRec Rec = SentenceRec[isr];
+				auto& WordRecs = Rec.OneWordRec;
+				if (Rec.OneWordRec.size() < cMinRealLength) {
+					continue;
+				}
+				for (auto wrec : WordRecs) {
+					VarTblsForGo.push_back(vector<string> (VarNamesMap.size()));
+					vector<string>& VarTbl = VarTblsForGo.back(); 
+					bool bAllFieldsFound = true;
+					for (auto access : FirstAccessFieldsIdx) {
+						bool bValid = true;
+						if (access.second >= VarTbl.size()) {
+							cerr << "Serious error!\n";
+							return;
+						}
+						VarTbl[access.second] = GetRecFieldByIdx(wrec, access.first, bValid);
+						if (!bValid) {
+							bAllFieldsFound = false;
+							break;
+						}
+					}
+					if (!bAllFieldsFound) {
+						continue;
+					}
+					NumCandidates++;
+				}
 			}
-			NumCandidates++;
+		}
+		
+		if (DataTranslateTbl.size() > 0) {
+			vector<vector<string> > VarTblsForGoTranslated; 
+			for (auto& VarTbl : VarTblsForGo) {
+				bool bAllGood = true;
+				for (auto& DataTranslateEntry :  DataTranslateTbl) {
+					string VarNameForMatch = VarTbl[DataTranslateEntry.VarTblMatchIdx];
+					int ColonPos = VarNameForMatch.find(":");
+					if (ColonPos == -1) {
+						cerr << "Error: Dep result is not formatted with a \":\". Dep to Word translation requires either RecAndDep or RecAndGov\n";
+						// this is really a parsing error not a data error so we return
+						return;
+					}
+					int RecID = stoi(VarNameForMatch.substr(0, ColonPos));
+					if (RecID >= SentenceRec.size()) {
+						cerr << "Error: Record number stored from dep result is greater than the number of SentenceRecs\n";
+						bAllGood = false;
+						break;
+					}
+					int WID = stoi(VarNameForMatch.substr(ColonPos+1));
+					SSentenceRec SRec = SentenceRec[RecID];
+					auto& WordRecs = SRec.OneWordRec;
+					// for the following, should be using DataTranslateEntry.TargetTblMatchIdx 
+					// and then loop through the records, till the return value matches WID
+					// but for dep records, they are sorted by the index anyway.
+					if (WID == 255) {
+						// ..but 255 is the special case of root
+						VarTbl[DataTranslateEntry.VarTblIdx] = "<na>";
+					}
+					else {
+						if (WID >= WordRecs.size()) {
+							//cerr << "Error: Word number stored from dep result is greater than the number of words in sentence\n";
+							bAllGood = false;
+							break;
+						}
+						auto& wrec = WordRecs[WID];
+						bool bValid = true;
+						VarTbl[DataTranslateEntry.VarTblIdx] 
+							= GetRecFieldByIdx(	wrec, 
+												DataTranslateEntry.TargetTblOutputIdx, 
+												bValid);
+						if (!bValid) {
+							bAllGood = false;
+							break;						
+						}
+					}
+
+				}
+				if (bAllGood) {
+					VarTblsForGoTranslated.push_back(VarTbl);
+				}
+
+			}
+			VarTblsForGo.clear();
+			VarTblsForGo = VarTblsForGoTranslated;
+		}
+		if (DataFilterTbl.size() > 0) {
+			vector<vector<string> > VarTblsForGoTranslated; 
+			for (auto& VarTbl : VarTblsForGo) {
+				bool bAllGood = true;
+				for (auto& DataFilter :  DataFilterTbl) {
+					string FieldVal = VarTbl[DataFilter.first];
+					if (FieldVal == DataFilter.second) {
+						VarTblsForGoTranslated.push_back(VarTbl);
+					}
+				}
+			}
+			
+			VarTblsForGo.clear();
+			VarTblsForGo = VarTblsForGoTranslated;
+		}
+		for (auto& VarTbl : VarTblsForGo) {
+			bool bAllFieldsFound = true;
 			vector<int> IData;
 			vector<int> OData;
 			for (int iBoth=0; bAllFieldsFound && iBoth<2; iBoth++) {
