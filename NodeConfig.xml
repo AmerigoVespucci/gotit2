@@ -442,6 +442,10 @@
   </GrpCreateList>
   <TaskLists>
     <TaskNode name="TaskNode.InitFromNLP">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPOutDir" val="/guten/NLP36Out" comment="where the nlp writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPExt" val="out" comment="The extension the NLP appends to the file name"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="not a param specific to this function"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
     </TaskNode>
     <TaskNode name="TaskNode.StartWork">
@@ -617,11 +621,12 @@
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
     </TaskNode>
     <TaskNode name="TaskNode.DoCaffeFn">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
-      <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
+      <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/DObjValid.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
-      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="40" should_be_val="40" />
+      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="6" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="DecrParam" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />

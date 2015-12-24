@@ -1,4 +1,4 @@
-#define GOTIT_LINUX
+//#define GOTIT_LINUX
 #include <cstdlib>
 #include <iostream>
 //#include <minmax.h>
@@ -55,7 +55,9 @@ typedef unsigned char uchar;
 #define LOGS_COUT GOTIT_ROOT "Logs/Cout"
 #define NAMED_COUNT_FNAME GOTIT_ROOT "state/NamedCounts.bin"
 #define NLP_OUT GOTIT_ROOT "NLPOut"
+//#define NLP_OUT GOTIT_ROOT "NLP36Out"
 #define FILES_EX GOTIT_ROOT "GotitFilesEx"
+//#define FILES_EX GOTIT_ROOT "NLP36Out"
 #else
 #define CODE_SRC "M:\\MascReader\\"
 #define GRPS_ROOT "D:\\guten\\GrpsRoot"
@@ -153,6 +155,18 @@ struct DepRec {
 	void Load(ifstream& fin);
 	bool operator == (DepRec& Other);
 };
+
+struct CorefRec {
+	int SentenceID; // zero based index into SSentenceRec array
+	int StartWordID; // zb index into WordRecArray of OneWordRec of SSentenceRec
+	int EndWordID; // a coref mention can include a number of words
+	int HeadWordId; // refers to the dependencey head of a phrase that makes up the mention
+	int GovID; // zb index into the CorefRec array itself. Who is the first mention. Now all will point to him
+	void Store(ofstream& fout);
+	void Load(ifstream& fin);
+	bool operator == (CorefRec& Other);
+};
+
 
 struct SSentenceRec {
 	static bool lt(const SSentenceRec& r0, const SSentenceRec& r1) {
@@ -722,6 +736,7 @@ private:
 	//map_name_to_pat_grp PatGrpTbl;
 	CPatGrpMgr PatGrpMgr;
 	vector<SSentenceRec> SentenceRec; // not so much a global param as a means of passing around a sample set of sentences
+	vector<CorefRec> CorefList; // not alligned with SentenceRec but SentenceID refers to rec in list
 	string ModName;
 	//vector<SSentenceRec> SentenceListRet;
 	vector<CGroupingRec*> RelevantGroups;

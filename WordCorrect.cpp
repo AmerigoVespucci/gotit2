@@ -471,3 +471,11 @@ bool DepRec::operator== (DepRec& Other)
 	}
 	return false;
 }
+
+bool CorefRec::operator== (CorefRec& Other)
+{
+	if (SentenceID == Other.SentenceID && StartWordID == Other.StartWordID && EndWordID == Other.EndWordID) {
+		return true;
+	}
+	return false;
+}

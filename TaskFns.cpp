@@ -211,9 +211,23 @@ static const bool cbRemoveExt = true;
 
 void CGotitEnv::InitLoadFromNLP()
 {
+	string sNLPOutDirName;
+	if (!GetImplemParam(sNLPOutDirName, "Implem.Param.InitLoadFromNLP.NLPOutDir")) {
+		sNLPOutDirName = NLP_OUT;
+	}
+	string sGotitOutDirName;
+	if (!GetImplemParam(sGotitOutDirName, "Implem.Param.InitLoadFromNLP.LoadedOutDir")) {
+		sGotitOutDirName = FILES_EX;
+	}
+	string sNLPOutFileExt;
+	if (!GetImplemParam(sNLPOutFileExt, "Implem.Param.InitLoadFromNLP.NLPExt")) {
+		sNLPOutFileExt = ".xml";
+	}
+
 	CModNames ModNamesCntrlNLP;
-	ModNamesCntrlNLP.LoadModuleNames(	NLP_OUT, cbIfExt, ".xml", !cbRemoveExt, 
-										"", atoi(ImplemParamTbl["Implem.Param.LoadNLPFilesLimit"].Val.c_str()));
+	ModNamesCntrlNLP.LoadModuleNames(	sNLPOutDirName, cbIfExt, sNLPOutFileExt, 
+										!cbRemoveExt, "", 
+										atoi(ImplemParamTbl["Implem.Param.LoadNLPFilesLimit"].Val.c_str()));
 	DynamicTypeListsNames.push_back("depcount");
 	DynamicTypeListsNames.push_back("NERCount");
 	DynamicTypeListsNames.push_back("POSCount");
@@ -225,7 +239,7 @@ void CGotitEnv::InitLoadFromNLP()
 		// dummy parameters, not needed for simple transfer to new format
 		bKeepGoing = !ModNamesCntrlNLP.GetSeqModName(ModName);
 		const bool bAddToDB = true;
-		ConvertStanfordOutput(FILES_EX, ModName, ".mod", bAddToDB,
+		ConvertStanfordOutput(sGotitOutDirName, ModName, ".mod", bAddToDB,
 								BaseWordCount, DepTypes, BasicTypeLists, 
 								DynamicTypeListsNames);
 		cout << "NLP Converted " << ModName << endl;
@@ -263,8 +277,12 @@ void CGotitEnv::InitLoadFromMasc()
 
 void CGotitEnv::InitLoadProcessed()
 {
+	string sGotitOutDirName;
+	if (!GetImplemParam(sGotitOutDirName, "Implem.Param.InitLoadProcessed.LoadedOutDir")) {
+		sGotitOutDirName = FILES_EX;
+	}
 	//ModNamesCntrl.LoadModuleNames("C:\\GotitFiles", !cbIfExt, "", !cbRemoveExt, "", -1);
-	ModNamesCntrl.LoadModuleNames(FILES_EX, cbIfExt, ".mod",
+	ModNamesCntrl.LoadModuleNames(sGotitOutDirName, cbIfExt, ".mod",
 		!cbRemoveExt, "",
 		atoi(ImplemParamTbl["Implem.Param.LoadGotitFilesLimit"].Val.c_str()));
 	LoadWords();
@@ -335,8 +353,10 @@ void CGotitEnv::LoadSentenceListOneMod()
 		OnlyIfWordsPresent.push_back(token);
 		AllIfWords.erase(0, pos + delimiter.length());
 	}
+	uint SentenceArrAtStart = SentenceRec.size();
 	string FileName = ModName;
 	uint NumIfWords = OnlyIfWordsPresent.size();
+	bool bOnlyIfWordFound = (NumIfWords == 0); // false for now if list not empty
 	ifstream ModFile(FileName, ios::binary);
 	uint NumRecs;
 	ModFile.read((char *)&(NumRecs), sizeof(NumRecs));
@@ -347,7 +367,6 @@ void CGotitEnv::LoadSentenceListOneMod()
 	for (uint im = 0; im < NumRecs; im++) {
 		SSentenceRec Rec;
 		Rec.Load(ModFile);
-		bool bOnlyIfWordFound = (NumIfWords == 0); // false for now if list not empty
 		for (uint iw = 0; iw < Rec.OneWordRec.size() && !bOnlyIfWordFound; iw++) {
 			WordRec wrec = Rec.OneWordRec[iw];
 			string W = wrec.Word;
@@ -371,6 +390,19 @@ void CGotitEnv::LoadSentenceListOneMod()
 			SentenceRec.push_back(Rec);
 		}
 	}
+	uint GovIDAtStart = CorefList.size();
+	if (!bOnlyIfWordFound) { // for now, if you filter records for word found, that wil mess up coref records
+		uint NumCorefMentions;
+		ModFile.read((char *)&(NumCorefMentions), sizeof(NumCorefMentions));
+		if (!ModFile.eof()) {
+			CorefRec crec;
+			crec.Load(ModFile);
+			crec.SentenceID += SentenceArrAtStart;
+			crec.GovID += GovIDAtStart;
+			CorefList.push_back(crec);
+			
+		}
+	}
 
 
 }
@@ -378,6 +410,7 @@ void CGotitEnv::LoadSentenceListOneMod()
 void CGotitEnv::ClearSentenceRecs()
 {
 	SentenceRec.clear();
+	CorefList.clear();
 }
 
 void CGotitEnv::RunRF()

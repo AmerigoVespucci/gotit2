@@ -303,6 +303,29 @@ void DepRec::Load(ifstream& fin)
 	Dep = StWord[2];
 }
 
+void CorefRec::Store(ofstream& fout)
+{
+	int CArr[5];
+	CArr[0] = SentenceID;
+	CArr[1] = StartWordID;
+	CArr[2] = EndWordID;
+	CArr[3] = HeadWordId;
+	CArr[4] = GovID;
+	fout.write((char *)CArr, sizeof(uint) * 5);
+	
+}
+
+void CorefRec::Load(ifstream& fin)
+{
+	int CArr[5];
+	fin.read((char *)CArr, sizeof(uint) * 5);
+	SentenceID = CArr[0];
+	StartWordID = CArr[1];
+	EndWordID = CArr[2];
+	HeadWordId = CArr[3];
+	GovID = CArr[4];
+}
+
 void SSentenceRec::Store(ofstream& fout)
 {
 	StringStore(Sentence, fout);
