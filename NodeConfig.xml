@@ -624,7 +624,7 @@
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
-      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/DObjValid.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/CorefNSubj.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
       <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="6" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />

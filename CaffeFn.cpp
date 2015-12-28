@@ -473,7 +473,8 @@ void CGotitEnv::CaffeFn()
 //		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
 //	}
 	enum DataTranslateEntryType {
-		dtetDep,
+		dtetDepToWord,
+		dtetDepToCoref,
 	};
 	struct SDataTranslateEntry {
 		DataTranslateEntryType dtet;
@@ -485,9 +486,17 @@ void CGotitEnv::CaffeFn()
 	vector<SDataTranslateEntry> DataTranslateTbl;
 	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
 		SDataTranslateEntry DataTranslateEntry ;
-		DataTranslateEntry.dtet = dtetDep;
+		DataTranslateEntry.dtet = dtetDepToWord;
 		const CaffeGenData::DataTranslate& GenDataTranslateEntry 
 			= gen_data->data_translates(idt);
+		CaffeGenData::DataTranslateType TranslateType = GenDataTranslateEntry.translate_type(); 
+		if (TranslateType == CaffeGenData::DATA_TRANSLATE_DEP_TO_WORD) {
+			DataTranslateEntry.dtet = dtetDepToWord;
+		}
+		if (TranslateType == CaffeGenData::DATA_TRANSLATE_DEP_TO_COREF) {
+			DataTranslateEntry.dtet = dtetDepToCoref;
+		}
+		
 		const string& MatchName = GenDataTranslateEntry.match_name();
 		auto itVarNamesMap = VarNamesMap.find(MatchName);
 		if (itVarNamesMap == VarNamesMap.end()) {
@@ -624,6 +633,24 @@ void CGotitEnv::CaffeFn()
 		EndType = CaffeGenSeed::END_MULTI_HOT;
 	}
 	
+	// create a reverse table for the coref data
+	
+	vector<vector<int> > CorefRevTbl(SentenceRec.size(), vector<int>());
+	{
+		int isrec = -1;
+		for (auto srec : SentenceRec) {
+			isrec++;
+			CorefRevTbl[isrec].resize(srec.OneWordRec.size(), -1);
+		}
+
+		int icrec = -1;
+		for (auto crec : CorefList) {
+			icrec++;
+			CorefRevTbl[crec.SentenceID][crec.HeadWordId] = icrec;
+		}
+	}
+	// step through records creating data based on translation tables just created
+	
 	int NumWordsClean = RevWordMapClean.size();
 	int iNA = NumWordsClean - 1;
 	int iPosNA = PosMap.size() - 1; 
@@ -662,7 +689,7 @@ void CGotitEnv::CaffeFn()
 							cerr << "Serious error!\n";
 							return;
 						}
-						VarTbl[access.second] = GetDepRecFieldByIdx(iisr, drec, access.first, bValid);
+						VarTbl[access.second] = GetDepRecFieldByIdx(isr, drec, access.first, bValid);
 						if (!bValid) {
 							bAllFieldsFound = false;
 							break;
@@ -714,43 +741,87 @@ void CGotitEnv::CaffeFn()
 				bool bAllGood = true;
 				for (auto& DataTranslateEntry :  DataTranslateTbl) {
 					string VarNameForMatch = VarTbl[DataTranslateEntry.VarTblMatchIdx];
-					int ColonPos = VarNameForMatch.find(":");
-					if (ColonPos == -1) {
-						cerr << "Error: Dep result is not formatted with a \":\". Dep to Word translation requires either RecAndDep or RecAndGov\n";
-						// this is really a parsing error not a data error so we return
-						return;
-					}
-					int RecID = stoi(VarNameForMatch.substr(0, ColonPos));
-					if (RecID >= SentenceRec.size()) {
-						cerr << "Error: Record number stored from dep result is greater than the number of SentenceRecs\n";
-						bAllGood = false;
-						break;
-					}
-					int WID = stoi(VarNameForMatch.substr(ColonPos+1));
-					SSentenceRec SRec = SentenceRec[RecID];
-					auto& WordRecs = SRec.OneWordRec;
-					// for the following, should be using DataTranslateEntry.TargetTblMatchIdx 
-					// and then loop through the records, till the return value matches WID
-					// but for dep records, they are sorted by the index anyway.
-					if (WID == 255) {
-						// ..but 255 is the special case of root
-						VarTbl[DataTranslateEntry.VarTblIdx] = "<na>";
-					}
-					else {
-						if (WID >= WordRecs.size()) {
-							//cerr << "Error: Word number stored from dep result is greater than the number of words in sentence\n";
+					// Phase 1. Access the current record
+					int WID = -1; // Assumes, the translation was from DEP, the id of the record in the WordRecs Tbl
+					int RecID = -1;
+					if (	DataTranslateEntry.dtet == dtetDepToWord 
+						||	DataTranslateEntry.dtet == dtetDepToCoref) {
+						int ColonPos = VarNameForMatch.find(":");
+						if (ColonPos == -1) {
+							cerr << "Error: Dep result is not formatted with a \":\". Dep to Word translation requires either RecAndDep or RecAndGov\n";
+							// this is really a parsing error not a data error so we return
+							return;
+						}
+						RecID = stoi(VarNameForMatch.substr(0, ColonPos));
+						if (RecID >= SentenceRec.size()) {
+							cerr << "Error: Record number stored from dep result is greater than the number of SentenceRecs\n";
 							bAllGood = false;
 							break;
 						}
-						auto& wrec = WordRecs[WID];
-						bool bValid = true;
-						VarTbl[DataTranslateEntry.VarTblIdx] 
-							= GetRecFieldByIdx(	wrec, 
-												DataTranslateEntry.TargetTblOutputIdx, 
-												bValid);
-						if (!bValid) {
+						WID = stoi(VarNameForMatch.substr(ColonPos+1));
+					}
+					// Phase 2. Apply the link to another set of records
+					if (	DataTranslateEntry.dtet == dtetDepToWord) {
+						SSentenceRec SRec = SentenceRec[RecID];
+						auto& WordRecs = SRec.OneWordRec;
+						// for the following, should be using DataTranslateEntry.TargetTblMatchIdx 
+						// and then loop through the records, till the return value matches WID
+						// but for dep records, they are sorted by the index anyway.
+						if (WID == 255) {
+							// ..but 255 is the special case of root
+							VarTbl[DataTranslateEntry.VarTblIdx] = "<na>";
+						}
+						else {
+							if (WID >= WordRecs.size()) {
+								//cerr << "Error: Word number stored from dep result is greater than the number of words in sentence\n";
+								bAllGood = false;
+								break;
+							}
+							auto& wrec = WordRecs[WID];
+							bool bValid = true;
+							VarTbl[DataTranslateEntry.VarTblIdx] 
+								= GetRecFieldByIdx(	wrec, 
+													DataTranslateEntry.TargetTblOutputIdx, 
+													bValid);
+							if (!bValid) {
+								bAllGood = false;
+								break;						
+							}
+						}
+					}
+					else if (	DataTranslateEntry.dtet == dtetDepToCoref) {
+						if (	(RecID < 0) || (WID < 0 )
+							||	(CorefRevTbl.size() <= RecID) || (CorefRevTbl[RecID].size() <= WID)) {
 							bAllGood = false;
-							break;						
+						}
+						else if (CorefRevTbl[RecID][WID] == -1) {
+							bAllGood = false;
+						}
+						else {
+							int icrec = CorefRevTbl[RecID][WID];
+							if (icrec < CorefList.size() && icrec > 0) {
+								auto crec = CorefList[icrec];
+								auto crecPrev = CorefList[icrec-1];
+								if (crec.GovID != crecPrev.GovID) {
+									bAllGood = false;
+								}
+								else {
+//									auto crecGov = CorefList[crec.GovID];
+//									cerr << "Found coref of gov: "
+//										<< SentenceRec[crecGov.SentenceID].OneWordRec[crecGov.HeadWordId].Word 
+//										<< " from "
+//										<< SentenceRec[crecPrev.SentenceID].OneWordRec[crecPrev.HeadWordId].Word 
+//										<< " and "
+//										<< SentenceRec[crec.SentenceID].OneWordRec[crec.HeadWordId].Word 
+//										<< endl;
+									VarTbl[DataTranslateEntry.VarTblIdx] 
+										=		(to_string(crecPrev.SentenceID) + ":" 
+											+	to_string(crecPrev.HeadWordId)) ;
+								}
+							}
+							else {
+								bAllGood = false;
+							}
 						}
 					}
 

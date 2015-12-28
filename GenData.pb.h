@@ -77,11 +77,12 @@ inline bool CaffeGenData_DataSrc_Parse(
     CaffeGenData_DataSrc_descriptor(), name, value);
 }
 enum CaffeGenData_DataTranslateType {
-  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD = 1
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD = 1,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF = 2
 };
 bool CaffeGenData_DataTranslateType_IsValid(int value);
 const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MIN = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD;
-const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MAX = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD;
+const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MAX = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF;
 const int CaffeGenData_DataTranslateType_DataTranslateType_ARRAYSIZE = CaffeGenData_DataTranslateType_DataTranslateType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CaffeGenData_DataTranslateType_descriptor();
@@ -716,6 +717,7 @@ class CaffeGenData : public ::google::protobuf::Message {
 
   typedef CaffeGenData_DataTranslateType DataTranslateType;
   static const DataTranslateType DATA_TRANSLATE_DEP_TO_WORD = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD;
+  static const DataTranslateType DATA_TRANSLATE_DEP_TO_COREF = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF;
   static inline bool DataTranslateType_IsValid(int value) {
     return CaffeGenData_DataTranslateType_IsValid(value);
   }

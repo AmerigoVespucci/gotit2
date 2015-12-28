@@ -391,16 +391,18 @@ void CGotitEnv::LoadSentenceListOneMod()
 		}
 	}
 	uint GovIDAtStart = CorefList.size();
-	if (!bOnlyIfWordFound) { // for now, if you filter records for word found, that wil mess up coref records
+	if (NumIfWords == 0) { // for now, if you filter records for word found, that wil mess up coref records
 		uint NumCorefMentions;
 		ModFile.read((char *)&(NumCorefMentions), sizeof(NumCorefMentions));
 		if (!ModFile.eof()) {
-			CorefRec crec;
-			crec.Load(ModFile);
-			crec.SentenceID += SentenceArrAtStart;
-			crec.GovID += GovIDAtStart;
-			CorefList.push_back(crec);
-			
+		
+			for (int ic = 0; ic < NumCorefMentions; ic++ ) {
+				CorefRec crec;
+				crec.Load(ModFile);
+				crec.SentenceID += SentenceArrAtStart;
+				crec.GovID += GovIDAtStart;
+				CorefList.push_back(crec);
+			}
 		}
 	}
 

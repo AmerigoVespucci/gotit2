@@ -199,7 +199,7 @@ void protobuf_AddDesc_GenData_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rGenData.proto\"\203\n\n\014CaffeGenData\022\014\n\004name"
+    "\n\rGenData.proto\"\244\n\n\014CaffeGenData\022\014\n\004name"
     "\030\001 \002(\t\022/\n\014iterate_type\030\002 \002(\0162\031.CaffeGenD"
     "ata.IterateType\022\'\n\010data_src\030\003 \002(\0162\025.Caff"
     "eGenData.DataSrc\022,\n\013data_fields\030\004 \003(\0132\027."
@@ -228,10 +228,11 @@ void protobuf_AddDesc_GenData_2eproto() {
     "ilter\022\020\n\010var_name\030\002 \002(\t\022\024\n\014match_string\030"
     "\004 \002(\t\"A\n\013IterateType\022\020\n\014ITERATE_WORD\020\001\022\017"
     "\n\013ITERATE_REC\020\002\022\017\n\013ITERATE_DEP\020\003\"\035\n\007Data"
-    "Src\022\022\n\016DATA_SRC_BOOKS\020\001\"3\n\021DataTranslate"
-    "Type\022\036\n\032DATA_TRANSLATE_DEP_TO_WORD\020\001\"\?\n\n"
-    "NetEndType\022\r\n\tEND_VALID\020\001\022\017\n\013END_ONE_HOT"
-    "\020\002\022\021\n\rEND_MULTI_HOT\020\003", 1301);
+    "Src\022\022\n\016DATA_SRC_BOOKS\020\001\"T\n\021DataTranslate"
+    "Type\022\036\n\032DATA_TRANSLATE_DEP_TO_WORD\020\001\022\037\n\033"
+    "DATA_TRANSLATE_DEP_TO_COREF\020\002\"\?\n\nNetEndT"
+    "ype\022\r\n\tEND_VALID\020\001\022\017\n\013END_ONE_HOT\020\002\022\021\n\rE"
+    "ND_MULTI_HOT\020\003", 1334);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GenData.proto", &protobuf_RegisterTypes);
   CaffeGenData::default_instance_ = new CaffeGenData();
@@ -305,6 +306,7 @@ const ::google::protobuf::EnumDescriptor* CaffeGenData_DataTranslateType_descrip
 bool CaffeGenData_DataTranslateType_IsValid(int value) {
   switch(value) {
     case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -313,6 +315,7 @@ bool CaffeGenData_DataTranslateType_IsValid(int value) {
 
 #ifndef _MSC_VER
 const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DEP_TO_WORD;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DEP_TO_COREF;
 const CaffeGenData_DataTranslateType CaffeGenData::DataTranslateType_MIN;
 const CaffeGenData_DataTranslateType CaffeGenData::DataTranslateType_MAX;
 const int CaffeGenData::DataTranslateType_ARRAYSIZE;

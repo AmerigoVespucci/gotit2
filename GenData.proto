@@ -17,6 +17,13 @@ message CaffeGenData {
 	repeated DataField data_fields = 4;
 	enum DataTranslateType {
 		DATA_TRANSLATE_DEP_TO_WORD = 1;
+		DATA_TRANSLATE_DEP_TO_COREF = 2;
+		DATA_TRANSLATE_WORD_TO_DEP_DEP = 3;
+		DATA_TRANSLATE_WORD_REC_TO_DEP_DEP = 4;
+		DATA_TRANSLATE_WORD_REC_TO_DEP_REC = 5;
+		DATA_TRANSLATE_DEP_REC_TO_DEP_DEP = 6;
+		DATA_TRANSLATE_DEP_REC_TO_DEP_GOV = 7;
+		DATA_TRANSLATE_DEP_REC_TO_DEP_TYPE = 8;
 	}
 	message DataTranslate {
 		required DataTranslateType translate_type = 1;
