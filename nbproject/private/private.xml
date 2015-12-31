@@ -18,8 +18,10 @@
         <group>
             <file>file:/home/abba/NetBeansProjects/gotit2/TaskFns.cpp</file>
             <file>file:/home/abba/NetBeansProjects/gotit2/MascReader.h</file>
+            <file>file:/home/abba/NetBeansProjects/gotit2/GenData.pb.cc</file>
             <file>file:/home/abba/NetBeansProjects/gotit2/TaskLists.cpp</file>
             <file>file:/home/abba/NetBeansProjects/gotit2/CaffeFn.cpp</file>
+            <file>file:/home/abba/NetBeansProjects/gotit2/GenData.pb.h</file>
             <file>file:/home/abba/NetBeansProjects/gotit2/NodeConfig.xml</file>
         </group>
     </open-files>

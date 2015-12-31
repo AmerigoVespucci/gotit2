@@ -30,11 +30,16 @@ enum FieldNameID {
 	fniWordCore,
 	fniPOS,
 	fniIndex,
+	fniWID,
 	fniDepType,
 	fniGov,
 	fniDep,
 	fniRecAndGov,
 	fniRecAndDep,
+	fniDIDGov,
+	fniDIDDep,
+	fniDepNameGov,
+	fniDepNameDep,
 };
 
 struct SFieldNameToID {
@@ -46,16 +51,21 @@ SFieldNameToID FieldNameToIDTbl[] = {	{"Word", fniWord},
 										{"WordCore", fniWordCore},  
 										{"POS", fniPOS},
 										{"index", fniIndex},
+										{"WID", fniWID},
 										{"DepType", fniDepType},
 										{"Gov", fniGov},
 										{"Dep", fniDep},										
 										{"RecAndGov", fniRecAndGov},
-										{"RecAndDep", fniRecAndDep}										
+										{"RecAndDep", fniRecAndDep},
+										{"DIDGov", fniDIDGov},
+										{"DIDDep", fniDIDDep},
+										{"DepNameGov", fniDepNameGov},
+										{"DepNameDep", fniDepNameDep},
 									};
 
 int FieldNamesTblSize = sizeof(FieldNameToIDTbl) / sizeof(FieldNameToIDTbl[0]);
 
-string GetRecFieldByIdx(WordRec& rec, int FieldID, bool& bRetValid)
+string GetRecFieldByIdx(int SRecID, int WID, WordRec& rec, int FieldID, bool& bRetValid)
 {
 	bRetValid = true;
 	switch(FieldID) {
@@ -84,6 +94,8 @@ string GetRecFieldByIdx(WordRec& rec, int FieldID, bool& bRetValid)
 			return rec.POS;
 		case fniIndex:
 			return to_string(FieldID);
+		case fniWID:
+			return (to_string(SRecID) + ":" + to_string(WID)) ;
 		default:
 			bRetValid = false;
 			break;
@@ -91,12 +103,12 @@ string GetRecFieldByIdx(WordRec& rec, int FieldID, bool& bRetValid)
 	return string();
 }
 
-string GetDepRecFieldByIdx(int SRecID, DepRec& rec, int FieldID, bool& bRetValid)
+string GetDepRecFieldByIdx(int SRecID, int DID, vector<string>& DepNames, DepRec& rec, int FieldID, bool& bRetValid)
 {
 	bRetValid = true;
 	switch(FieldID) {
 		case fniDepType: 
-			return (to_string((int)rec.iDep)) ;
+			return (DepNames[rec.iDep]) ;
 		case fniGov: 
 			return (to_string((int)rec.Gov)) ;
 		case fniDep: 
@@ -105,6 +117,14 @@ string GetDepRecFieldByIdx(int SRecID, DepRec& rec, int FieldID, bool& bRetValid
 			return (to_string(SRecID) + ":" + to_string((int)rec.Gov)) ;
 		case fniRecAndDep: 
 			return (to_string(SRecID) + ":" + to_string((int)rec.Dep)) ; 
+		case fniDIDGov:
+			return (to_string(SRecID) + ":" + to_string(DID) + ":g");
+		case fniDIDDep:
+			return (to_string(SRecID) + ":" + to_string(DID) + ":d");
+		case fniDepNameGov:
+			return (DepNames[rec.iDep] + ":g") ;
+		case fniDepNameDep:
+			return (DepNames[rec.iDep] + ":d") ;
 		default:
 			bRetValid = false;
 			break;
@@ -398,6 +418,11 @@ void CGotitEnv::CaffeFn()
 	
 	}
 	
+	vector<string> DepNames(DepTypes.size());
+	for (auto deprec : DepTypes) {
+		DepNames[deprec.second] = deprec.first;
+	}
+
 	vector<vector<float> > PosVecTbl;
 	vector<vector<float> > PosNumTbl;
 	int PosMapSize = PosMap.size();
@@ -473,8 +498,12 @@ void CGotitEnv::CaffeFn()
 //		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
 //	}
 	enum DataTranslateEntryType {
-		dtetDepToWord,
-		dtetDepToCoref,
+		dtetWIDToWord,
+		dtetWIDToCoref,
+		dtetWIDToDID,
+		dtetDIDToDepWID,
+		dtetDIDToGovWID,
+		dtetDIDToDepName,
 	};
 	struct SDataTranslateEntry {
 		DataTranslateEntryType dtet;
@@ -486,15 +515,29 @@ void CGotitEnv::CaffeFn()
 	vector<SDataTranslateEntry> DataTranslateTbl;
 	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
 		SDataTranslateEntry DataTranslateEntry ;
-		DataTranslateEntry.dtet = dtetDepToWord;
+		DataTranslateEntry.dtet = dtetWIDToWord;
 		const CaffeGenData::DataTranslate& GenDataTranslateEntry 
 			= gen_data->data_translates(idt);
 		CaffeGenData::DataTranslateType TranslateType = GenDataTranslateEntry.translate_type(); 
-		if (TranslateType == CaffeGenData::DATA_TRANSLATE_DEP_TO_WORD) {
-			DataTranslateEntry.dtet = dtetDepToWord;
-		}
-		if (TranslateType == CaffeGenData::DATA_TRANSLATE_DEP_TO_COREF) {
-			DataTranslateEntry.dtet = dtetDepToCoref;
+		switch (TranslateType) {
+			case CaffeGenData::DATA_TRANSLATE_WID_TO_WORD :
+				DataTranslateEntry.dtet = dtetWIDToWord;
+				break;				
+			case CaffeGenData::DATA_TRANSLATE_WID_TO_COREF:
+				DataTranslateEntry.dtet = dtetWIDToCoref;
+				break;
+			case CaffeGenData::DATA_TRANSLATE_WID_TO_DID:
+				DataTranslateEntry.dtet = dtetWIDToDID;
+				break;
+ 			case CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_WID:
+				DataTranslateEntry.dtet = dtetDIDToDepWID;
+				break;
+ 			case CaffeGenData::DATA_TRANSLATE_DID_TO_GOV_WID :
+				DataTranslateEntry.dtet = dtetDIDToGovWID;
+				break;
+			case CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_NAME:
+				DataTranslateEntry.dtet = dtetDIDToDepName;
+				break;
 		}
 		
 		const string& MatchName = GenDataTranslateEntry.match_name();
@@ -505,7 +548,16 @@ void CGotitEnv::CaffeFn()
 		}
 		DataTranslateEntry.VarTblMatchIdx = itVarNamesMap->second;
 
-		int FieldID = GetIdxFromFieldName(GenDataTranslateEntry.field_name());
+		int FieldID = -1;
+		if (GenDataTranslateEntry.has_field_name() ) {
+			FieldID = GetIdxFromFieldName(GenDataTranslateEntry.field_name());
+		}
+		else {
+			if (DataTranslateEntry.dtet == dtetWIDToWord) {
+				cerr << "field_name is required if DATA_TRANSLATE_WID_TO_WORD is set.";
+				return;
+			}
+		}
 		DataTranslateEntry.TargetTblOutputIdx = FieldID;
 		const string& OutputVarName = GenDataTranslateEntry.var_name();
 		auto itvnm = VarNamesMap.find(OutputVarName);
@@ -679,7 +731,8 @@ void CGotitEnv::CaffeFn()
 					continue;
 				}
 				auto& DepRecs = Rec.Deps;
-				for (auto drec : DepRecs) {
+				int idrec = -1; 
+				for (auto drec : DepRecs) { idrec++;
 					VarTblsForGo.push_back(vector<string> (VarNamesMap.size()));
 					vector<string>& VarTbl = VarTblsForGo.back(); 
 					bool bAllFieldsFound = true;
@@ -689,7 +742,9 @@ void CGotitEnv::CaffeFn()
 							cerr << "Serious error!\n";
 							return;
 						}
-						VarTbl[access.second] = GetDepRecFieldByIdx(isr, drec, access.first, bValid);
+						VarTbl[access.second] 
+								= GetDepRecFieldByIdx(	isr, idrec, DepNames, drec, 
+														access.first, bValid);
 						if (!bValid) {
 							bAllFieldsFound = false;
 							break;
@@ -699,7 +754,7 @@ void CGotitEnv::CaffeFn()
 				}
 			}
 		}	
-		else if (gen_data->iterate_type() == CaffeGenData::ITERATE_REC) {
+		else if (gen_data->iterate_type() == CaffeGenData::ITERATE_WORD) {
 			const int cNumSentenceRecsPerGo = 1;
 			for (int iisr = 0; iisr < cNumSentenceRecsPerGo; iisr++, isr++) {
 				if (isr >= SentenceRec.size()) {
@@ -711,7 +766,7 @@ void CGotitEnv::CaffeFn()
 				if (Rec.OneWordRec.size() < cMinRealLength) {
 					continue;
 				}
-				for (auto wrec : WordRecs) {
+				int iwrec = -1; for (auto wrec : WordRecs) { iwrec++;
 					VarTblsForGo.push_back(vector<string> (VarNamesMap.size()));
 					vector<string>& VarTbl = VarTblsForGo.back(); 
 					bool bAllFieldsFound = true;
@@ -721,7 +776,7 @@ void CGotitEnv::CaffeFn()
 							cerr << "Serious error!\n";
 							return;
 						}
-						VarTbl[access.second] = GetRecFieldByIdx(wrec, access.first, bValid);
+						VarTbl[access.second] = GetRecFieldByIdx(isr, iwrec, wrec, access.first, bValid);
 						if (!bValid) {
 							bAllFieldsFound = false;
 							break;
@@ -742,13 +797,16 @@ void CGotitEnv::CaffeFn()
 				for (auto& DataTranslateEntry :  DataTranslateTbl) {
 					string VarNameForMatch = VarTbl[DataTranslateEntry.VarTblMatchIdx];
 					// Phase 1. Access the current record
-					int WID = -1; // Assumes, the translation was from DEP, the id of the record in the WordRecs Tbl
+					int WID = -1; // Assumes the translation was from WID, the id of the record in the WordRecs Tbl
 					int RecID = -1;
-					if (	DataTranslateEntry.dtet == dtetDepToWord 
-						||	DataTranslateEntry.dtet == dtetDepToCoref) {
+					int DID = -1;
+					bool bGov = true;
+					if (	DataTranslateEntry.dtet == dtetWIDToWord 
+						||	DataTranslateEntry.dtet == dtetWIDToCoref
+						||	DataTranslateEntry.dtet == dtetWIDToDID) {
 						int ColonPos = VarNameForMatch.find(":");
 						if (ColonPos == -1) {
-							cerr << "Error: Dep result is not formatted with a \":\". Dep to Word translation requires either RecAndDep or RecAndGov\n";
+							cerr << "Error: WID result is not formatted with a \":\". WID must be formatted as RecID::idx where idx is the index of the word in the sentence\n";
 							// this is really a parsing error not a data error so we return
 							return;
 						}
@@ -760,8 +818,31 @@ void CGotitEnv::CaffeFn()
 						}
 						WID = stoi(VarNameForMatch.substr(ColonPos+1));
 					}
+					if (	( DataTranslateEntry.dtet == dtetDIDToDepWID) 
+						||	(DataTranslateEntry.dtet == dtetDIDToGovWID) 
+						||	(DataTranslateEntry.dtet == dtetDIDToDepName) ) {
+						int ColonPos = VarNameForMatch.find(":");
+						if (ColonPos == -1) {
+							cerr << "Error: DID result is not formatted with even a single \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
+							// this is really a parsing error not a data error so we return
+							return;
+						}
+						RecID = stoi(VarNameForMatch.substr(0, ColonPos));
+						VarNameForMatch = VarNameForMatch.substr(ColonPos+1);
+						ColonPos = VarNameForMatch.find(":");
+						if (ColonPos == -1) {
+							cerr << "Error: DID result is not formatted with its second \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
+							// this is really a parsing error not a data error so we return
+							return;
+						}
+						DID = stoi(VarNameForMatch.substr(0, ColonPos));
+						string sDorG = VarNameForMatch.substr(ColonPos+1);
+						if (sDorG == "d") {
+							bGov = false;
+						}
+					}
 					// Phase 2. Apply the link to another set of records
-					if (	DataTranslateEntry.dtet == dtetDepToWord) {
+					if (	DataTranslateEntry.dtet == dtetWIDToWord) {
 						SSentenceRec SRec = SentenceRec[RecID];
 						auto& WordRecs = SRec.OneWordRec;
 						// for the following, should be using DataTranslateEntry.TargetTblMatchIdx 
@@ -780,7 +861,7 @@ void CGotitEnv::CaffeFn()
 							auto& wrec = WordRecs[WID];
 							bool bValid = true;
 							VarTbl[DataTranslateEntry.VarTblIdx] 
-								= GetRecFieldByIdx(	wrec, 
+								= GetRecFieldByIdx(	RecID, WID, wrec, 
 													DataTranslateEntry.TargetTblOutputIdx, 
 													bValid);
 							if (!bValid) {
@@ -789,7 +870,29 @@ void CGotitEnv::CaffeFn()
 							}
 						}
 					}
-					else if (	DataTranslateEntry.dtet == dtetDepToCoref) {
+					else if (	DataTranslateEntry.dtet == dtetWIDToDID) {
+						SSentenceRec SRec = SentenceRec[RecID];
+						auto& DepRecs = SRec.Deps;
+						int idid = -1; for (auto drec : DepRecs) { idid++;
+							bool bValid = true;
+							if (drec.Gov == WID) { 
+#pragma messages("replace setting the last time by addding a new rVarTbl each time")								
+								VarTbl[DataTranslateEntry.VarTblIdx] 
+										= GetDepRecFieldByIdx(	RecID, idid, DepNames, drec, 
+																fniDIDGov, bValid);
+
+							}
+							if (drec.Dep == WID) { 
+								VarTbl[DataTranslateEntry.VarTblIdx] 
+										= GetDepRecFieldByIdx(	RecID, idid, DepNames, drec, 
+																fniDIDDep, bValid);
+
+							}
+						}
+						
+						
+					}
+					else if (	DataTranslateEntry.dtet == dtetWIDToCoref) {
 						if (	(RecID < 0) || (WID < 0 )
 							||	(CorefRevTbl.size() <= RecID) || (CorefRevTbl[RecID].size() <= WID)) {
 							bAllGood = false;
@@ -826,6 +929,7 @@ void CGotitEnv::CaffeFn()
 					}
 
 				}
+				//add all the other dtet options
 				if (bAllGood) {
 					VarTblsForGoTranslated.push_back(VarTbl);
 				}

@@ -199,7 +199,7 @@ void protobuf_AddDesc_GenData_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rGenData.proto\"\244\n\n\014CaffeGenData\022\014\n\004name"
+    "\n\rGenData.proto\"\256\013\n\014CaffeGenData\022\014\n\004name"
     "\030\001 \002(\t\022/\n\014iterate_type\030\002 \002(\0162\031.CaffeGenD"
     "ata.IterateType\022\'\n\010data_src\030\003 \002(\0162\025.Caff"
     "eGenData.DataSrc\022,\n\013data_fields\030\004 \003(\0132\027."
@@ -219,20 +219,23 @@ void protobuf_AddDesc_GenData_2eproto() {
     "\n\tDataField\022\020\n\010var_name\030\001 \002(\t\022\022\n\nfield_n"
     "ame\030\002 \002(\t\032\257\001\n\rDataTranslate\0227\n\016translate"
     "_type\030\001 \002(\0162\037.CaffeGenData.DataTranslate"
-    "Type\022\020\n\010var_name\030\002 \002(\t\022\021\n\titer_type\030\003 \002("
+    "Type\022\020\n\010var_name\030\002 \002(\t\022\021\n\titer_type\030\003 \001("
     "\t\022\022\n\nmatch_name\030\004 \002(\t\022\030\n\020match_field_nam"
-    "e\030\005 \002(\t\022\022\n\nfield_name\030\006 \002(\t\032z\n\016FieldTran"
+    "e\030\005 \001(\t\022\022\n\nfield_name\030\006 \001(\t\032z\n\016FieldTran"
     "slate\022\020\n\010var_name\030\001 \001(\t\022\022\n\ntable_name\030\002 "
     "\002(\t\022\025\n\rb_can_replace\030\003 \001(\010\022\025\n\rmax_instan"
     "ces\030\004 \001(\005\022\024\n\014replace_prob\030\005 \001(\002\0324\n\nDataF"
     "ilter\022\020\n\010var_name\030\002 \002(\t\022\024\n\014match_string\030"
     "\004 \002(\t\"A\n\013IterateType\022\020\n\014ITERATE_WORD\020\001\022\017"
     "\n\013ITERATE_REC\020\002\022\017\n\013ITERATE_DEP\020\003\"\035\n\007Data"
-    "Src\022\022\n\016DATA_SRC_BOOKS\020\001\"T\n\021DataTranslate"
-    "Type\022\036\n\032DATA_TRANSLATE_DEP_TO_WORD\020\001\022\037\n\033"
-    "DATA_TRANSLATE_DEP_TO_COREF\020\002\"\?\n\nNetEndT"
-    "ype\022\r\n\tEND_VALID\020\001\022\017\n\013END_ONE_HOT\020\002\022\021\n\rE"
-    "ND_MULTI_HOT\020\003", 1334);
+    "Src\022\022\n\016DATA_SRC_BOOKS\020\001\"\335\001\n\021DataTranslat"
+    "eType\022\036\n\032DATA_TRANSLATE_WID_TO_WORD\020\001\022\037\n"
+    "\033DATA_TRANSLATE_WID_TO_COREF\020\002\022\035\n\031DATA_T"
+    "RANSLATE_WID_TO_DID\020\003\022\"\n\036DATA_TRANSLATE_"
+    "DID_TO_DEP_NAME\020\004\022!\n\035DATA_TRANSLATE_DID_"
+    "TO_GOV_WID\020\005\022!\n\035DATA_TRANSLATE_DID_TO_DE"
+    "P_WID\020\006\"\?\n\nNetEndType\022\r\n\tEND_VALID\020\001\022\017\n\013"
+    "END_ONE_HOT\020\002\022\021\n\rEND_MULTI_HOT\020\003", 1472);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GenData.proto", &protobuf_RegisterTypes);
   CaffeGenData::default_instance_ = new CaffeGenData();
@@ -307,6 +310,10 @@ bool CaffeGenData_DataTranslateType_IsValid(int value) {
   switch(value) {
     case 1:
     case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
       return true;
     default:
       return false;
@@ -314,8 +321,12 @@ bool CaffeGenData_DataTranslateType_IsValid(int value) {
 }
 
 #ifndef _MSC_VER
-const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DEP_TO_WORD;
-const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DEP_TO_COREF;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_WID_TO_WORD;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_WID_TO_COREF;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_WID_TO_DID;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_NAME;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DID_TO_GOV_WID;
+const CaffeGenData_DataTranslateType CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_WID;
 const CaffeGenData_DataTranslateType CaffeGenData::DataTranslateType_MIN;
 const CaffeGenData_DataTranslateType CaffeGenData::DataTranslateType_MAX;
 const int CaffeGenData::DataTranslateType_ARRAYSIZE;
@@ -781,7 +792,7 @@ bool CaffeGenData_DataTranslate::MergePartialFromCodedStream(
         break;
       }
 
-      // required string iter_type = 3;
+      // optional string iter_type = 3;
       case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -815,7 +826,7 @@ bool CaffeGenData_DataTranslate::MergePartialFromCodedStream(
         break;
       }
 
-      // required string match_field_name = 5;
+      // optional string match_field_name = 5;
       case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -832,7 +843,7 @@ bool CaffeGenData_DataTranslate::MergePartialFromCodedStream(
         break;
       }
 
-      // required string field_name = 6;
+      // optional string field_name = 6;
       case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -882,7 +893,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
       2, this->var_name(), output);
   }
 
-  // required string iter_type = 3;
+  // optional string iter_type = 3;
   if (has_iter_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->iter_type().data(), this->iter_type().length(),
@@ -900,7 +911,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
       4, this->match_name(), output);
   }
 
-  // required string match_field_name = 5;
+  // optional string match_field_name = 5;
   if (has_match_field_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->match_field_name().data(), this->match_field_name().length(),
@@ -909,7 +920,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
       5, this->match_field_name(), output);
   }
 
-  // required string field_name = 6;
+  // optional string field_name = 6;
   if (has_field_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->field_name().data(), this->field_name().length(),
@@ -942,7 +953,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
         2, this->var_name(), target);
   }
 
-  // required string iter_type = 3;
+  // optional string iter_type = 3;
   if (has_iter_type()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->iter_type().data(), this->iter_type().length(),
@@ -962,7 +973,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
         4, this->match_name(), target);
   }
 
-  // required string match_field_name = 5;
+  // optional string match_field_name = 5;
   if (has_match_field_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->match_field_name().data(), this->match_field_name().length(),
@@ -972,7 +983,7 @@ void CaffeGenData_DataTranslate::SerializeWithCachedSizes(
         5, this->match_field_name(), target);
   }
 
-  // required string field_name = 6;
+  // optional string field_name = 6;
   if (has_field_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->field_name().data(), this->field_name().length(),
@@ -1006,7 +1017,7 @@ int CaffeGenData_DataTranslate::ByteSize() const {
           this->var_name());
     }
 
-    // required string iter_type = 3;
+    // optional string iter_type = 3;
     if (has_iter_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -1020,14 +1031,14 @@ int CaffeGenData_DataTranslate::ByteSize() const {
           this->match_name());
     }
 
-    // required string match_field_name = 5;
+    // optional string match_field_name = 5;
     if (has_match_field_name()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->match_field_name());
     }
 
-    // required string field_name = 6;
+    // optional string field_name = 6;
     if (has_field_name()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -1096,7 +1107,7 @@ void CaffeGenData_DataTranslate::CopyFrom(const CaffeGenData_DataTranslate& from
 }
 
 bool CaffeGenData_DataTranslate::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x0000000b) != 0x0000000b) return false;
 
   return true;
 }

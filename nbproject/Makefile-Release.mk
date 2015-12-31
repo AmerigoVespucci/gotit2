@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=GNU-Linux
 CND_DLIB_EXT=so
 CND_CONF=Release
 CND_DISTDIR=dist
@@ -35,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o \
-	${OBJECTDIR}/_ext/738675558/ipc.pb.o \
+	${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o \
+	${OBJECTDIR}/_ext/2c074b66/ipc.pb.o \
 	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
@@ -94,15 +94,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o: ../CaffeR/GenSeed.pb.cc 
-	${MKDIR} -p ${OBJECTDIR}/_ext/2095212026
+${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o: ../CaffeR/GenSeed.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}/_ext/7ce265fa
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2095212026/GenSeed.pb.o ../CaffeR/GenSeed.pb.cc
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o ../CaffeR/GenSeed.pb.cc
 
-${OBJECTDIR}/_ext/738675558/ipc.pb.o: ../TestCaffe/ipc.pb.cc 
-	${MKDIR} -p ${OBJECTDIR}/_ext/738675558
+${OBJECTDIR}/_ext/2c074b66/ipc.pb.o: ../TestCaffe/ipc.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}/_ext/2c074b66
 	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/738675558/ipc.pb.o ../TestCaffe/ipc.pb.cc
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2c074b66/ipc.pb.o ../TestCaffe/ipc.pb.cc
 
 ${OBJECTDIR}/CaffeFn.o: CaffeFn.cpp 
 	${MKDIR} -p ${OBJECTDIR}

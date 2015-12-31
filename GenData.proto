@@ -16,22 +16,20 @@ message CaffeGenData {
 	}
 	repeated DataField data_fields = 4;
 	enum DataTranslateType {
-		DATA_TRANSLATE_DEP_TO_WORD = 1;
-		DATA_TRANSLATE_DEP_TO_COREF = 2;
-		DATA_TRANSLATE_WORD_TO_DEP_DEP = 3;
-		DATA_TRANSLATE_WORD_REC_TO_DEP_DEP = 4;
-		DATA_TRANSLATE_WORD_REC_TO_DEP_REC = 5;
-		DATA_TRANSLATE_DEP_REC_TO_DEP_DEP = 6;
-		DATA_TRANSLATE_DEP_REC_TO_DEP_GOV = 7;
-		DATA_TRANSLATE_DEP_REC_TO_DEP_TYPE = 8;
+		DATA_TRANSLATE_WID_TO_WORD = 1;
+		DATA_TRANSLATE_WID_TO_COREF = 2;
+		DATA_TRANSLATE_WID_TO_DID = 3;
+		DATA_TRANSLATE_DID_TO_DEP_NAME = 4;
+		DATA_TRANSLATE_DID_TO_GOV_WID = 5;
+		DATA_TRANSLATE_DID_TO_DEP_WID = 6;
 	}
 	message DataTranslate {
 		required DataTranslateType translate_type = 1;
 		required string var_name = 2;
-		required string iter_type = 3;
+		optional string iter_type = 3;
 		required string match_name = 4;
-		required string match_field_name = 5;
-		required string field_name = 6;
+		optional string match_field_name = 5;
+		optional string field_name = 6;
 	}
 	repeated DataTranslate data_translates = 5;
 	message FieldTranslate {

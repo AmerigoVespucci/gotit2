@@ -77,12 +77,16 @@ inline bool CaffeGenData_DataSrc_Parse(
     CaffeGenData_DataSrc_descriptor(), name, value);
 }
 enum CaffeGenData_DataTranslateType {
-  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD = 1,
-  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF = 2
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_WORD = 1,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_COREF = 2,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_DID = 3,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_DEP_NAME = 4,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_GOV_WID = 5,
+  CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_DEP_WID = 6
 };
 bool CaffeGenData_DataTranslateType_IsValid(int value);
-const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MIN = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD;
-const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MAX = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF;
+const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MIN = CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_WORD;
+const CaffeGenData_DataTranslateType CaffeGenData_DataTranslateType_DataTranslateType_MAX = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_DEP_WID;
 const int CaffeGenData_DataTranslateType_DataTranslateType_ARRAYSIZE = CaffeGenData_DataTranslateType_DataTranslateType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CaffeGenData_DataTranslateType_descriptor();
@@ -292,7 +296,7 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline ::std::string* release_var_name();
   inline void set_allocated_var_name(::std::string* var_name);
 
-  // required string iter_type = 3;
+  // optional string iter_type = 3;
   inline bool has_iter_type() const;
   inline void clear_iter_type();
   static const int kIterTypeFieldNumber = 3;
@@ -316,7 +320,7 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline ::std::string* release_match_name();
   inline void set_allocated_match_name(::std::string* match_name);
 
-  // required string match_field_name = 5;
+  // optional string match_field_name = 5;
   inline bool has_match_field_name() const;
   inline void clear_match_field_name();
   static const int kMatchFieldNameFieldNumber = 5;
@@ -328,7 +332,7 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline ::std::string* release_match_field_name();
   inline void set_allocated_match_field_name(::std::string* match_field_name);
 
-  // required string field_name = 6;
+  // optional string field_name = 6;
   inline bool has_field_name() const;
   inline void clear_field_name();
   static const int kFieldNameFieldNumber = 6;
@@ -716,8 +720,12 @@ class CaffeGenData : public ::google::protobuf::Message {
   }
 
   typedef CaffeGenData_DataTranslateType DataTranslateType;
-  static const DataTranslateType DATA_TRANSLATE_DEP_TO_WORD = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_WORD;
-  static const DataTranslateType DATA_TRANSLATE_DEP_TO_COREF = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DEP_TO_COREF;
+  static const DataTranslateType DATA_TRANSLATE_WID_TO_WORD = CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_WORD;
+  static const DataTranslateType DATA_TRANSLATE_WID_TO_COREF = CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_COREF;
+  static const DataTranslateType DATA_TRANSLATE_WID_TO_DID = CaffeGenData_DataTranslateType_DATA_TRANSLATE_WID_TO_DID;
+  static const DataTranslateType DATA_TRANSLATE_DID_TO_DEP_NAME = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_DEP_NAME;
+  static const DataTranslateType DATA_TRANSLATE_DID_TO_GOV_WID = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_GOV_WID;
+  static const DataTranslateType DATA_TRANSLATE_DID_TO_DEP_WID = CaffeGenData_DataTranslateType_DATA_TRANSLATE_DID_TO_DEP_WID;
   static inline bool DataTranslateType_IsValid(int value) {
     return CaffeGenData_DataTranslateType_IsValid(value);
   }
@@ -1251,7 +1259,7 @@ inline void CaffeGenData_DataTranslate::set_allocated_var_name(::std::string* va
   }
 }
 
-// required string iter_type = 3;
+// optional string iter_type = 3;
 inline bool CaffeGenData_DataTranslate::has_iter_type() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1391,7 +1399,7 @@ inline void CaffeGenData_DataTranslate::set_allocated_match_name(::std::string* 
   }
 }
 
-// required string match_field_name = 5;
+// optional string match_field_name = 5;
 inline bool CaffeGenData_DataTranslate::has_match_field_name() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
@@ -1461,7 +1469,7 @@ inline void CaffeGenData_DataTranslate::set_allocated_match_field_name(::std::st
   }
 }
 
-// required string field_name = 6;
+// optional string field_name = 6;
 inline bool CaffeGenData_DataTranslate::has_field_name() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
