@@ -13,7 +13,7 @@
 #include "MascReader.h"
 #include "H5Cpp.h"
 
-#include "../../CaffeR/GenSeed.pb.h"
+#include "GenSeed.pb.h"
 #include "GenData.pb.h"
 
 #ifndef H5_NO_NAMESPACE
@@ -257,7 +257,7 @@ void CGotitEnv::CaffeFn()
 	int NumValsPerVec = cNumValsPerVecSrc * (cbDoubleWordVecs ? 2 : 1);
 
 	
-	const int cNumWords = 10000; //2047;
+	const int cNumWords = 6000; //2047;
 	const int cNOfNGrams = 5; // the value of N in NGram
 	const int cMinRealLength = (cNOfNGrams / 2) + 1; // 3, can't be less
 	const int cCenterGram = cNOfNGrams / 2; // 2. center of 5-gram= in 0 based index
@@ -281,7 +281,8 @@ void CGotitEnv::CaffeFn()
 	vector<vector<float> > WordsVecsClean; 
 	
 	
-	for (int iw=0; iw<cNumWords* 100; iw++) { // factor 100, just to make sure we have enough
+	int NumWordsToSearch = min(cNumWords* 100, (int)WordsInOrder.size() ); // factor 100, just to make sure we have enough
+	for (int iw=0; iw<NumWordsToSearch; iw++) { 
 		string w = WordsInOrder[iw].Name;
 		bool bGood = true;
 		for (auto c : w) {
@@ -924,6 +925,40 @@ void CGotitEnv::CaffeFn()
 							}
 							else {
 								bAllGood = false;
+							}
+						}
+					}
+					else if (	(DataTranslateEntry.dtet == dtetDIDToDepWID) 
+							||	(DataTranslateEntry.dtet == dtetDIDToGovWID) 
+							||	(DataTranslateEntry.dtet == dtetDIDToDepName) ){
+						if ((RecID < 0) ||  (RecID > SentenceRec.size())) {
+							bAllGood = false;
+						}
+						else {
+							SSentenceRec SRec = SentenceRec[RecID];
+							auto& DepRecs = SRec.Deps;
+							if ((DID < 0) ||  (DID > DepRecs.size())) {
+								bAllGood = false;
+							}
+							else {
+								auto& drec = DepRecs[DID];
+								switch (DataTranslateEntry.dtet) {
+									case dtetDIDToDepWID:
+										VarTbl[DataTranslateEntry.VarTblIdx] 
+											=		(to_string(RecID) + ":" 
+												+	to_string((int)(drec.Dep))) ;
+										break;
+									case dtetDIDToGovWID:
+										VarTbl[DataTranslateEntry.VarTblIdx] 
+											=		(to_string(RecID) + ":" 
+												+	to_string((int)(drec.Gov))) ;
+										break;
+									case dtetDIDToDepName:
+										VarTbl[DataTranslateEntry.VarTblIdx] =
+											(DepNames[drec.iDep] + (bGov ? ":g" : ":d"));
+										break;
+								}
+								
 							}
 						}
 					}

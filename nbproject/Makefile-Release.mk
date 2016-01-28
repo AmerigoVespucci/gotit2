@@ -35,8 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o \
-	${OBJECTDIR}/_ext/2c074b66/ipc.pb.o \
 	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
@@ -44,6 +42,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/ForLearn.o \
 	${OBJECTDIR}/Gamer.o \
 	${OBJECTDIR}/GenData.pb.o \
+	${OBJECTDIR}/GenSeed.pb.o \
 	${OBJECTDIR}/GrpsCntrl.o \
 	${OBJECTDIR}/GrpsCreate.o \
 	${OBJECTDIR}/GrpsFile.o \
@@ -67,6 +66,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/WordGroup.o \
 	${OBJECTDIR}/WordSwap.o \
 	${OBJECTDIR}/XmlParser.o \
+	${OBJECTDIR}/ipc.pb.o \
 	${OBJECTDIR}/main.o
 
 
@@ -93,16 +93,6 @@ LDLIBSOPTIONS=-lboost_system -lboost_filesystem -lhdf5 -lhdf5_cpp -lpthread -lpr
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2 ${OBJECTFILES} ${LDLIBSOPTIONS}
-
-${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o: ../CaffeR/GenSeed.pb.cc 
-	${MKDIR} -p ${OBJECTDIR}/_ext/7ce265fa
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/7ce265fa/GenSeed.pb.o ../CaffeR/GenSeed.pb.cc
-
-${OBJECTDIR}/_ext/2c074b66/ipc.pb.o: ../TestCaffe/ipc.pb.cc 
-	${MKDIR} -p ${OBJECTDIR}/_ext/2c074b66
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/2c074b66/ipc.pb.o ../TestCaffe/ipc.pb.cc
 
 ${OBJECTDIR}/CaffeFn.o: CaffeFn.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -138,6 +128,11 @@ ${OBJECTDIR}/GenData.pb.o: GenData.pb.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenData.pb.o GenData.pb.cc
+
+${OBJECTDIR}/GenSeed.pb.o: GenSeed.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenSeed.pb.o GenSeed.pb.cc
 
 ${OBJECTDIR}/GrpsCntrl.o: GrpsCntrl.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -253,6 +248,11 @@ ${OBJECTDIR}/XmlParser.o: XmlParser.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/XmlParser.o XmlParser.cpp
+
+${OBJECTDIR}/ipc.pb.o: ipc.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ipc.pb.o ipc.pb.cc
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}

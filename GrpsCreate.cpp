@@ -66,7 +66,8 @@ void CGotitEnv::CreateGroups()
 			//bool bFurtherFiltering = false;
 			//vector<string>* pNewParamsVec = NULL;
 
-			uint NumPrevGrpIters = max(GrpParamStrings.size(), (uint)1);
+			//uint mtest = max((uint)3, (uint)5);
+			uint NumPrevGrpIters = max(GrpParamStrings.size(), (size_t)1);
 			for (uint iPrevGrps = 0; iPrevGrps < NumPrevGrpIters; iPrevGrps++) {
 				if (GrpParam.sSrcType == "NameListItem") {
 					MapStringToNameItems::iterator itnls = BasicTypeLists.find(GrpParam.sSrc);

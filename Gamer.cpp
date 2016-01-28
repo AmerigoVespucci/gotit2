@@ -23,7 +23,7 @@
 // Generate ipc.pb.h and ipc.pb.cc using:
 // cd ~/NetBeansProjects/TestCaffe
 // protoc -I=. -cpp_out=. ./ipc.proto
-#include "/home/abba/NetBeansProjects/TestCaffe/ipc.pb.h"
+#include "ipc.pb.h"
 
 using boost::asio::ip::tcp;
 tcp::socket* Caffe1stClickSocket = NULL;
