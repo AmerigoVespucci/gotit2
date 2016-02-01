@@ -620,14 +620,29 @@
       <TaskItem TaskType="NoArgsFn" do="SaveNGrams" />
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
     </TaskNode>
+    <TaskNode name="TaskNode.DoTblGen">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/DepNum.prototxt" />
+      <TaskItem TaskType="NoArgsFn" do="TblGen" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/DepOneHot.prototxt" />
+      <TaskItem TaskType="NoArgsFn" do="TblGen" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/POSNum.prototxt" />
+      <TaskItem TaskType="NoArgsFn" do="TblGen" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/POSOneHot.prototxt" />
+      <TaskItem TaskType="NoArgsFn" do="TblGen" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/Words6000.prototxt" />
+      <TaskItem TaskType="NoArgsFn" do="TblGen" />
+    </TaskNode>
     <TaskNode name="TaskNode.DoCaffeFn">
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
-      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/CorefNSubj.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/DepValid.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
-      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="6" should_be_val="40" />
+      <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="1" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="DecrParam" do="Task.Param.DoCaffeFn.Loop0" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
@@ -1234,8 +1249,10 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForAEWordVec"  commment="saving sentences and their pos for caffe" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForGramValid"  commment="saving valid and invalid ngrams for caffe learn" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="Conditional compilation of desired function" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoTblGen"  commment="Conditional compilation of desired function" />
+
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="Conditional compilation of desired function" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="build data table" />
 
   </ImplementationParameterList>
 </Config>

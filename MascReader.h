@@ -687,6 +687,8 @@ public:
 	void CaffeFn();
 	void CaffeFnInit();
 	void CaffeFnComplete();
+        void TblGenInit();
+        void TblGen();
 	
 private:
 	void WordsCreated();
@@ -756,8 +758,9 @@ private:
 	u64 LastMaintenance;
 	map<string, bool> ModsAlreadyUsed;
 	vector<pair<float, string> > PeerVec;; // return param from CreatePeerList
-	void * CaffeFnHandle; // Avoiding declaring CaffeGenData, a ::google::protobuf::Message at this level
-	void * CaffeFnOutHandle; // as above
+//	void * CaffeFnHandle; // Avoiding declaring CaffeGenData, a ::google::protobuf::Message at this level
+//	void * CaffeFnOutHandle; // as above
+        void * CaffeFnDataHandle; // contains all the data for CaffeFnInit, CaffeFn and CaffeFnComplete
 
 	// Align Params
 	enum {

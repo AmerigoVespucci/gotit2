@@ -30,7 +30,7 @@ enum FieldNameID {
 	fniWordCore,
 	fniPOS,
 	fniIndex,
-	fniWID,
+	fniRWID,
 	fniDepType,
 	fniGov,
 	fniDep,
@@ -51,7 +51,7 @@ SFieldNameToID FieldNameToIDTbl[] = {	{"Word", fniWord},
 										{"WordCore", fniWordCore},  
 										{"POS", fniPOS},
 										{"index", fniIndex},
-										{"WID", fniWID},
+										{"RWID", fniRWID},
 										{"DepType", fniDepType},
 										{"Gov", fniGov},
 										{"Dep", fniDep},										
@@ -65,11 +65,12 @@ SFieldNameToID FieldNameToIDTbl[] = {	{"Word", fniWord},
 
 int FieldNamesTblSize = sizeof(FieldNameToIDTbl) / sizeof(FieldNameToIDTbl[0]);
 
-string GetRecFieldByIdx(int SRecID, int WID, WordRec& rec, int FieldID, bool& bRetValid)
+string GetRecFieldByIdx(int SRecID, int WID, WordRec& rec, 
+						CaffeGenData_FieldType FieldID, bool& bRetValid)
 {
 	bRetValid = true;
 	switch(FieldID) {
-		case fniWord: {
+		case CaffeGenData::FIELD_TYPE_WORD: {
 			string w = rec.Word;
 			bool bWordOK = true;
 			for (int iiw = 0; iiw < w.size(); iiw++) {
@@ -88,13 +89,15 @@ string GetRecFieldByIdx(int SRecID, int WID, WordRec& rec, int FieldID, bool& bR
 			}
 			return w;
 		}
-		case fniWordCore: 
+		case CaffeGenData::FIELD_TYPE_WORD_CORE: 
 			return rec.WordCore;
-		case fniPOS:
+		case CaffeGenData::FIELD_TYPE_POS:
 			return rec.POS;
-		case fniIndex:
-			return to_string(FieldID);
-		case fniWID:
+//		case fniIndex: I think this is a misunderstanding
+//			return to_string(FieldID);
+		case CaffeGenData::FIELD_TYPE_WID:
+			return (to_string(WID)) ;
+		case CaffeGenData::FIELD_TYPE_RWID:
 			return (to_string(SRecID) + ":" + to_string(WID)) ;
 		default:
 			bRetValid = false;
@@ -103,27 +106,28 @@ string GetRecFieldByIdx(int SRecID, int WID, WordRec& rec, int FieldID, bool& bR
 	return string();
 }
 
-string GetDepRecFieldByIdx(int SRecID, int DID, vector<string>& DepNames, DepRec& rec, int FieldID, bool& bRetValid)
+string GetDepRecFieldByIdx(	int SRecID, int DID, vector<string>& DepNames, DepRec& rec, 
+							CaffeGenData_FieldType FieldID, bool& bRetValid)
 {
 	bRetValid = true;
 	switch(FieldID) {
-		case fniDepType: 
+		case CaffeGenData::FIELD_TYPE_DEP_NAME: 
 			return (DepNames[rec.iDep]) ;
-		case fniGov: 
+		case CaffeGenData::FIELD_TYPE_GOV_WID: 
 			return (to_string((int)rec.Gov)) ;
-		case fniDep: 
+		case CaffeGenData::FIELD_TYPE_DEP_WID: 
 			return (to_string((int)rec.Dep)) ; 
-		case fniRecAndGov: 
+		case CaffeGenData::FIELD_TYPE_GOV_RWID: 
 			return (to_string(SRecID) + ":" + to_string((int)rec.Gov)) ;
-		case fniRecAndDep: 
+		case CaffeGenData::FIELD_TYPE_DEP_RWID: 
 			return (to_string(SRecID) + ":" + to_string((int)rec.Dep)) ; 
-		case fniDIDGov:
+		case CaffeGenData::FIELD_TYPE_GOV_RDID:
 			return (to_string(SRecID) + ":" + to_string(DID) + ":g");
-		case fniDIDDep:
+		case CaffeGenData::FIELD_TYPE_DEP_RDID:
 			return (to_string(SRecID) + ":" + to_string(DID) + ":d");
-		case fniDepNameGov:
+		case CaffeGenData::FIELD_TYPE_DEP_NAME_G:
 			return (DepNames[rec.iDep] + ":g") ;
-		case fniDepNameDep:
+		case CaffeGenData::FIELD_TYPE_DEP_NAME_D:
 			return (DepNames[rec.iDep] + ":d") ;
 		default:
 			bRetValid = false;
@@ -141,11 +145,25 @@ int GetIdxFromFieldName (const string& name) {
 	return -1;
 }
 
+struct CaffeFnInitData {
+	CaffeGenData* gen_data;
+	CaffeGenSeed* gen_seed_config;
+	int NumVecTbls;
+	vector<map<string, int>*> TranslateTblPtrs;
+	vector<vector<vector<float> >* > VecTblPtrs;
+	map<string, int> TranslateTblNameMap;
+	vector<string> DepNames;
+	int YesNoTblIdx;
+};
 void CGotitEnv::CaffeFnInit() 
 {
-	CaffeFnHandle = NULL;
-	CaffeFnOutHandle = NULL;
+	CaffeFnInitData * InitData = new CaffeFnInitData;
+
+	CaffeFnDataHandle = NULL;
+//	CaffeFnHandle = NULL;
+//	CaffeFnOutHandle = NULL;
 	CaffeGenData* gen_data = new CaffeGenData;
+	InitData->gen_data = gen_data;
 	
 	string sModelProtoName;
 	if (!GetImplemParam(sModelProtoName, "Implem.Param.FnParam.CaffeFn.ModelProtoName")) {
@@ -156,11 +174,15 @@ void CGotitEnv::CaffeFnInit()
 	if (proto_ifs.is_open()) {
 		google::protobuf::io::IstreamInputStream* proto_input 
 			= new google::protobuf::io::IstreamInputStream(&proto_ifs);
-		google::protobuf::TextFormat::Parse(proto_input, gen_data);
+		if (!google::protobuf::TextFormat::Parse(proto_input, gen_data)) {
+			cerr << "CaffeFn config file Parse failed for " << sModelProtoName << endl;
+			return;
+		}
 		delete proto_input;
 	}
 
 	CaffeGenSeed* gen_seed_config = new CaffeGenSeed;
+	InitData->gen_seed_config = gen_seed_config;
 
 	const string& CoreDir = gen_data->files_core_dir();
 	string H5TrainListFileName = CoreDir + "data/train_list.txt";
@@ -171,19 +193,94 @@ void CGotitEnv::CaffeFnInit()
 
 	gen_seed_config->set_num_test_cases(0);
 	
-	CaffeFnHandle = gen_data;
-	CaffeFnOutHandle = gen_seed_config;
+	struct VecTblData {
+		map<string, int> NameMap;
+		vector<vector<float> > VecData;
+	};
+//	vector<string> * pDepNames = new vector<string>();
+//	InitData->DepNames = 
+	InitData->NumVecTbls = gen_data->vec_tbls_size();
+	int ivt = -1;
+	for (auto vec_tbl : gen_data->vec_tbls()) { ivt++;
+		InitData->TranslateTblNameMap[vec_tbl.name()] = ivt;
+		bool bThisTblIsTheVecTbl = false;
+		if (vec_tbl.name() == gen_data->dep_name_vec_tbl()) {
+			bThisTblIsTheVecTbl = true;
+			InitData->DepNames.clear();
+		}
+		map<string, int>* pNameMap = new map<string, int>();
+		InitData->TranslateTblPtrs.push_back(pNameMap);
+		vector<vector<float> >* pVecTbl = new vector<vector<float> >();
+		InitData->VecTblPtrs.push_back(pVecTbl);
+		string VecTblPath = gen_data->vec_tbls_core_path() + vec_tbl.path() + "/OutputVec.txt";
+		ifstream VecFile(VecTblPath);
+		if (VecFile.is_open()) {
+			string ln;
+			int NumVecs;
+			int NumValsPerVec;
+			VecFile >> NumVecs;
+			VecFile >> NumValsPerVec;
+//			if (bThisTblIsTheVecTbl) {
+//				pDepNames->resize(NumVecs);
+//			}
+
+			getline(VecFile, ln); // excess .n
+			//while (!VecFile.eof()) {
+			for (int ic = 0; ic < NumVecs; ic++) {
+				getline(VecFile, ln, ' ');
+				string w;
+				w = ln;
+				if (w.size() == 0) {
+					cerr << "There should be as many items in the vec file as stated on the first line of file.\n";
+					return;
+				}
+				if (bThisTblIsTheVecTbl) {
+					InitData->DepNames.push_back(w);
+				}
+				(*pNameMap)[w] = ic;
+				pVecTbl->push_back(vector<float>());
+				vector<float>& OneVec = pVecTbl->back();
+				//vector<float>& OneVec = WordsVecs[iw];
+				for (int iwv = 0; iwv < NumValsPerVec; iwv++) {
+					if (iwv == NumValsPerVec - 1) {
+						getline(VecFile, ln);
+					}
+					else {
+						getline(VecFile, ln, ' ');
+					}
+					float wv;
+					wv = stof(ln);
+					OneVec.push_back(wv);
+				}
+			}
+		}
+	}
+
+	vector<vector<float> > * YesNoTbl = new vector<vector<float> >;
+	YesNoTbl->push_back(vector<float>(1, 0.0f));
+	YesNoTbl->push_back(vector<float>(1, 1.0f));
+
+	
+	InitData->YesNoTblIdx = InitData->TranslateTblPtrs.size();
+	InitData->TranslateTblNameMap["YesNoTbl"] = InitData->YesNoTblIdx;
+	InitData->TranslateTblPtrs.push_back(NULL);
+	InitData->VecTblPtrs.push_back(YesNoTbl);
+//	CaffeFnHandle = gen_data;
+//	CaffeFnOutHandle = gen_seed_config;
+	CaffeFnDataHandle = InitData;
 }
 void CGotitEnv::CaffeFnComplete()
 {
 	
-	if (!CaffeFnHandle || !CaffeFnOutHandle) {
-		cerr << "CaffeFnComplete can only work if preceeded by a succesful call to CaffeFnInit";
+	//if (!CaffeFnHandle || !CaffeFnOutHandle) {
+	if (!CaffeFnDataHandle)	 {
+		cerr << "CaffeFnComplete can only work if preceeded by a succesful call to CaffeFnInit.\n";
 		return;
 		
 	}
-	CaffeGenData* gen_data = (CaffeGenData *)CaffeFnHandle;
-	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;
+	CaffeFnInitData * InitData = (CaffeFnInitData * )CaffeFnDataHandle;
+	CaffeGenData* gen_data = InitData->gen_data; // (CaffeGenData *)CaffeFnHandle;
+	CaffeGenSeed* gen_seed_config  = InitData->gen_seed_config; // (CaffeGenSeed*)CaffeFnOutHandle;
 
 	const string& CoreDir = gen_data->files_core_dir();
 	string H5TrainListFileName = CoreDir + "data/train_list.txt";
@@ -204,23 +301,41 @@ void CGotitEnv::CaffeFnComplete()
 		delete config_output;
 	}
 	
-	
 	delete gen_data;
-	CaffeFnHandle = NULL;
+	//CaffeFnHandle = NULL;
 	delete gen_seed_config ;
-	CaffeFnOutHandle = NULL;
+	//CaffeFnOutHandle = NULL;
+	for (auto p : InitData->TranslateTblPtrs) {
+		if (p != NULL) {
+			delete p;
+		}
+	}
+	for (auto p : InitData->VecTblPtrs) {
+		if (p != NULL) {
+			delete p;
+		}
+	}
+	delete InitData;
+	CaffeFnDataHandle = NULL;
 }
 
 void CGotitEnv::CaffeFn()
 {
 
-	if (!CaffeFnHandle || !CaffeFnOutHandle) {
-		cerr << "CaffeFn can only work if preceeded by a succesful call to CaffeFnInit";
+	if (!CaffeFnDataHandle)	 {
+		cerr << "CaffeFn can only work if preceeded by a succesful call to CaffeFnInit.\n";
 		return;
 		
 	}
-	CaffeGenData* gen_data = (CaffeGenData *)CaffeFnHandle;
-	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;
+	CaffeFnInitData * InitData = (CaffeFnInitData * )CaffeFnDataHandle;
+	CaffeGenData* gen_data = InitData->gen_data; // (CaffeGenData *)CaffeFnHandle;
+	CaffeGenSeed* gen_seed_config  = InitData->gen_seed_config; // (CaffeGenSeed*)CaffeFnOutHandle;
+	vector<map<string, int>*>& TranslateTblPtrs = InitData->TranslateTblPtrs;
+	vector<vector<vector<float> >* >& VecTblPtrs = InitData->VecTblPtrs;
+	map<string, int>& TranslateTblNameMap = InitData->TranslateTblNameMap;
+	vector<string>& DepNames = InitData->DepNames;
+	int YesNoTblIdx = InitData->YesNoTblIdx;
+
 	const string& CoreDir = gen_data->files_core_dir();
 	string sConfigLoopNum;
 	if (!GetImplemParam(sConfigLoopNum, "Task.Param.DoCaffeFn.Loop0")) {
@@ -234,24 +349,6 @@ void CGotitEnv::CaffeFn()
 	string WordListFileName = CoreDir + "data/WordList.txt";
 	string WordVecFileName =	gen_data->glove_vec_file_name() ;
 	
-//	gen_data.set_name("WordToPos");
-//	gen_data.set_iterate_type(CaffeGenData_IterateType_ITERATE_WORD);
-//	gen_data.set_data_src(CaffeGenData_DataSrc_DATA_SRC_BOOKS);
-//	CaffeGenData::DataField * p_field_1 = gen_data.add_data_fields();
-//	p_field_1->set_field_name("Word");
-//	p_field_1->set_var_name("Word1");
-//	{
-//		ofstream proto_ofs("/home/abba/NetBeansProjects/gotit2/CaffeSrc/NetGen/WordToPos/WordToPos.prototxt");
-//		if (proto_ofs.is_open()) {
-//			google::protobuf::io::OstreamOutputStream* proto_output 
-//				= new google::protobuf::io::OstreamOutputStream(&proto_ofs);
-//			google::protobuf::TextFormat::Print(gen_data, proto_output);
-//			delete proto_output;
-//		}
-//	}
-	
-	
-
 	const bool cbDoubleWordVecs = true; // false for autoencode thin vector
 	const int cNumValsPerVecSrc = 50; // 10 - size of thin vector
 	int NumValsPerVec = cNumValsPerVecSrc * (cbDoubleWordVecs ? 2 : 1);
@@ -271,206 +368,20 @@ void CGotitEnv::CaffeFn()
 	// tuple: rand num for sort, vector of indexes of words, bool if valid, vector of pos indices. 
 	vector<tuple<int, vector<int>, bool, vector<int> > > GramRecs; 
 	int NumWords = 0;
-	map<string, int> WordMap;
-	vector<string> RevWordMap;
-//	vector<int> GramsFound(cNumWords, 0); 
-	vector<vector<float> > WordsVecs(cNumWords+1); // indexed by the same as WordMap
+//	map<string, int> WordMap;
+//	vector<string> RevWordMap;
+////	vector<int> GramsFound(cNumWords, 0); 
+//	vector<vector<float> > WordsVecs(cNumWords+1); // indexed by the same as WordMap
 
-	map<string, int> WordMapClean;
-	vector<string> RevWordMapClean;
-	vector<vector<float> > WordsVecsClean; 
+//	map<string, int> WordMapClean;
+//	vector<string> RevWordMapClean;
+//	vector<vector<float> > WordsVecsClean; 
 	
 	
-	int NumWordsToSearch = min(cNumWords* 100, (int)WordsInOrder.size() ); // factor 100, just to make sure we have enough
-	for (int iw=0; iw<NumWordsToSearch; iw++) { 
-		string w = WordsInOrder[iw].Name;
-		bool bGood = true;
-		for (auto c : w) {
-			//if (!isalpha(c)) {
-			if (c < 'a' || c > 'z') {
-				bGood = false;
-				break;
-			}
-		}
-		if (bGood) {
-			auto itWordMap = WordMap.find(w);
-			if (itWordMap != WordMap.end()) {
-				continue;
-			}
-			int MapSize = WordMap.size(); // saved to avoid ambiguity on next line
-			WordMap[w] = MapSize;
-			RevWordMap.push_back(w);
-			if (MapSize >= cNumWords-1) {
-				break;
-			}
-		}
-	}
-	{
-		int MapSize = WordMap.size(); // saved to avoid ambiguity on next line
-		WordMap["<na>"] = MapSize;
-		RevWordMap.push_back("<na>");
-	}
-	
-	vector<NameItem>& PosCount = BasicTypeLists["POSCount"];
-	map<string, int> PosMap;
-	int ini = -1;
-	for (NameItem ni : PosCount) {
-		ini++;
-		PosMap[ni.Name] = ini;
-	}
-	PosMap["<na>"] = ini;
 
-	//int NumDepTypes = BasicTypeLists["AllDepList"].size();
-	int NumDepTypes = DepTypes.size();
-	// dobj == 8
 
-	const int cVocabLimit = 400000;
-	{
-		ifstream VecFile(WordVecFileName);
-		if (VecFile.is_open()) {
-			string ln;
-			//VecFile >> NumValsPerVec;
-			//while (!VecFile.eof()) {
-			for (int ic = 0; ic < cVocabLimit; ic++) {
-				getline(VecFile, ln, ' ');
-				string w;
-				w = ln;
-				if (w.size() == 0) {
-					break;
-				}
-				int iw = cNumWords; // default to <na>
-				bool bAddVec = false;
-					auto itWordMap = WordMap.find(w);
-					if (itWordMap != WordMap.end()) {
-						bAddVec = true;
-						iw = itWordMap->second;
-				}
-				vector<float>& OneVec = WordsVecs[iw];
-				for (int iwv = 0; iwv < cNumValsPerVecSrc; iwv++) {
-					if (iwv == cNumValsPerVecSrc - 1) {
-						getline(VecFile, ln);
-					}
-					else {
-						getline(VecFile, ln, ' ');
-					}
-					float wv;
-					wv = stof(ln);
-					if (bAddVec) {
-						if (cbDoubleWordVecs) {
-							OneVec.push_back((wv < -0.1f) ? 1.0f : 0.0f);
-							OneVec.push_back((wv > 0.1f) ? 1.0f : 0.0f);
-						}
-						else {
-							OneVec.push_back(wv);
-						}
-					}
-				}
-			}
-		}
-		for (int iwv = 0; iwv < WordsVecs.size(); iwv++) {
-			vector<float>& OneVec = WordsVecs[iwv];
-			if (OneVec.size() == NumValsPerVec) {
-				WordMapClean[RevWordMap[iwv]] = WordsVecsClean.size();
-				WordsVecsClean.push_back(OneVec);
-				RevWordMapClean.push_back(RevWordMap[iwv]);
-			}
-			else {
-				if (RevWordMap[iwv] == "<na>") {
-					WordMapClean["<na>"] =  WordsVecsClean.size();
-					vector<float> NullVec(NumValsPerVec, 0.0);
-					WordsVecsClean.push_back(NullVec);
-					RevWordMapClean.push_back("<na>");
-				}
-				else {
-					cerr << "no vec found for " <<RevWordMap[iwv] << endl;
-				}
-				
-
-			}
-		}
-		if (cbDoubleWordVecs) {
-			ofstream strNames(WordListFileName);
-			if (strNames.is_open()) {
-				for (auto w : RevWordMapClean) {
-					strNames << w << " ";
-					int iw = WordMapClean[w];
-					auto OneVec = WordsVecsClean[iw];
-					for (int iwv = 0; iwv < OneVec.size(); iwv++) {
-						auto wv = OneVec[iwv];
-						strNames << wv;
-						if (iwv == OneVec.size() - 1) {
-							strNames << endl;
-						}
-						else {
-							strNames << " ";
-						}
-					}
-				}
-			}
-		}
-//		for (vector<float>& OneVec : WordsVecs) {
-//			if (OneVec.size() < NumValsPerVec * 2) {
-//				int StartSize = OneVec.size();
-//				for (int iwv = StartSize; iwv < NumValsPerVec * 2; iwv++) {
-//					OneVec.push_back(0.0);
-//				}
-//			}
-//		}
-	
-	}
-	
-	vector<string> DepNames(DepTypes.size());
-	for (auto deprec : DepTypes) {
-		DepNames[deprec.second] = deprec.first;
-	}
-
-	vector<vector<float> > PosVecTbl;
-	vector<vector<float> > PosNumTbl;
-	int PosMapSize = PosMap.size();
-	for (auto PosRec : PosMap) {
-		PosVecTbl.push_back(vector<float>(PosMapSize, 0.0f));
-		vector<float>& CurrVec = PosVecTbl.back();
-		CurrVec[PosRec.second] = 1.0f;
-		PosNumTbl.push_back(vector<float>(1, (float)PosRec.second));
-	}
-	vector<vector<float> > YesNoTbl;
-	YesNoTbl.push_back(vector<float>(1, 0.0f));
-	YesNoTbl.push_back(vector<float>(1, 1.0f));
-
-	map<string, int> DepMap;
-	vector<vector<float> > DepVecTbl(NumDepTypes, vector<float>(NumDepTypes, 0.0f));
-	vector<vector<float> > DepNumTbl;
-	for (int idt = 0; idt < NumDepTypes; idt++) {
-		DepMap[to_string(idt)] = idt;
-		DepVecTbl[idt][idt] = 1.0f;
-		DepNumTbl.push_back(vector<float>(1, (float)idt));
-	}
-	
-	int YesNoTblIdx = -1;
-	vector<map<string, int>*> TranslateTblPtrs;
-	vector<vector<vector<float> >* > VecTblPtrs;
-	map<string, int> TranslateTblNameMap;
-	TranslateTblNameMap["WordVecTbl"] = TranslateTblPtrs.size();
-	TranslateTblPtrs.push_back(&WordMapClean);
-	VecTblPtrs.push_back(&WordsVecsClean);
-	TranslateTblNameMap["POSVecTbl"] = TranslateTblPtrs.size();
-	TranslateTblPtrs.push_back(&PosMap);
-	VecTblPtrs.push_back(&PosVecTbl);
-	TranslateTblNameMap["POSNumTbl"] = TranslateTblPtrs.size();
-	TranslateTblPtrs.push_back(&PosMap); // note, the same pos map tbl as prev
-	VecTblPtrs.push_back(&PosNumTbl);
-	YesNoTblIdx = TranslateTblPtrs.size();
-	TranslateTblNameMap["YesNoTbl"] = YesNoTblIdx;
-	TranslateTblPtrs.push_back(NULL);
-	VecTblPtrs.push_back(&YesNoTbl);
-	TranslateTblNameMap["DepVecTbl"] = TranslateTblPtrs.size();
-	TranslateTblPtrs.push_back(&DepMap);
-	VecTblPtrs.push_back(&DepVecTbl);
-	TranslateTblNameMap["DepNumTbl"] = TranslateTblPtrs.size();
-	TranslateTblPtrs.push_back(&DepMap);
-	VecTblPtrs.push_back(&DepNumTbl);
 	// each pair in the table: first - idx of rec to access. second: idx of VarTbl to put it into
-	vector<pair<int, int> > FirstAccessFieldsIdx; 
+	vector<pair<CaffeGenData_FieldType, int> > FirstAccessFieldsIdx; 
 	map<string, int> VarNamesMap;
 	for (int idf = 0; idf < gen_data->data_fields_size(); idf++) {
 		const CaffeGenData::DataField& Field = gen_data->data_fields(idf);
@@ -482,8 +393,8 @@ void CGotitEnv::CaffeFn()
 		}
 		int NextVarNamesMapPos = VarNamesMap.size();
 		VarNamesMap[VarName] = NextVarNamesMapPos;
-		int FieldID = GetIdxFromFieldName(Field.field_name());
-		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
+		//int FieldID = GetIdxFromFieldName(Field.field_name());
+		FirstAccessFieldsIdx.push_back(make_pair(Field.field_type(), NextVarNamesMapPos));
 	}
 //	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
 //		const CaffeGenData::DataTranslate& Field = gen_data->data_translates(idt);
@@ -499,45 +410,45 @@ void CGotitEnv::CaffeFn()
 //		FirstAccessFieldsIdx.push_back(make_pair(FieldID, NextVarNamesMapPos));
 //	}
 	enum DataTranslateEntryType {
-		dtetWIDToWord,
-		dtetWIDToCoref,
-		dtetWIDToDID,
-		dtetDIDToDepWID,
-		dtetDIDToGovWID,
-		dtetDIDToDepName,
+		dtetRWIDToWord,
+		dtetRWIDToCoref,
+		dtetRWIDToRDID,
+		dtetRDIDToDepRWID,
+		dtetRDIDToGovRWID,
+		dtetRDIDToDepName,
 	};
 	struct SDataTranslateEntry {
 		DataTranslateEntryType dtet;
 		int VarTblIdx; // index of field of var tbl to write result to 
 		int VarTblMatchIdx; // index of search field to retrieve from var tbl
 		int TargetTblMatchIdx; // index of field in target to match
-		int TargetTblOutputIdx; // idx of field in target table to output
+		CaffeGenData_FieldType TargetTblOutputIdx; // idx of field in target table to output
 	};
 	vector<SDataTranslateEntry> DataTranslateTbl;
 	for (int idt = 0; idt < gen_data->data_translates_size(); idt++) {
 		SDataTranslateEntry DataTranslateEntry ;
-		DataTranslateEntry.dtet = dtetWIDToWord;
+		DataTranslateEntry.dtet = dtetRWIDToWord;
 		const CaffeGenData::DataTranslate& GenDataTranslateEntry 
 			= gen_data->data_translates(idt);
 		CaffeGenData::DataTranslateType TranslateType = GenDataTranslateEntry.translate_type(); 
 		switch (TranslateType) {
-			case CaffeGenData::DATA_TRANSLATE_WID_TO_WORD :
-				DataTranslateEntry.dtet = dtetWIDToWord;
+			case CaffeGenData::DATA_TRANSLATE_RWID_TO_WORD :
+				DataTranslateEntry.dtet = dtetRWIDToWord;
 				break;				
-			case CaffeGenData::DATA_TRANSLATE_WID_TO_COREF:
-				DataTranslateEntry.dtet = dtetWIDToCoref;
+			case CaffeGenData::DATA_TRANSLATE_RWID_TO_COREF:
+				DataTranslateEntry.dtet = dtetRWIDToCoref;
 				break;
-			case CaffeGenData::DATA_TRANSLATE_WID_TO_DID:
-				DataTranslateEntry.dtet = dtetWIDToDID;
+			case CaffeGenData::DATA_TRANSLATE_RWID_TO_RDID:
+				DataTranslateEntry.dtet = dtetRWIDToRDID;
 				break;
- 			case CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_WID:
-				DataTranslateEntry.dtet = dtetDIDToDepWID;
+ 			case CaffeGenData::DATA_TRANSLATE_RDID_TO_DEP_RWID:
+				DataTranslateEntry.dtet = dtetRDIDToDepRWID;
 				break;
- 			case CaffeGenData::DATA_TRANSLATE_DID_TO_GOV_WID :
-				DataTranslateEntry.dtet = dtetDIDToGovWID;
+ 			case CaffeGenData::DATA_TRANSLATE_RDID_TO_GOV_RWID :
+				DataTranslateEntry.dtet = dtetRDIDToGovRWID;
 				break;
-			case CaffeGenData::DATA_TRANSLATE_DID_TO_DEP_NAME:
-				DataTranslateEntry.dtet = dtetDIDToDepName;
+			case CaffeGenData::DATA_TRANSLATE_RDID_TO_DEP_NAME:
+				DataTranslateEntry.dtet = dtetRDIDToDepName;
 				break;
 		}
 		
@@ -549,13 +460,14 @@ void CGotitEnv::CaffeFn()
 		}
 		DataTranslateEntry.VarTblMatchIdx = itVarNamesMap->second;
 
-		int FieldID = -1;
-		if (GenDataTranslateEntry.has_field_name() ) {
-			FieldID = GetIdxFromFieldName(GenDataTranslateEntry.field_name());
+		CaffeGenData_FieldType FieldID = CaffeGenData::FIELD_TYPE_INVALID;
+		if (GenDataTranslateEntry.has_field_type() ) {
+			FieldID = //GetIdxFromFieldNif Dame(GenDataTranslateEntry.field_type());
+			FieldID = GenDataTranslateEntry.field_type();
 		}
 		else {
-			if (DataTranslateEntry.dtet == dtetWIDToWord) {
-				cerr << "field_name is required if DATA_TRANSLATE_WID_TO_WORD is set.";
+			if (DataTranslateEntry.dtet == dtetRWIDToWord) {
+				cerr << "field_name is required if DATA_TRANSLATE_RWID_TO_WORD is set.\n";
 				return;
 			}
 		}
@@ -704,9 +616,9 @@ void CGotitEnv::CaffeFn()
 	}
 	// step through records creating data based on translation tables just created
 	
-	int NumWordsClean = RevWordMapClean.size();
-	int iNA = NumWordsClean - 1;
-	int iPosNA = PosMap.size() - 1; 
+//	int NumWordsClean = RevWordMapClean.size();
+//	int iNA = NumWordsClean - 1;
+//	int iPosNA = PosMap.size() - 1; 
 	 
 	// not the actual vecs, but the integers that will give the vecs
 	// random, IData, valid, OData
@@ -802,12 +714,12 @@ void CGotitEnv::CaffeFn()
 					int RecID = -1;
 					int DID = -1;
 					bool bGov = true;
-					if (	DataTranslateEntry.dtet == dtetWIDToWord 
-						||	DataTranslateEntry.dtet == dtetWIDToCoref
-						||	DataTranslateEntry.dtet == dtetWIDToDID) {
+					if (	DataTranslateEntry.dtet == dtetRWIDToWord 
+						||	DataTranslateEntry.dtet == dtetRWIDToCoref
+						||	DataTranslateEntry.dtet == dtetRWIDToRDID) {
 						int ColonPos = VarNameForMatch.find(":");
 						if (ColonPos == -1) {
-							cerr << "Error: WID result is not formatted with a \":\". WID must be formatted as RecID::idx where idx is the index of the word in the sentence\n";
+							cerr << "Error: RWID result is not formatted with a \":\". WID must be formatted as RecID::idx where idx is the index of the word in the sentence\n";
 							// this is really a parsing error not a data error so we return
 							return;
 						}
@@ -819,12 +731,12 @@ void CGotitEnv::CaffeFn()
 						}
 						WID = stoi(VarNameForMatch.substr(ColonPos+1));
 					}
-					if (	( DataTranslateEntry.dtet == dtetDIDToDepWID) 
-						||	(DataTranslateEntry.dtet == dtetDIDToGovWID) 
-						||	(DataTranslateEntry.dtet == dtetDIDToDepName) ) {
+					if (	( DataTranslateEntry.dtet == dtetRDIDToDepRWID) 
+						||	(DataTranslateEntry.dtet == dtetRDIDToGovRWID) 
+						||	(DataTranslateEntry.dtet == dtetRDIDToDepName) ) {
 						int ColonPos = VarNameForMatch.find(":");
 						if (ColonPos == -1) {
-							cerr << "Error: DID result is not formatted with even a single \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
+							cerr << "Error: RDID result is not formatted with even a single \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
 							// this is really a parsing error not a data error so we return
 							return;
 						}
@@ -832,7 +744,7 @@ void CGotitEnv::CaffeFn()
 						VarNameForMatch = VarNameForMatch.substr(ColonPos+1);
 						ColonPos = VarNameForMatch.find(":");
 						if (ColonPos == -1) {
-							cerr << "Error: DID result is not formatted with its second \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
+							cerr << "Error: RDID result is not formatted with its second \":\". DID must be formatted as RecID::idx:g/v where idx is the index of the dep rec in the sentence\n";
 							// this is really a parsing error not a data error so we return
 							return;
 						}
@@ -843,7 +755,7 @@ void CGotitEnv::CaffeFn()
 						}
 					}
 					// Phase 2. Apply the link to another set of records
-					if (	DataTranslateEntry.dtet == dtetWIDToWord) {
+					if (	DataTranslateEntry.dtet == dtetRWIDToWord) {
 						SSentenceRec SRec = SentenceRec[RecID];
 						auto& WordRecs = SRec.OneWordRec;
 						// for the following, should be using DataTranslateEntry.TargetTblMatchIdx 
@@ -871,7 +783,7 @@ void CGotitEnv::CaffeFn()
 							}
 						}
 					}
-					else if (	DataTranslateEntry.dtet == dtetWIDToDID) {
+					else if (	DataTranslateEntry.dtet == dtetRWIDToRDID) {
 						SSentenceRec SRec = SentenceRec[RecID];
 						auto& DepRecs = SRec.Deps;
 						int idid = -1; for (auto drec : DepRecs) { idid++;
@@ -880,20 +792,22 @@ void CGotitEnv::CaffeFn()
 #pragma messages("replace setting the last time by addding a new rVarTbl each time")								
 								VarTbl[DataTranslateEntry.VarTblIdx] 
 										= GetDepRecFieldByIdx(	RecID, idid, DepNames, drec, 
-																fniDIDGov, bValid);
+																CaffeGenData::FIELD_TYPE_GOV_RDID, 
+																bValid);
 
 							}
 							if (drec.Dep == WID) { 
 								VarTbl[DataTranslateEntry.VarTblIdx] 
 										= GetDepRecFieldByIdx(	RecID, idid, DepNames, drec, 
-																fniDIDDep, bValid);
+																CaffeGenData::FIELD_TYPE_DEP_RDID, 
+																bValid);
 
 							}
 						}
 						
 						
 					}
-					else if (	DataTranslateEntry.dtet == dtetWIDToCoref) {
+					else if (	DataTranslateEntry.dtet == dtetRWIDToCoref) {
 						if (	(RecID < 0) || (WID < 0 )
 							||	(CorefRevTbl.size() <= RecID) || (CorefRevTbl[RecID].size() <= WID)) {
 							bAllGood = false;
@@ -928,9 +842,9 @@ void CGotitEnv::CaffeFn()
 							}
 						}
 					}
-					else if (	(DataTranslateEntry.dtet == dtetDIDToDepWID) 
-							||	(DataTranslateEntry.dtet == dtetDIDToGovWID) 
-							||	(DataTranslateEntry.dtet == dtetDIDToDepName) ){
+					else if (	(DataTranslateEntry.dtet == dtetRDIDToDepRWID) 
+							||	(DataTranslateEntry.dtet == dtetRDIDToGovRWID) 
+							||	(DataTranslateEntry.dtet == dtetRDIDToDepName) ){
 						if ((RecID < 0) ||  (RecID > SentenceRec.size())) {
 							bAllGood = false;
 						}
@@ -943,17 +857,17 @@ void CGotitEnv::CaffeFn()
 							else {
 								auto& drec = DepRecs[DID];
 								switch (DataTranslateEntry.dtet) {
-									case dtetDIDToDepWID:
+									case dtetRDIDToDepRWID:
 										VarTbl[DataTranslateEntry.VarTblIdx] 
 											=		(to_string(RecID) + ":" 
 												+	to_string((int)(drec.Dep))) ;
 										break;
-									case dtetDIDToGovWID:
+									case dtetRDIDToGovRWID:
 										VarTbl[DataTranslateEntry.VarTblIdx] 
 											=		(to_string(RecID) + ":" 
 												+	to_string((int)(drec.Gov))) ;
 										break;
-									case dtetDIDToDepName:
+									case dtetRDIDToDepName:
 										VarTbl[DataTranslateEntry.VarTblIdx] =
 											(DepNames[drec.iDep] + (bGov ? ":g" : ":d"));
 										break;
@@ -1205,5 +1119,7 @@ void CGotitEnv::CaffeFn()
 	// the following two repeatedly set. No harm AFAICS
 	gen_seed_config->set_num_output_nodes(NumOutputNodesNeeded);
 	gen_seed_config->set_net_end_type(EndType);
+	
+
 }
 

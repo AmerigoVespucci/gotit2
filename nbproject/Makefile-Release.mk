@@ -43,6 +43,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Gamer.o \
 	${OBJECTDIR}/GenData.pb.o \
 	${OBJECTDIR}/GenSeed.pb.o \
+	${OBJECTDIR}/GenTbl.pb.o \
 	${OBJECTDIR}/GrpsCntrl.o \
 	${OBJECTDIR}/GrpsCreate.o \
 	${OBJECTDIR}/GrpsFile.o \
@@ -61,6 +62,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/StanfordReader.o \
 	${OBJECTDIR}/TaskFns.o \
 	${OBJECTDIR}/TaskLists.o \
+	${OBJECTDIR}/TblGen.o \
 	${OBJECTDIR}/WordAligned.o \
 	${OBJECTDIR}/WordCorrect.o \
 	${OBJECTDIR}/WordGroup.o \
@@ -133,6 +135,11 @@ ${OBJECTDIR}/GenSeed.pb.o: GenSeed.pb.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenSeed.pb.o GenSeed.pb.cc
+
+${OBJECTDIR}/GenTbl.pb.o: GenTbl.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenTbl.pb.o GenTbl.pb.cc
 
 ${OBJECTDIR}/GrpsCntrl.o: GrpsCntrl.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -223,6 +230,11 @@ ${OBJECTDIR}/TaskLists.o: TaskLists.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TaskLists.o TaskLists.cpp
+
+${OBJECTDIR}/TblGen.o: TblGen.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TblGen.o TblGen.cpp
 
 ${OBJECTDIR}/WordAligned.o: WordAligned.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -24,6 +24,7 @@
       <itemPath>Gamer.cpp</itemPath>
       <itemPath>GenData.pb.cc</itemPath>
       <itemPath>GenSeed.pb.cc</itemPath>
+      <itemPath>GenTbl.pb.cc</itemPath>
       <itemPath>GrpsCntrl.cpp</itemPath>
       <itemPath>GrpsCreate.cpp</itemPath>
       <itemPath>GrpsFile.cpp</itemPath>
@@ -35,6 +36,7 @@
       <itemPath>StanfordReader.cpp</itemPath>
       <itemPath>TaskFns.cpp</itemPath>
       <itemPath>TaskLists.cpp</itemPath>
+      <itemPath>TblGen.cpp</itemPath>
       <itemPath>WordAligned.cpp</itemPath>
       <itemPath>WordCorrect.cpp</itemPath>
       <itemPath>WordGroup.cpp</itemPath>
@@ -59,6 +61,7 @@
                    displayName="Important Files"
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>GenData.proto</itemPath>
       <itemPath>Makefile</itemPath>
       <itemPath>NodeConfig.xml</itemPath>
     </logicalFolder>
@@ -128,6 +131,8 @@
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="GenTbl.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="GrpsCntrl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GrpsCreate.cpp" ex="false" tool="1" flavor2="0">
@@ -163,6 +168,8 @@
       <item path="TaskFns.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="TaskLists.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TblGen.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WordAligned.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -252,6 +259,8 @@
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="GenTbl.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="GrpsCntrl.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GrpsCreate.cpp" ex="false" tool="1" flavor2="0">
@@ -287,6 +296,8 @@
       <item path="TaskFns.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="TaskLists.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TblGen.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="WordAligned.cpp" ex="false" tool="1" flavor2="0">
       </item>

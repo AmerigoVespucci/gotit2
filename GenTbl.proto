@@ -1,0 +1,14 @@
+message CaffeGenTbl {
+	required string name = 1;
+	required string files_core_dir = 2;
+	enum TblType {
+		TBL_TYPE_WORD = 1;
+		TBL_TYPE_POS = 2;
+		TBL_TYPE_DEP = 3;
+	}
+	required TblType tbl_type = 3;
+	optional string input_vec_file_name = 4; // required for type WORD
+	optional int32 max_words = 5; // required for type WORD
+	optional bool alpha_only = 6; // required for type WORD
+	optional bool one_hot = 7; // regquired if !WORD. true means a whole vector one hot, if false then a single encoded number
+}
