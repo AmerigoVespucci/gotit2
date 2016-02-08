@@ -21,6 +21,7 @@
 #include <float.h>
 #include <math.h>
 #include <assert.h>
+
 #define RAPIDXML_STATIC_POOL_SIZE (16 * 1024)
 #include "RapidXml/rapidxml.hpp"
 
@@ -128,6 +129,9 @@ struct WordProps {
 	string POS;
 
 };
+
+#ifndef GENDATA_HPP
+
 // used for sentence rec
 struct WordRec {
 	WordRec() {
@@ -142,7 +146,7 @@ struct WordRec {
 	string WordCore;
 	string POS;
 	string NER;
-	bool bCap; // only true if the first letter only was capitalized. We store in that case as all lowercase
+	bool bCap; // only true if the first letter only was capitalized. We store WordRecin that case as all lowercase
 	void Store(ofstream& fout);
 	void Load(ifstream& fin);
 };
@@ -184,6 +188,8 @@ struct SSentenceRec {
 	vector<WordRec> OneWordRec;
 	vector<DepRec> Deps; // not collapsed dependencies
 };
+
+#endif // #ifndef GENDATA_HPP
 
 typedef map<string, SSentenceRec> MapIDToSentenceRec;
 
@@ -639,7 +645,10 @@ static u64 const cMaintenancePeriod = 60000000ll;
 class CGotitEnv {
 	static const int cNumElsForSurprise = 20;
 public:
-	CGotitEnv() : PatGrpMgr(this), AlignConfig(NumAlignParams) {}
+	CGotitEnv() : PatGrpMgr(this), AlignConfig(NumAlignParams) {
+            CaffeFnOutHandle = NULL;
+            CaffeFnDataHandle = NULL;
+        }
 	~CGotitEnv();
 
 	void ParseConfigFile();
@@ -759,7 +768,7 @@ private:
 	map<string, bool> ModsAlreadyUsed;
 	vector<pair<float, string> > PeerVec;; // return param from CreatePeerList
 //	void * CaffeFnHandle; // Avoiding declaring CaffeGenData, a ::google::protobuf::Message at this level
-//	void * CaffeFnOutHandle; // as above
+	void * CaffeFnOutHandle; // as above
         void * CaffeFnDataHandle; // contains all the data for CaffeFnInit, CaffeFn and CaffeFnComplete
 
 	// Align Params

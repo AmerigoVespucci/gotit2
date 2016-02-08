@@ -47,9 +47,9 @@ message CaffeGenData {
 	message DataTranslate {
 		required DataTranslateType translate_type = 1;
 		required string var_name = 2;
-		optional string iter_type = 3;
+		//optional string iter_type = 3;
 		required string match_name = 4;
-		optional string match_field_name = 5;
+		//optional string match_field_name = 5;
 		optional FieldType field_type = 6; // used when translating to WORD to specify which, i.e. WORD, POS etc.
 	}
 	repeated DataTranslate data_translates = 5;
@@ -78,7 +78,7 @@ message CaffeGenData {
 	required string model_file_name = 13;
 	required string config_file_name = 14;
 	optional int32 num_accuracy_candidates = 15; // passed right on to caffe's config. Only relevant for some EndTypes
-	required string glove_vec_file_name = 16; // must be replaced by a proper table creation schema
+	//required string glove_vec_file_name = 16; // must be replaced by a proper table creation schema
 	message DataFilter {
 		required string var_name = 2;
 		required string match_string = 4;
@@ -90,5 +90,5 @@ message CaffeGenData {
 		required string path = 2;
 	}
 	repeated VecTbl vec_tbls = 19;
-	required string dep_name_vec_tbl = 20;
+	required string dep_name_vec_tbl = 20; // needed for the DataTranslate messsages. e.g. for RWID to RDID
 }

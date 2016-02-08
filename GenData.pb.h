@@ -327,18 +327,6 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline ::std::string* release_var_name();
   inline void set_allocated_var_name(::std::string* var_name);
 
-  // optional string iter_type = 3;
-  inline bool has_iter_type() const;
-  inline void clear_iter_type();
-  static const int kIterTypeFieldNumber = 3;
-  inline const ::std::string& iter_type() const;
-  inline void set_iter_type(const ::std::string& value);
-  inline void set_iter_type(const char* value);
-  inline void set_iter_type(const char* value, size_t size);
-  inline ::std::string* mutable_iter_type();
-  inline ::std::string* release_iter_type();
-  inline void set_allocated_iter_type(::std::string* iter_type);
-
   // required string match_name = 4;
   inline bool has_match_name() const;
   inline void clear_match_name();
@@ -350,18 +338,6 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline ::std::string* mutable_match_name();
   inline ::std::string* release_match_name();
   inline void set_allocated_match_name(::std::string* match_name);
-
-  // optional string match_field_name = 5;
-  inline bool has_match_field_name() const;
-  inline void clear_match_field_name();
-  static const int kMatchFieldNameFieldNumber = 5;
-  inline const ::std::string& match_field_name() const;
-  inline void set_match_field_name(const ::std::string& value);
-  inline void set_match_field_name(const char* value);
-  inline void set_match_field_name(const char* value, size_t size);
-  inline ::std::string* mutable_match_field_name();
-  inline ::std::string* release_match_field_name();
-  inline void set_allocated_match_field_name(::std::string* match_field_name);
 
   // optional .CaffeGenData.FieldType field_type = 6;
   inline bool has_field_type() const;
@@ -376,26 +352,20 @@ class CaffeGenData_DataTranslate : public ::google::protobuf::Message {
   inline void clear_has_translate_type();
   inline void set_has_var_name();
   inline void clear_has_var_name();
-  inline void set_has_iter_type();
-  inline void clear_has_iter_type();
   inline void set_has_match_name();
   inline void clear_has_match_name();
-  inline void set_has_match_field_name();
-  inline void clear_has_match_field_name();
   inline void set_has_field_type();
   inline void clear_has_field_type();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* var_name_;
-  ::std::string* iter_type_;
   int translate_type_;
   int field_type_;
   ::std::string* match_name_;
-  ::std::string* match_field_name_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(6 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_GenData_2eproto();
   friend void protobuf_AssignDesc_GenData_2eproto();
@@ -1103,18 +1073,6 @@ class CaffeGenData : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 num_accuracy_candidates() const;
   inline void set_num_accuracy_candidates(::google::protobuf::int32 value);
 
-  // required string glove_vec_file_name = 16;
-  inline bool has_glove_vec_file_name() const;
-  inline void clear_glove_vec_file_name();
-  static const int kGloveVecFileNameFieldNumber = 16;
-  inline const ::std::string& glove_vec_file_name() const;
-  inline void set_glove_vec_file_name(const ::std::string& value);
-  inline void set_glove_vec_file_name(const char* value);
-  inline void set_glove_vec_file_name(const char* value, size_t size);
-  inline ::std::string* mutable_glove_vec_file_name();
-  inline ::std::string* release_glove_vec_file_name();
-  inline void set_allocated_glove_vec_file_name(::std::string* glove_vec_file_name);
-
   // repeated .CaffeGenData.DataFilter data_filters = 17;
   inline int data_filters_size() const;
   inline void clear_data_filters();
@@ -1187,8 +1145,6 @@ class CaffeGenData : public ::google::protobuf::Message {
   inline void clear_has_config_file_name();
   inline void set_has_num_accuracy_candidates();
   inline void clear_has_num_accuracy_candidates();
-  inline void set_has_glove_vec_file_name();
-  inline void clear_has_glove_vec_file_name();
   inline void set_has_vec_tbls_core_path();
   inline void clear_has_vec_tbls_core_path();
   inline void set_has_dep_name_vec_tbl();
@@ -1207,18 +1163,17 @@ class CaffeGenData : public ::google::protobuf::Message {
   ::std::string* test_list_file_name_;
   ::std::string* train_list_file_name_;
   ::std::string* proto_file_name_;
+  ::std::string* model_file_name_;
   int net_end_type_;
   ::google::protobuf::int32 num_accuracy_candidates_;
-  ::std::string* model_file_name_;
   ::std::string* config_file_name_;
-  ::std::string* glove_vec_file_name_;
   ::google::protobuf::RepeatedPtrField< ::CaffeGenData_DataFilter > data_filters_;
   ::std::string* vec_tbls_core_path_;
   ::google::protobuf::RepeatedPtrField< ::CaffeGenData_VecTbl > vec_tbls_;
   ::std::string* dep_name_vec_tbl_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(20 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(19 + 31) / 32];
 
   friend void  protobuf_AddDesc_GenData_2eproto();
   friend void protobuf_AssignDesc_GenData_2eproto();
@@ -1424,85 +1379,15 @@ inline void CaffeGenData_DataTranslate::set_allocated_var_name(::std::string* va
   }
 }
 
-// optional string iter_type = 3;
-inline bool CaffeGenData_DataTranslate::has_iter_type() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void CaffeGenData_DataTranslate::set_has_iter_type() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void CaffeGenData_DataTranslate::clear_has_iter_type() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void CaffeGenData_DataTranslate::clear_iter_type() {
-  if (iter_type_ != &::google::protobuf::internal::kEmptyString) {
-    iter_type_->clear();
-  }
-  clear_has_iter_type();
-}
-inline const ::std::string& CaffeGenData_DataTranslate::iter_type() const {
-  return *iter_type_;
-}
-inline void CaffeGenData_DataTranslate::set_iter_type(const ::std::string& value) {
-  set_has_iter_type();
-  if (iter_type_ == &::google::protobuf::internal::kEmptyString) {
-    iter_type_ = new ::std::string;
-  }
-  iter_type_->assign(value);
-}
-inline void CaffeGenData_DataTranslate::set_iter_type(const char* value) {
-  set_has_iter_type();
-  if (iter_type_ == &::google::protobuf::internal::kEmptyString) {
-    iter_type_ = new ::std::string;
-  }
-  iter_type_->assign(value);
-}
-inline void CaffeGenData_DataTranslate::set_iter_type(const char* value, size_t size) {
-  set_has_iter_type();
-  if (iter_type_ == &::google::protobuf::internal::kEmptyString) {
-    iter_type_ = new ::std::string;
-  }
-  iter_type_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* CaffeGenData_DataTranslate::mutable_iter_type() {
-  set_has_iter_type();
-  if (iter_type_ == &::google::protobuf::internal::kEmptyString) {
-    iter_type_ = new ::std::string;
-  }
-  return iter_type_;
-}
-inline ::std::string* CaffeGenData_DataTranslate::release_iter_type() {
-  clear_has_iter_type();
-  if (iter_type_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = iter_type_;
-    iter_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-inline void CaffeGenData_DataTranslate::set_allocated_iter_type(::std::string* iter_type) {
-  if (iter_type_ != &::google::protobuf::internal::kEmptyString) {
-    delete iter_type_;
-  }
-  if (iter_type) {
-    set_has_iter_type();
-    iter_type_ = iter_type;
-  } else {
-    clear_has_iter_type();
-    iter_type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  }
-}
-
 // required string match_name = 4;
 inline bool CaffeGenData_DataTranslate::has_match_name() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void CaffeGenData_DataTranslate::set_has_match_name() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void CaffeGenData_DataTranslate::clear_has_match_name() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void CaffeGenData_DataTranslate::clear_match_name() {
   if (match_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -1564,85 +1449,15 @@ inline void CaffeGenData_DataTranslate::set_allocated_match_name(::std::string* 
   }
 }
 
-// optional string match_field_name = 5;
-inline bool CaffeGenData_DataTranslate::has_match_field_name() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void CaffeGenData_DataTranslate::set_has_match_field_name() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void CaffeGenData_DataTranslate::clear_has_match_field_name() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void CaffeGenData_DataTranslate::clear_match_field_name() {
-  if (match_field_name_ != &::google::protobuf::internal::kEmptyString) {
-    match_field_name_->clear();
-  }
-  clear_has_match_field_name();
-}
-inline const ::std::string& CaffeGenData_DataTranslate::match_field_name() const {
-  return *match_field_name_;
-}
-inline void CaffeGenData_DataTranslate::set_match_field_name(const ::std::string& value) {
-  set_has_match_field_name();
-  if (match_field_name_ == &::google::protobuf::internal::kEmptyString) {
-    match_field_name_ = new ::std::string;
-  }
-  match_field_name_->assign(value);
-}
-inline void CaffeGenData_DataTranslate::set_match_field_name(const char* value) {
-  set_has_match_field_name();
-  if (match_field_name_ == &::google::protobuf::internal::kEmptyString) {
-    match_field_name_ = new ::std::string;
-  }
-  match_field_name_->assign(value);
-}
-inline void CaffeGenData_DataTranslate::set_match_field_name(const char* value, size_t size) {
-  set_has_match_field_name();
-  if (match_field_name_ == &::google::protobuf::internal::kEmptyString) {
-    match_field_name_ = new ::std::string;
-  }
-  match_field_name_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* CaffeGenData_DataTranslate::mutable_match_field_name() {
-  set_has_match_field_name();
-  if (match_field_name_ == &::google::protobuf::internal::kEmptyString) {
-    match_field_name_ = new ::std::string;
-  }
-  return match_field_name_;
-}
-inline ::std::string* CaffeGenData_DataTranslate::release_match_field_name() {
-  clear_has_match_field_name();
-  if (match_field_name_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = match_field_name_;
-    match_field_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-inline void CaffeGenData_DataTranslate::set_allocated_match_field_name(::std::string* match_field_name) {
-  if (match_field_name_ != &::google::protobuf::internal::kEmptyString) {
-    delete match_field_name_;
-  }
-  if (match_field_name) {
-    set_has_match_field_name();
-    match_field_name_ = match_field_name;
-  } else {
-    clear_has_match_field_name();
-    match_field_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  }
-}
-
 // optional .CaffeGenData.FieldType field_type = 6;
 inline bool CaffeGenData_DataTranslate::has_field_type() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void CaffeGenData_DataTranslate::set_has_field_type() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void CaffeGenData_DataTranslate::clear_has_field_type() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void CaffeGenData_DataTranslate::clear_field_type() {
   field_type_ = 1;
@@ -2840,76 +2655,6 @@ inline void CaffeGenData::set_num_accuracy_candidates(::google::protobuf::int32 
   num_accuracy_candidates_ = value;
 }
 
-// required string glove_vec_file_name = 16;
-inline bool CaffeGenData::has_glove_vec_file_name() const {
-  return (_has_bits_[0] & 0x00008000u) != 0;
-}
-inline void CaffeGenData::set_has_glove_vec_file_name() {
-  _has_bits_[0] |= 0x00008000u;
-}
-inline void CaffeGenData::clear_has_glove_vec_file_name() {
-  _has_bits_[0] &= ~0x00008000u;
-}
-inline void CaffeGenData::clear_glove_vec_file_name() {
-  if (glove_vec_file_name_ != &::google::protobuf::internal::kEmptyString) {
-    glove_vec_file_name_->clear();
-  }
-  clear_has_glove_vec_file_name();
-}
-inline const ::std::string& CaffeGenData::glove_vec_file_name() const {
-  return *glove_vec_file_name_;
-}
-inline void CaffeGenData::set_glove_vec_file_name(const ::std::string& value) {
-  set_has_glove_vec_file_name();
-  if (glove_vec_file_name_ == &::google::protobuf::internal::kEmptyString) {
-    glove_vec_file_name_ = new ::std::string;
-  }
-  glove_vec_file_name_->assign(value);
-}
-inline void CaffeGenData::set_glove_vec_file_name(const char* value) {
-  set_has_glove_vec_file_name();
-  if (glove_vec_file_name_ == &::google::protobuf::internal::kEmptyString) {
-    glove_vec_file_name_ = new ::std::string;
-  }
-  glove_vec_file_name_->assign(value);
-}
-inline void CaffeGenData::set_glove_vec_file_name(const char* value, size_t size) {
-  set_has_glove_vec_file_name();
-  if (glove_vec_file_name_ == &::google::protobuf::internal::kEmptyString) {
-    glove_vec_file_name_ = new ::std::string;
-  }
-  glove_vec_file_name_->assign(reinterpret_cast<const char*>(value), size);
-}
-inline ::std::string* CaffeGenData::mutable_glove_vec_file_name() {
-  set_has_glove_vec_file_name();
-  if (glove_vec_file_name_ == &::google::protobuf::internal::kEmptyString) {
-    glove_vec_file_name_ = new ::std::string;
-  }
-  return glove_vec_file_name_;
-}
-inline ::std::string* CaffeGenData::release_glove_vec_file_name() {
-  clear_has_glove_vec_file_name();
-  if (glove_vec_file_name_ == &::google::protobuf::internal::kEmptyString) {
-    return NULL;
-  } else {
-    ::std::string* temp = glove_vec_file_name_;
-    glove_vec_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-    return temp;
-  }
-}
-inline void CaffeGenData::set_allocated_glove_vec_file_name(::std::string* glove_vec_file_name) {
-  if (glove_vec_file_name_ != &::google::protobuf::internal::kEmptyString) {
-    delete glove_vec_file_name_;
-  }
-  if (glove_vec_file_name) {
-    set_has_glove_vec_file_name();
-    glove_vec_file_name_ = glove_vec_file_name;
-  } else {
-    clear_has_glove_vec_file_name();
-    glove_vec_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  }
-}
-
 // repeated .CaffeGenData.DataFilter data_filters = 17;
 inline int CaffeGenData::data_filters_size() const {
   return data_filters_.size();
@@ -2937,13 +2682,13 @@ CaffeGenData::mutable_data_filters() {
 
 // required string vec_tbls_core_path = 18;
 inline bool CaffeGenData::has_vec_tbls_core_path() const {
-  return (_has_bits_[0] & 0x00020000u) != 0;
+  return (_has_bits_[0] & 0x00010000u) != 0;
 }
 inline void CaffeGenData::set_has_vec_tbls_core_path() {
-  _has_bits_[0] |= 0x00020000u;
+  _has_bits_[0] |= 0x00010000u;
 }
 inline void CaffeGenData::clear_has_vec_tbls_core_path() {
-  _has_bits_[0] &= ~0x00020000u;
+  _has_bits_[0] &= ~0x00010000u;
 }
 inline void CaffeGenData::clear_vec_tbls_core_path() {
   if (vec_tbls_core_path_ != &::google::protobuf::internal::kEmptyString) {
@@ -3032,13 +2777,13 @@ CaffeGenData::mutable_vec_tbls() {
 
 // required string dep_name_vec_tbl = 20;
 inline bool CaffeGenData::has_dep_name_vec_tbl() const {
-  return (_has_bits_[0] & 0x00080000u) != 0;
+  return (_has_bits_[0] & 0x00040000u) != 0;
 }
 inline void CaffeGenData::set_has_dep_name_vec_tbl() {
-  _has_bits_[0] |= 0x00080000u;
+  _has_bits_[0] |= 0x00040000u;
 }
 inline void CaffeGenData::clear_has_dep_name_vec_tbl() {
-  _has_bits_[0] &= ~0x00080000u;
+  _has_bits_[0] &= ~0x00040000u;
 }
 inline void CaffeGenData::clear_dep_name_vec_tbl() {
   if (dep_name_vec_tbl_ != &::google::protobuf::internal::kEmptyString) {

@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/c7f2a17a/GenDef.o \
 	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
@@ -96,180 +97,185 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/gotit2 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/_ext/c7f2a17a/GenDef.o: ../../dev/caffe/src/caffe/GenDef.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/c7f2a17a
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/c7f2a17a/GenDef.o ../../dev/caffe/src/caffe/GenDef.cpp
+
 ${OBJECTDIR}/CaffeFn.o: CaffeFn.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeFn.o CaffeFn.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CaffeFn.o CaffeFn.cpp
 
 ${OBJECTDIR}/CheckersIntf.o: CheckersIntf.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CheckersIntf.o CheckersIntf.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CheckersIntf.o CheckersIntf.cpp
 
 ${OBJECTDIR}/CheckersText.o: CheckersText.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CheckersText.o CheckersText.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CheckersText.o CheckersText.cpp
 
 ${OBJECTDIR}/DepGrps.o: DepGrps.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DepGrps.o DepGrps.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/DepGrps.o DepGrps.cpp
 
 ${OBJECTDIR}/ForLearn.o: ForLearn.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ForLearn.o ForLearn.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ForLearn.o ForLearn.cpp
 
 ${OBJECTDIR}/Gamer.o: Gamer.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Gamer.o Gamer.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Gamer.o Gamer.cpp
 
 ${OBJECTDIR}/GenData.pb.o: GenData.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenData.pb.o GenData.pb.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenData.pb.o GenData.pb.cc
 
 ${OBJECTDIR}/GenSeed.pb.o: GenSeed.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenSeed.pb.o GenSeed.pb.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenSeed.pb.o GenSeed.pb.cc
 
 ${OBJECTDIR}/GenTbl.pb.o: GenTbl.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenTbl.pb.o GenTbl.pb.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenTbl.pb.o GenTbl.pb.cc
 
 ${OBJECTDIR}/GrpsCntrl.o: GrpsCntrl.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsCntrl.o GrpsCntrl.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsCntrl.o GrpsCntrl.cpp
 
 ${OBJECTDIR}/GrpsCreate.o: GrpsCreate.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsCreate.o GrpsCreate.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsCreate.o GrpsCreate.cpp
 
 ${OBJECTDIR}/GrpsFile.o: GrpsFile.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsFile.o GrpsFile.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GrpsFile.o GrpsFile.cpp
 
 ${OBJECTDIR}/MascFiles.o: MascFiles.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MascFiles.o MascFiles.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MascFiles.o MascFiles.cpp
 
 ${OBJECTDIR}/MascReader.o: MascReader.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MascReader.o MascReader.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MascReader.o MascReader.cpp
 
 ${OBJECTDIR}/NodeConfig.o: NodeConfig.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NodeConfig.o NodeConfig.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NodeConfig.o NodeConfig.cpp
 
 ${OBJECTDIR}/RF/discrete_dist.o: RF/discrete_dist.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/discrete_dist.o RF/discrete_dist.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/discrete_dist.o RF/discrete_dist.cc
 
 ${OBJECTDIR}/RF/instance_set.o: RF/instance_set.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/instance_set.o RF/instance_set.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/instance_set.o RF/instance_set.cc
 
 ${OBJECTDIR}/RF/random_forest.o: RF/random_forest.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/random_forest.o RF/random_forest.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/random_forest.o RF/random_forest.cc
 
 ${OBJECTDIR}/RF/test.o: RF/test.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/test.o RF/test.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/test.o RF/test.cc
 
 ${OBJECTDIR}/RF/tree.o: RF/tree.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/tree.o RF/tree.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/tree.o RF/tree.cc
 
 ${OBJECTDIR}/RF/tree_node.o: RF/tree_node.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/tree_node.o RF/tree_node.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/tree_node.o RF/tree_node.cc
 
 ${OBJECTDIR}/RF/weights.o: RF/weights.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/weights.o RF/weights.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RF/weights.o RF/weights.cc
 
 ${OBJECTDIR}/Regex2D.o: Regex2D.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Regex2D.o Regex2D.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Regex2D.o Regex2D.cpp
 
 ${OBJECTDIR}/RegexLearn.o: RegexLearn.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RegexLearn.o RegexLearn.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RegexLearn.o RegexLearn.cpp
 
 ${OBJECTDIR}/StanfordReader.o: StanfordReader.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StanfordReader.o StanfordReader.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/StanfordReader.o StanfordReader.cpp
 
 ${OBJECTDIR}/TaskFns.o: TaskFns.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TaskFns.o TaskFns.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TaskFns.o TaskFns.cpp
 
 ${OBJECTDIR}/TaskLists.o: TaskLists.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TaskLists.o TaskLists.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TaskLists.o TaskLists.cpp
 
 ${OBJECTDIR}/TblGen.o: TblGen.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TblGen.o TblGen.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TblGen.o TblGen.cpp
 
 ${OBJECTDIR}/WordAligned.o: WordAligned.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordAligned.o WordAligned.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordAligned.o WordAligned.cpp
 
 ${OBJECTDIR}/WordCorrect.o: WordCorrect.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordCorrect.o WordCorrect.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordCorrect.o WordCorrect.cpp
 
 ${OBJECTDIR}/WordGroup.o: WordGroup.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordGroup.o WordGroup.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordGroup.o WordGroup.cpp
 
 ${OBJECTDIR}/WordSwap.o: WordSwap.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordSwap.o WordSwap.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/WordSwap.o WordSwap.cpp
 
 ${OBJECTDIR}/XmlParser.o: XmlParser.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/XmlParser.o XmlParser.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/XmlParser.o XmlParser.cpp
 
 ${OBJECTDIR}/ipc.pb.o: ipc.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ipc.pb.o ipc.pb.cc
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/ipc.pb.o ipc.pb.cc
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

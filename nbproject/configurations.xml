@@ -23,6 +23,7 @@
       <itemPath>ForLearn.cpp</itemPath>
       <itemPath>Gamer.cpp</itemPath>
       <itemPath>GenData.pb.cc</itemPath>
+      <itemPath>../../dev/caffe/src/caffe/GenDef.cpp</itemPath>
       <itemPath>GenSeed.pb.cc</itemPath>
       <itemPath>GenTbl.pb.cc</itemPath>
       <itemPath>GrpsCntrl.cpp</itemPath>
@@ -79,6 +80,8 @@
           <standard>8</standard>
           <incDir>
             <pElem>RF</pElem>
+            <pElem>../../dev/caffe/.build_debug/src</pElem>
+            <pElem>../../dev/caffe/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GOTIT_LINUX</Elem>
@@ -95,6 +98,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../dev/caffe/src/caffe/GenDef.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="/media/truecrypt6/MascReader/CheckersIntf.h"
             ex="false"
             tool="3"
@@ -201,6 +209,8 @@
           <standard>8</standard>
           <incDir>
             <pElem>RF</pElem>
+            <pElem>../../dev/caffe/.build_release/src</pElem>
+            <pElem>../../dev/caffe/include</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GOTIT_LINUX</Elem>
@@ -223,6 +233,11 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="../../dev/caffe/src/caffe/GenDef.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="/media/truecrypt6/MascReader/CheckersIntf.h"
             ex="false"
             tool="3"
