@@ -23,6 +23,7 @@
       <itemPath>ForLearn.cpp</itemPath>
       <itemPath>Gamer.cpp</itemPath>
       <itemPath>GenData.pb.cc</itemPath>
+      <itemPath>GenDataTbls.pb.cc</itemPath>
       <itemPath>../../dev/caffe/src/caffe/GenDef.cpp</itemPath>
       <itemPath>GenSeed.pb.cc</itemPath>
       <itemPath>GenTbl.pb.cc</itemPath>
@@ -136,6 +137,8 @@
       <item path="Gamer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenData.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenDataTbls.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -271,6 +274,8 @@
       <item path="Gamer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenData.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenDataTbls.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>

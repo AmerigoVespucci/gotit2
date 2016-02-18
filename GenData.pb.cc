@@ -33,9 +33,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* CaffeGenData_DataFilter_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CaffeGenData_DataFilter_reflection_ = NULL;
-const ::google::protobuf::Descriptor* CaffeGenData_VecTbl_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  CaffeGenData_VecTbl_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* CaffeGenData_IterateType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* CaffeGenData_DataSrc_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* CaffeGenData_FieldType_descriptor_ = NULL;
@@ -52,7 +49,7 @@ void protobuf_AssignDesc_GenData_2eproto() {
       "GenData.proto");
   GOOGLE_CHECK(file != NULL);
   CaffeGenData_descriptor_ = file->message_type(0);
-  static const int CaffeGenData_offsets_[19] = {
+  static const int CaffeGenData_offsets_[17] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, iterate_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, data_src_),
@@ -69,9 +66,7 @@ void protobuf_AssignDesc_GenData_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, config_file_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, num_accuracy_candidates_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, data_filters_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, vec_tbls_core_path_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, vec_tbls_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, dep_name_vec_tbl_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData, netgen_output_file_name_),
   };
   CaffeGenData_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -153,22 +148,6 @@ void protobuf_AssignDesc_GenData_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CaffeGenData_DataFilter));
-  CaffeGenData_VecTbl_descriptor_ = CaffeGenData_descriptor_->nested_type(4);
-  static const int CaffeGenData_VecTbl_offsets_[2] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData_VecTbl, name_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData_VecTbl, path_),
-  };
-  CaffeGenData_VecTbl_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      CaffeGenData_VecTbl_descriptor_,
-      CaffeGenData_VecTbl::default_instance_,
-      CaffeGenData_VecTbl_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData_VecTbl, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CaffeGenData_VecTbl, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(CaffeGenData_VecTbl));
   CaffeGenData_IterateType_descriptor_ = CaffeGenData_descriptor_->enum_type(0);
   CaffeGenData_DataSrc_descriptor_ = CaffeGenData_descriptor_->enum_type(1);
   CaffeGenData_FieldType_descriptor_ = CaffeGenData_descriptor_->enum_type(2);
@@ -196,8 +175,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
     CaffeGenData_FieldTranslate_descriptor_, &CaffeGenData_FieldTranslate::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CaffeGenData_DataFilter_descriptor_, &CaffeGenData_DataFilter::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    CaffeGenData_VecTbl_descriptor_, &CaffeGenData_VecTbl::default_instance());
 }
 
 }  // namespace
@@ -213,8 +190,6 @@ void protobuf_ShutdownFile_GenData_2eproto() {
   delete CaffeGenData_FieldTranslate_reflection_;
   delete CaffeGenData_DataFilter::default_instance_;
   delete CaffeGenData_DataFilter_reflection_;
-  delete CaffeGenData_VecTbl::default_instance_;
-  delete CaffeGenData_VecTbl_reflection_;
 }
 
 void protobuf_AddDesc_GenData_2eproto() {
@@ -224,7 +199,7 @@ void protobuf_AddDesc_GenData_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\rGenData.proto\"\337\017\n\014CaffeGenData\022\014\n\004name"
+    "\n\rGenData.proto\"\374\016\n\014CaffeGenData\022\014\n\004name"
     "\030\001 \002(\t\022/\n\014iterate_type\030\002 \002(\0162\031.CaffeGenD"
     "ata.IterateType\022\'\n\010data_src\030\003 \002(\0162\025.Caff"
     "eGenData.DataSrc\022,\n\013data_fields\030\004 \003(\0132\027."
@@ -240,41 +215,39 @@ void protobuf_AddDesc_GenData_2eproto() {
     "\017model_file_name\030\r \002(\t\022\030\n\020config_file_na"
     "me\030\016 \002(\t\022\037\n\027num_accuracy_candidates\030\017 \001("
     "\005\022.\n\014data_filters\030\021 \003(\0132\030.CaffeGenData.D"
-    "ataFilter\022\032\n\022vec_tbls_core_path\030\022 \002(\t\022&\n"
-    "\010vec_tbls\030\023 \003(\0132\024.CaffeGenData.VecTbl\022\030\n"
-    "\020dep_name_vec_tbl\030\024 \002(\t\032J\n\tDataField\022\020\n\010"
-    "var_name\030\001 \002(\t\022+\n\nfield_type\030\003 \002(\0162\027.Caf"
-    "feGenData.FieldType\032\233\001\n\rDataTranslate\0227\n"
-    "\016translate_type\030\001 \002(\0162\037.CaffeGenData.Dat"
-    "aTranslateType\022\020\n\010var_name\030\002 \002(\t\022\022\n\nmatc"
-    "h_name\030\004 \002(\t\022+\n\nfield_type\030\006 \001(\0162\027.Caffe"
-    "GenData.FieldType\032z\n\016FieldTranslate\022\020\n\010v"
-    "ar_name\030\001 \001(\t\022\022\n\ntable_name\030\002 \002(\t\022\025\n\rb_c"
-    "an_replace\030\003 \001(\010\022\025\n\rmax_instances\030\004 \001(\005\022"
-    "\024\n\014replace_prob\030\005 \001(\002\0324\n\nDataFilter\022\020\n\010v"
-    "ar_name\030\002 \002(\t\022\024\n\014match_string\030\004 \002(\t\032$\n\006V"
-    "ecTbl\022\014\n\004name\030\001 \002(\t\022\014\n\004path\030\002 \002(\t\"A\n\013Ite"
-    "rateType\022\020\n\014ITERATE_WORD\020\001\022\017\n\013ITERATE_RE"
-    "C\020\002\022\017\n\013ITERATE_DEP\020\003\"\035\n\007DataSrc\022\022\n\016DATA_"
-    "SRC_BOOKS\020\001\"\271\003\n\tFieldType\022\023\n\017FIELD_TYPE_"
-    "WORD\020\001\022\030\n\024FIELD_TYPE_WORD_CORE\020\002\022\022\n\016FIEL"
-    "D_TYPE_POS\020\003\022\022\n\016FIELD_TYPE_WID\020\004\022\023\n\017FIEL"
-    "D_TYPE_RWID\020\005\022\027\n\023FIELD_TYPE_DEP_NAME\020\006\022\026"
-    "\n\022FIELD_TYPE_GOV_WID\020\007\022\026\n\022FIELD_TYPE_DEP"
-    "_WID\020\010\022\027\n\023FIELD_TYPE_GOV_RWID\020\t\022\027\n\023FIELD"
-    "_TYPE_DEP_RWID\020\n\022\023\n\017FIELD_TYPE_RDID\020\013\022\027\n"
-    "\023FIELD_TYPE_GOV_RDID\020\014\022\027\n\023FIELD_TYPE_DEP"
-    "_RDID\020\r\022\027\n\023FIELD_TYPE_GOV_WORD\020\016\022\027\n\023FIEL"
-    "D_TYPE_DEP_WORD\020\017\022\031\n\025FIELD_TYPE_DEP_NAME"
-    "_G\020\020\022\031\n\025FIELD_TYPE_DEP_NAME_D\020\021\022\026\n\022FIELD"
-    "_TYPE_INVALID\020\037\"\346\001\n\021DataTranslateType\022\037\n"
-    "\033DATA_TRANSLATE_RWID_TO_WORD\020\001\022 \n\034DATA_T"
-    "RANSLATE_RWID_TO_COREF\020\002\022\037\n\033DATA_TRANSLA"
-    "TE_RWID_TO_RDID\020\003\022#\n\037DATA_TRANSLATE_RDID"
-    "_TO_DEP_NAME\020\004\022#\n\037DATA_TRANSLATE_RDID_TO"
-    "_GOV_RWID\020\005\022#\n\037DATA_TRANSLATE_RDID_TO_DE"
-    "P_RWID\020\006\"\?\n\nNetEndType\022\r\n\tEND_VALID\020\001\022\017\n"
-    "\013END_ONE_HOT\020\002\022\021\n\rEND_MULTI_HOT\020\003", 2033);
+    "ataFilter\022\037\n\027netgen_output_file_name\030\025 \002"
+    "(\t\032J\n\tDataField\022\020\n\010var_name\030\001 \002(\t\022+\n\nfie"
+    "ld_type\030\003 \002(\0162\027.CaffeGenData.FieldType\032\233"
+    "\001\n\rDataTranslate\0227\n\016translate_type\030\001 \002(\016"
+    "2\037.CaffeGenData.DataTranslateType\022\020\n\010var"
+    "_name\030\002 \002(\t\022\022\n\nmatch_name\030\004 \002(\t\022+\n\nfield"
+    "_type\030\006 \001(\0162\027.CaffeGenData.FieldType\032z\n\016"
+    "FieldTranslate\022\020\n\010var_name\030\001 \001(\t\022\022\n\ntabl"
+    "e_name\030\002 \002(\t\022\025\n\rb_can_replace\030\003 \001(\010\022\025\n\rm"
+    "ax_instances\030\004 \001(\005\022\024\n\014replace_prob\030\005 \001(\002"
+    "\0324\n\nDataFilter\022\020\n\010var_name\030\002 \002(\t\022\024\n\014matc"
+    "h_string\030\004 \002(\t\"A\n\013IterateType\022\020\n\014ITERATE"
+    "_WORD\020\001\022\017\n\013ITERATE_REC\020\002\022\017\n\013ITERATE_DEP\020"
+    "\003\"\035\n\007DataSrc\022\022\n\016DATA_SRC_BOOKS\020\001\"\271\003\n\tFie"
+    "ldType\022\023\n\017FIELD_TYPE_WORD\020\001\022\030\n\024FIELD_TYP"
+    "E_WORD_CORE\020\002\022\022\n\016FIELD_TYPE_POS\020\003\022\022\n\016FIE"
+    "LD_TYPE_WID\020\004\022\023\n\017FIELD_TYPE_RWID\020\005\022\027\n\023FI"
+    "ELD_TYPE_DEP_NAME\020\006\022\026\n\022FIELD_TYPE_GOV_WI"
+    "D\020\007\022\026\n\022FIELD_TYPE_DEP_WID\020\010\022\027\n\023FIELD_TYP"
+    "E_GOV_RWID\020\t\022\027\n\023FIELD_TYPE_DEP_RWID\020\n\022\023\n"
+    "\017FIELD_TYPE_RDID\020\013\022\027\n\023FIELD_TYPE_GOV_RDI"
+    "D\020\014\022\027\n\023FIELD_TYPE_DEP_RDID\020\r\022\027\n\023FIELD_TY"
+    "PE_GOV_WORD\020\016\022\027\n\023FIELD_TYPE_DEP_WORD\020\017\022\031"
+    "\n\025FIELD_TYPE_DEP_NAME_G\020\020\022\031\n\025FIELD_TYPE_"
+    "DEP_NAME_D\020\021\022\026\n\022FIELD_TYPE_INVALID\020\037\"\346\001\n"
+    "\021DataTranslateType\022\037\n\033DATA_TRANSLATE_RWI"
+    "D_TO_WORD\020\001\022 \n\034DATA_TRANSLATE_RWID_TO_CO"
+    "REF\020\002\022\037\n\033DATA_TRANSLATE_RWID_TO_RDID\020\003\022#"
+    "\n\037DATA_TRANSLATE_RDID_TO_DEP_NAME\020\004\022#\n\037D"
+    "ATA_TRANSLATE_RDID_TO_GOV_RWID\020\005\022#\n\037DATA"
+    "_TRANSLATE_RDID_TO_DEP_RWID\020\006\"\?\n\nNetEndT"
+    "ype\022\r\n\tEND_VALID\020\001\022\017\n\013END_ONE_HOT\020\002\022\021\n\rE"
+    "ND_MULTI_HOT\020\003", 1934);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GenData.proto", &protobuf_RegisterTypes);
   CaffeGenData::default_instance_ = new CaffeGenData();
@@ -282,13 +255,11 @@ void protobuf_AddDesc_GenData_2eproto() {
   CaffeGenData_DataTranslate::default_instance_ = new CaffeGenData_DataTranslate();
   CaffeGenData_FieldTranslate::default_instance_ = new CaffeGenData_FieldTranslate();
   CaffeGenData_DataFilter::default_instance_ = new CaffeGenData_DataFilter();
-  CaffeGenData_VecTbl::default_instance_ = new CaffeGenData_VecTbl();
   CaffeGenData::default_instance_->InitAsDefaultInstance();
   CaffeGenData_DataField::default_instance_->InitAsDefaultInstance();
   CaffeGenData_DataTranslate::default_instance_->InitAsDefaultInstance();
   CaffeGenData_FieldTranslate::default_instance_->InitAsDefaultInstance();
   CaffeGenData_DataFilter::default_instance_->InitAsDefaultInstance();
-  CaffeGenData_VecTbl::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_GenData_2eproto);
 }
 
@@ -1778,289 +1749,6 @@ void CaffeGenData_DataFilter::Swap(CaffeGenData_DataFilter* other) {
 // -------------------------------------------------------------------
 
 #ifndef _MSC_VER
-const int CaffeGenData_VecTbl::kNameFieldNumber;
-const int CaffeGenData_VecTbl::kPathFieldNumber;
-#endif  // !_MSC_VER
-
-CaffeGenData_VecTbl::CaffeGenData_VecTbl()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void CaffeGenData_VecTbl::InitAsDefaultInstance() {
-}
-
-CaffeGenData_VecTbl::CaffeGenData_VecTbl(const CaffeGenData_VecTbl& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void CaffeGenData_VecTbl::SharedCtor() {
-  _cached_size_ = 0;
-  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-CaffeGenData_VecTbl::~CaffeGenData_VecTbl() {
-  SharedDtor();
-}
-
-void CaffeGenData_VecTbl::SharedDtor() {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
-    delete name_;
-  }
-  if (path_ != &::google::protobuf::internal::kEmptyString) {
-    delete path_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void CaffeGenData_VecTbl::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* CaffeGenData_VecTbl::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return CaffeGenData_VecTbl_descriptor_;
-}
-
-const CaffeGenData_VecTbl& CaffeGenData_VecTbl::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_GenData_2eproto();
-  return *default_instance_;
-}
-
-CaffeGenData_VecTbl* CaffeGenData_VecTbl::default_instance_ = NULL;
-
-CaffeGenData_VecTbl* CaffeGenData_VecTbl::New() const {
-  return new CaffeGenData_VecTbl;
-}
-
-void CaffeGenData_VecTbl::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_name()) {
-      if (name_ != &::google::protobuf::internal::kEmptyString) {
-        name_->clear();
-      }
-    }
-    if (has_path()) {
-      if (path_ != &::google::protobuf::internal::kEmptyString) {
-        path_->clear();
-      }
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool CaffeGenData_VecTbl::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string name = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->name().data(), this->name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(18)) goto parse_path;
-        break;
-      }
-
-      // required string path = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_path:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_path()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->path().data(), this->path().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void CaffeGenData_VecTbl::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string name = 1;
-  if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->name(), output);
-  }
-
-  // required string path = 2;
-  if (has_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->path().data(), this->path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->path(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* CaffeGenData_VecTbl::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required string name = 1;
-  if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->name(), target);
-  }
-
-  // required string path = 2;
-  if (has_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->path().data(), this->path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->path(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int CaffeGenData_VecTbl::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string name = 1;
-    if (has_name()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->name());
-    }
-
-    // required string path = 2;
-    if (has_path()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->path());
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void CaffeGenData_VecTbl::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const CaffeGenData_VecTbl* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const CaffeGenData_VecTbl*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void CaffeGenData_VecTbl::MergeFrom(const CaffeGenData_VecTbl& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_name()) {
-      set_name(from.name());
-    }
-    if (from.has_path()) {
-      set_path(from.path());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void CaffeGenData_VecTbl::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void CaffeGenData_VecTbl::CopyFrom(const CaffeGenData_VecTbl& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool CaffeGenData_VecTbl::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-
-  return true;
-}
-
-void CaffeGenData_VecTbl::Swap(CaffeGenData_VecTbl* other) {
-  if (other != this) {
-    std::swap(name_, other->name_);
-    std::swap(path_, other->path_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata CaffeGenData_VecTbl::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = CaffeGenData_VecTbl_descriptor_;
-  metadata.reflection = CaffeGenData_VecTbl_reflection_;
-  return metadata;
-}
-
-
-// -------------------------------------------------------------------
-
-#ifndef _MSC_VER
 const int CaffeGenData::kNameFieldNumber;
 const int CaffeGenData::kIterateTypeFieldNumber;
 const int CaffeGenData::kDataSrcFieldNumber;
@@ -2077,9 +1765,7 @@ const int CaffeGenData::kModelFileNameFieldNumber;
 const int CaffeGenData::kConfigFileNameFieldNumber;
 const int CaffeGenData::kNumAccuracyCandidatesFieldNumber;
 const int CaffeGenData::kDataFiltersFieldNumber;
-const int CaffeGenData::kVecTblsCorePathFieldNumber;
-const int CaffeGenData::kVecTblsFieldNumber;
-const int CaffeGenData::kDepNameVecTblFieldNumber;
+const int CaffeGenData::kNetgenOutputFileNameFieldNumber;
 #endif  // !_MSC_VER
 
 CaffeGenData::CaffeGenData()
@@ -2109,8 +1795,7 @@ void CaffeGenData::SharedCtor() {
   model_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   config_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   num_accuracy_candidates_ = 0;
-  vec_tbls_core_path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  dep_name_vec_tbl_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  netgen_output_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2140,11 +1825,8 @@ void CaffeGenData::SharedDtor() {
   if (config_file_name_ != &::google::protobuf::internal::kEmptyString) {
     delete config_file_name_;
   }
-  if (vec_tbls_core_path_ != &::google::protobuf::internal::kEmptyString) {
-    delete vec_tbls_core_path_;
-  }
-  if (dep_name_vec_tbl_ != &::google::protobuf::internal::kEmptyString) {
-    delete dep_name_vec_tbl_;
+  if (netgen_output_file_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete netgen_output_file_name_;
   }
   if (this != default_instance_) {
   }
@@ -2216,14 +1898,9 @@ void CaffeGenData::Clear() {
     num_accuracy_candidates_ = 0;
   }
   if (_has_bits_[16 / 32] & (0xffu << (16 % 32))) {
-    if (has_vec_tbls_core_path()) {
-      if (vec_tbls_core_path_ != &::google::protobuf::internal::kEmptyString) {
-        vec_tbls_core_path_->clear();
-      }
-    }
-    if (has_dep_name_vec_tbl()) {
-      if (dep_name_vec_tbl_ != &::google::protobuf::internal::kEmptyString) {
-        dep_name_vec_tbl_->clear();
+    if (has_netgen_output_file_name()) {
+      if (netgen_output_file_name_ != &::google::protobuf::internal::kEmptyString) {
+        netgen_output_file_name_->clear();
       }
     }
   }
@@ -2232,7 +1909,6 @@ void CaffeGenData::Clear() {
   input_field_translates_.Clear();
   output_field_translates_.Clear();
   data_filters_.Clear();
-  vec_tbls_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -2511,51 +2187,19 @@ bool CaffeGenData::MergePartialFromCodedStream(
           goto handle_uninterpreted;
         }
         if (input->ExpectTag(138)) goto parse_data_filters;
-        if (input->ExpectTag(146)) goto parse_vec_tbls_core_path;
+        if (input->ExpectTag(170)) goto parse_netgen_output_file_name;
         break;
       }
 
-      // required string vec_tbls_core_path = 18;
-      case 18: {
+      // required string netgen_output_file_name = 21;
+      case 21: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_vec_tbls_core_path:
+         parse_netgen_output_file_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_vec_tbls_core_path()));
+                input, this->mutable_netgen_output_file_name()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(154)) goto parse_vec_tbls;
-        break;
-      }
-
-      // repeated .CaffeGenData.VecTbl vec_tbls = 19;
-      case 19: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_vec_tbls:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-                input, add_vec_tbls()));
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(154)) goto parse_vec_tbls;
-        if (input->ExpectTag(162)) goto parse_dep_name_vec_tbl;
-        break;
-      }
-
-      // required string dep_name_vec_tbl = 20;
-      case 20: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_dep_name_vec_tbl:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_dep_name_vec_tbl()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
+            this->netgen_output_file_name().data(), this->netgen_output_file_name().length(),
             ::google::protobuf::internal::WireFormat::PARSE);
         } else {
           goto handle_uninterpreted;
@@ -2698,28 +2342,13 @@ void CaffeGenData::SerializeWithCachedSizes(
       17, this->data_filters(i), output);
   }
 
-  // required string vec_tbls_core_path = 18;
-  if (has_vec_tbls_core_path()) {
+  // required string netgen_output_file_name = 21;
+  if (has_netgen_output_file_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
+      this->netgen_output_file_name().data(), this->netgen_output_file_name().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      18, this->vec_tbls_core_path(), output);
-  }
-
-  // repeated .CaffeGenData.VecTbl vec_tbls = 19;
-  for (int i = 0; i < this->vec_tbls_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      19, this->vec_tbls(i), output);
-  }
-
-  // required string dep_name_vec_tbl = 20;
-  if (has_dep_name_vec_tbl()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      20, this->dep_name_vec_tbl(), output);
+      21, this->netgen_output_file_name(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -2858,31 +2487,14 @@ void CaffeGenData::SerializeWithCachedSizes(
         17, this->data_filters(i), target);
   }
 
-  // required string vec_tbls_core_path = 18;
-  if (has_vec_tbls_core_path()) {
+  // required string netgen_output_file_name = 21;
+  if (has_netgen_output_file_name()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
+      this->netgen_output_file_name().data(), this->netgen_output_file_name().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        18, this->vec_tbls_core_path(), target);
-  }
-
-  // repeated .CaffeGenData.VecTbl vec_tbls = 19;
-  for (int i = 0; i < this->vec_tbls_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        19, this->vec_tbls(i), target);
-  }
-
-  // required string dep_name_vec_tbl = 20;
-  if (has_dep_name_vec_tbl()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        20, this->dep_name_vec_tbl(), target);
+        21, this->netgen_output_file_name(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -2974,18 +2586,11 @@ int CaffeGenData::ByteSize() const {
 
   }
   if (_has_bits_[16 / 32] & (0xffu << (16 % 32))) {
-    // required string vec_tbls_core_path = 18;
-    if (has_vec_tbls_core_path()) {
+    // required string netgen_output_file_name = 21;
+    if (has_netgen_output_file_name()) {
       total_size += 2 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->vec_tbls_core_path());
-    }
-
-    // required string dep_name_vec_tbl = 20;
-    if (has_dep_name_vec_tbl()) {
-      total_size += 2 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->dep_name_vec_tbl());
+          this->netgen_output_file_name());
     }
 
   }
@@ -3029,14 +2634,6 @@ int CaffeGenData::ByteSize() const {
         this->data_filters(i));
   }
 
-  // repeated .CaffeGenData.VecTbl vec_tbls = 19;
-  total_size += 2 * this->vec_tbls_size();
-  for (int i = 0; i < this->vec_tbls_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->vec_tbls(i));
-  }
-
   if (!unknown_fields().empty()) {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
@@ -3067,7 +2664,6 @@ void CaffeGenData::MergeFrom(const CaffeGenData& from) {
   input_field_translates_.MergeFrom(from.input_field_translates_);
   output_field_translates_.MergeFrom(from.output_field_translates_);
   data_filters_.MergeFrom(from.data_filters_);
-  vec_tbls_.MergeFrom(from.vec_tbls_);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
     if (from.has_name()) {
       set_name(from.name());
@@ -3106,11 +2702,8 @@ void CaffeGenData::MergeFrom(const CaffeGenData& from) {
     }
   }
   if (from._has_bits_[16 / 32] & (0xffu << (16 % 32))) {
-    if (from.has_vec_tbls_core_path()) {
-      set_vec_tbls_core_path(from.vec_tbls_core_path());
-    }
-    if (from.has_dep_name_vec_tbl()) {
-      set_dep_name_vec_tbl(from.dep_name_vec_tbl());
+    if (from.has_netgen_output_file_name()) {
+      set_netgen_output_file_name(from.netgen_output_file_name());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -3129,7 +2722,7 @@ void CaffeGenData::CopyFrom(const CaffeGenData& from) {
 }
 
 bool CaffeGenData::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00053f87) != 0x00053f87) return false;
+  if ((_has_bits_[0] & 0x00013f87) != 0x00013f87) return false;
 
   for (int i = 0; i < data_fields_size(); i++) {
     if (!this->data_fields(i).IsInitialized()) return false;
@@ -3145,9 +2738,6 @@ bool CaffeGenData::IsInitialized() const {
   }
   for (int i = 0; i < data_filters_size(); i++) {
     if (!this->data_filters(i).IsInitialized()) return false;
-  }
-  for (int i = 0; i < vec_tbls_size(); i++) {
-    if (!this->vec_tbls(i).IsInitialized()) return false;
   }
   return true;
 }
@@ -3170,9 +2760,7 @@ void CaffeGenData::Swap(CaffeGenData* other) {
     std::swap(config_file_name_, other->config_file_name_);
     std::swap(num_accuracy_candidates_, other->num_accuracy_candidates_);
     data_filters_.Swap(&other->data_filters_);
-    std::swap(vec_tbls_core_path_, other->vec_tbls_core_path_);
-    vec_tbls_.Swap(&other->vec_tbls_);
-    std::swap(dep_name_vec_tbl_, other->dep_name_vec_tbl_);
+    std::swap(netgen_output_file_name_, other->netgen_output_file_name_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

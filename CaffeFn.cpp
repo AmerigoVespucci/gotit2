@@ -39,18 +39,42 @@ void CGotitEnv::CaffeFnInit()
 		return;
 	}
 
-	NetGenInitData * InitData = new NetGenInitData;
+	string sTblDefsProtoName;
+	if (!GetImplemParam(sTblDefsProtoName, "Implem.Param.FnParam.CaffeFn.TblDefsProtoName")) {
+		cerr << "CaffeFn cannot be called without setting Implem.Param.FnParam.CaffeFn.TblDefsProtoName \n";
+		return;
+	}
 
-	if (!GenDataModelInit(sModelProtoName, InitData)) {
+	CGenDefTbls * GenTbls = new CGenDefTbls(sTblDefsProtoName);
+	if (!GenTbls->bInitDone) {
+		cerr << "Failed to initialize tables def file. Terminating.\n";
+		return;
+	}
+	const bool cb_model_owns_tbls = true;
+
+	CGenDef * InitData = new CGenDef(GenTbls, cb_model_owns_tbls);
+
+	if (	!InitData->ModelInit(sModelProtoName)
+		||	!InitData->ModelPrep()) {
 		delete InitData;
 		return;
 	}
 
 	CaffeGenSeed* gen_seed_config = new CaffeGenSeed;
 	gen_seed_config->set_num_test_cases(0);
+
+	CaffeGenData* gen_data = InitData->getGenData(); 
+	const string& CoreDir = gen_data->files_core_dir();
+	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
+	// trancate files at init which wil later be appended
+	ofstream test_list(H5TestListFileName);
+	ofstream train_list(H5TrainListFileName);
+
 	CaffeFnOutHandle = gen_seed_config;
 	CaffeFnDataHandle = InitData;
 }
+
 void CGotitEnv::CaffeFnComplete()
 {
 	
@@ -60,13 +84,13 @@ void CGotitEnv::CaffeFnComplete()
 		return;
 		
 	}
-	NetGenInitData * InitData = (NetGenInitData * )CaffeFnDataHandle;
-	CaffeGenData* gen_data = InitData->gen_data; // (CaffeGenData *)CaffeFnHandle;
+	CGenDef * InitData = (CGenDef * )CaffeFnDataHandle;
+	CaffeGenData* gen_data = InitData->getGenData(); // (CaffeGenData *)CaffeFnHandle;
 	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;
 
 	const string& CoreDir = gen_data->files_core_dir();
-	string H5TrainListFileName = CoreDir + "data/train_list.txt";
-	string H5TestListFileName = CoreDir + "data/test_list.txt";
+	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
 	
 	ofstream config_ofs(CoreDir + gen_data->config_file_name());
 	google::protobuf::io::OstreamOutputStream* config_output 
@@ -82,6 +106,7 @@ void CGotitEnv::CaffeFnComplete()
 		google::protobuf::TextFormat::Print(*gen_seed_config, config_output);
 		delete config_output;
 	}
+
 	
 	delete gen_seed_config ;
 	delete InitData;
@@ -99,28 +124,26 @@ void CGotitEnv::CaffeFn()
 	}
 	
 	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;	
-	NetGenInitData * InitData = (NetGenInitData * )CaffeFnDataHandle;
-	CaffeGenData* gen_data = InitData->gen_data; // (CaffeGenData *)CaffeFnHandle;
-	vector<map<string, int>*>& TranslateTblPtrs = InitData->TranslateTblPtrs;
-	vector<vector<vector<float> >* >& VecTblPtrs = InitData->VecTblPtrs;
+	CGenDef * InitData = (CGenDef * )CaffeFnDataHandle;
+	CaffeGenData* gen_data = InitData->getGenData(); // (CaffeGenData *)CaffeFnHandle;
+//	vector<map<string, int>*>& TranslateTblPtrs = InitData->TranslateTblPtrs;
+	vector<vector<vector<float> >* >& VecTblPtrs = InitData->getVecTblPtrs();
+	int NumOutputNodesNeeded = InitData->getNumOutputNodesNeeded();
 	vector<DataAvailType> CorefAvail;
 	vector<SSentenceRecAvail> SentenceAvailList(0);
 
-	vector<pair<int, int> > InputTranslateTbl;
-	vector<pair<int, int> > OutputTranslateTbl;
-	vector<SDataForVecs > DataForVecs;
-	int NumOutputNodesNeeded = -1;
+	vector<pair<int, int> >& InputTranslateTbl = InitData->getInputTranslateTbl();
+	vector<pair<int, int> > OutputTranslateTbl = InitData->getOutputTranslateTbl();
 	
-	if (!GenDataModelApply(	InputTranslateTbl, OutputTranslateTbl,
-							DataForVecs, NumOutputNodesNeeded,
-							SentenceRec, CorefList, 
-							SentenceAvailList, CorefAvail,
-							InitData)) {
+	CGenModelRun GenModelRun(*InitData, SentenceRec, CorefList, 
+							SentenceAvailList, CorefAvail);
+	
+	if (!GenModelRun.DoRun()) {
 		return;
 	}
+	
+	vector<SDataForVecs >& DataForVecs = GenModelRun.getDataForVecs();
 
-	vector<string>& DepNames = InitData->DepNames;
-	int YesNoTblIdx = InitData->YesNoTblIdx;
 
 	const string& CoreDir = gen_data->files_core_dir();
 	string sConfigLoopNum;
@@ -128,11 +151,10 @@ void CGotitEnv::CaffeFn()
 		cerr << "CaffeFn assumes it is called as part of a loop with loop parameter Task.Param.DoCaffeFn.Loop0 \n";
 		return;
 	}
-	string H5TrainListFileName = CoreDir + "data/train_list.txt";
-	string H5TestListFileName = CoreDir + "data/test_list.txt";
-	string H5TrainFileName = CoreDir + "data/train" + sConfigLoopNum + ".h5";
-	string H5TestFileName = CoreDir + "data/test" + sConfigLoopNum + ".h5";
-	string WordListFileName = CoreDir + "data/WordList.txt";
+	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
+	string H5TrainFileName = CoreDir + gen_data->train_list_file_name() + sConfigLoopNum + ".h5";
+	string H5TestFileName = CoreDir + gen_data->test_list_file_name() + sConfigLoopNum + ".h5";
 	
 	int NumRecords = DataForVecs.size() / 2;
 	int NumLabelVals = 0;
@@ -231,8 +253,10 @@ void CGotitEnv::CaffeFn()
 	{
 
 		ofstream test_list(H5TestListFileName, ofstream::app);
-		ofstream train_list(H5TrainListFileName, ofstream::app);
-//		ofstream test_list(H5TestListFileName);
+		ofstream train_list(H5TrainListFileName,ofstream::app);
+//		ofstream test_list(H5TestListFileName, (sConfigLoopNum == "0") ?  ofstream::trunc : ofstream::app);
+//		ofstream train_list(H5TrainListFileName, (sConfigLoopNum == "0") ?  ofstream::trunc : ofstream::app);
+////		ofstream test_list(H5TestListFileName);
 		if (test_list.is_open()) {
 			test_list << H5TestFileName << endl;
 		}

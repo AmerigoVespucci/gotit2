@@ -640,7 +640,8 @@
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
-      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/models/CaffeFnModels/RootPOSPredict.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.TblDefsProtoName" val="/devlink/caffe/data/GenGen/TblDefs/tbls.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/data/GenGen/gengen1455787125.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
       <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="6" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
