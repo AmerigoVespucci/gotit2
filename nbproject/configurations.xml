@@ -25,6 +25,7 @@
       <itemPath>GenData.pb.cc</itemPath>
       <itemPath>GenDataTbls.pb.cc</itemPath>
       <itemPath>../../dev/caffe/src/caffe/GenDef.cpp</itemPath>
+      <itemPath>GenDef.pb.cc</itemPath>
       <itemPath>GenSeed.pb.cc</itemPath>
       <itemPath>GenTbl.pb.cc</itemPath>
       <itemPath>GrpsCntrl.cpp</itemPath>
@@ -139,6 +140,8 @@
       <item path="GenData.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenDataTbls.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenDef.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -276,6 +279,8 @@
       <item path="GenData.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenDataTbls.pb.cc" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenDef.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GenSeed.pb.cc" ex="false" tool="1" flavor2="0">
       </item>

@@ -12,6 +12,7 @@
 
 #include "GenSeed.pb.h"
 #include "GenData.pb.h"
+#include "GenDef.pb.h"
 
 #include "/home/eli/dev/caffe/include/caffe/GenData.hpp"
 #include "MascReader.h"
@@ -63,10 +64,10 @@ void CGotitEnv::CaffeFnInit()
 	CaffeGenSeed* gen_seed_config = new CaffeGenSeed;
 	gen_seed_config->set_num_test_cases(0);
 
-	CaffeGenData* gen_data = InitData->getGenData(); 
-	const string& CoreDir = gen_data->files_core_dir();
-	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
-	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
+	CaffeGenDef* gen_def = InitData->getGenDef(); 
+	const string& CoreDir = gen_def->files_core_dir();
+	string H5TrainListFileName = CoreDir + gen_def->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_def->test_list_file_name() + "_list.txt";
 	// trancate files at init which wil later be appended
 	ofstream test_list(H5TestListFileName);
 	ofstream train_list(H5TrainListFileName);
@@ -85,14 +86,14 @@ void CGotitEnv::CaffeFnComplete()
 		
 	}
 	CGenDef * InitData = (CGenDef * )CaffeFnDataHandle;
-	CaffeGenData* gen_data = InitData->getGenData(); // (CaffeGenData *)CaffeFnHandle;
+	CaffeGenDef* gen_def = InitData->getGenDef(); // (CaffeGenData *)CaffeFnHandle;
 	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;
 
-	const string& CoreDir = gen_data->files_core_dir();
-	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
-	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
+	const string& CoreDir = gen_def->files_core_dir();
+	string H5TrainListFileName = CoreDir + gen_def->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_def->test_list_file_name() + "_list.txt";
 	
-	ofstream config_ofs(CoreDir + gen_data->config_file_name());
+	ofstream config_ofs(CoreDir + gen_def->config_file_name());
 	google::protobuf::io::OstreamOutputStream* config_output 
 		= new google::protobuf::io::OstreamOutputStream(&config_ofs);
 	//ofstream f_config(ConfigFileName); // I think this one is wrong
@@ -100,9 +101,9 @@ void CGotitEnv::CaffeFnComplete()
 		//CaffeGenSeed config;
 		gen_seed_config->set_test_list_file_name(H5TestListFileName);
 		gen_seed_config->set_train_list_file_name(H5TrainListFileName);
-		gen_seed_config->set_model_file_name(CoreDir + gen_data->model_file_name());
-		gen_seed_config->set_proto_file_name(CoreDir + gen_data->proto_file_name());
-		gen_seed_config->set_num_accuracy_candidates(gen_data->num_accuracy_candidates());
+		gen_seed_config->set_model_file_name(CoreDir + gen_def->model_file_name());
+		gen_seed_config->set_proto_file_name(CoreDir + gen_def->proto_file_name());
+		gen_seed_config->set_num_accuracy_candidates(gen_def->num_accuracy_candidates());
 		google::protobuf::TextFormat::Print(*gen_seed_config, config_output);
 		delete config_output;
 	}
@@ -125,7 +126,7 @@ void CGotitEnv::CaffeFn()
 	
 	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;	
 	CGenDef * InitData = (CGenDef * )CaffeFnDataHandle;
-	CaffeGenData* gen_data = InitData->getGenData(); // (CaffeGenData *)CaffeFnHandle;
+	CaffeGenDef* gen_def = InitData->getGenDef(); // (CaffeGenData *)CaffeFnHandle;
 //	vector<map<string, int>*>& TranslateTblPtrs = InitData->TranslateTblPtrs;
 	vector<vector<vector<float> >* >& VecTblPtrs = InitData->getVecTblPtrs();
 	int NumOutputNodesNeeded = InitData->getNumOutputNodesNeeded();
@@ -145,16 +146,16 @@ void CGotitEnv::CaffeFn()
 	vector<SDataForVecs >& DataForVecs = GenModelRun.getDataForVecs();
 
 
-	const string& CoreDir = gen_data->files_core_dir();
+	const string& CoreDir = gen_def->files_core_dir();
 	string sConfigLoopNum;
 	if (!GetImplemParam(sConfigLoopNum, "Task.Param.DoCaffeFn.Loop0")) {
 		cerr << "CaffeFn assumes it is called as part of a loop with loop parameter Task.Param.DoCaffeFn.Loop0 \n";
 		return;
 	}
-	string H5TrainListFileName = CoreDir + gen_data->train_list_file_name() + "_list.txt";
-	string H5TestListFileName = CoreDir + gen_data->test_list_file_name() + "_list.txt";
-	string H5TrainFileName = CoreDir + gen_data->train_list_file_name() + sConfigLoopNum + ".h5";
-	string H5TestFileName = CoreDir + gen_data->test_list_file_name() + sConfigLoopNum + ".h5";
+	string H5TrainListFileName = CoreDir + gen_def->train_list_file_name() + "_list.txt";
+	string H5TestListFileName = CoreDir + gen_def->test_list_file_name() + "_list.txt";
+	string H5TrainFileName = CoreDir + gen_def->train_list_file_name() + sConfigLoopNum + ".h5";
+	string H5TestFileName = CoreDir + gen_def->test_list_file_name() + sConfigLoopNum + ".h5";
 	
 	int NumRecords = DataForVecs.size() / 2;
 	int NumLabelVals = 0;
@@ -269,7 +270,7 @@ void CGotitEnv::CaffeFn()
 	gen_seed_config->set_num_test_cases(TestCases);
 	// the following two repeatedly set. No harm AFAICS
 	gen_seed_config->set_num_output_nodes(NumOutputNodesNeeded);
-	gen_seed_config->set_net_end_type((CaffeGenSeed::NetEndType)gen_data->net_end_type());
+	gen_seed_config->set_net_end_type((CaffeGenSeed::NetEndType)gen_def->net_end_type());
 	
 
 }

@@ -44,6 +44,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/Gamer.o \
 	${OBJECTDIR}/GenData.pb.o \
 	${OBJECTDIR}/GenDataTbls.pb.o \
+	${OBJECTDIR}/GenDef.pb.o \
 	${OBJECTDIR}/GenSeed.pb.o \
 	${OBJECTDIR}/GenTbl.pb.o \
 	${OBJECTDIR}/GrpsCntrl.o \
@@ -142,6 +143,11 @@ ${OBJECTDIR}/GenDataTbls.pb.o: GenDataTbls.pb.cc
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_release/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenDataTbls.pb.o GenDataTbls.pb.cc
+
+${OBJECTDIR}/GenDef.pb.o: GenDef.pb.cc 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_release/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GenDef.pb.o GenDef.pb.cc
 
 ${OBJECTDIR}/GenSeed.pb.o: GenSeed.pb.cc 
 	${MKDIR} -p ${OBJECTDIR}

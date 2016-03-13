@@ -641,7 +641,7 @@
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.TblDefsProtoName" val="/devlink/caffe/data/GenGen/TblDefs/tbls.prototxt" />
-      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/data/GenGen/gengen1455787125.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.ModelProtoName" val="/devlink/caffe/data/GenGen/gengen1457876578.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnInit" />
       <TaskItem TaskType="SetParam" do="Task.Param.DoCaffeFn.Loop0" val="6" should_be_val="40" />
       <TaskItem TaskType="LoopStart" do="Task.Param.DoCaffeFn.Loop0" />
