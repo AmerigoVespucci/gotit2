@@ -442,10 +442,10 @@
   </GrpCreateList>
   <TaskLists>
     <TaskNode name="TaskNode.InitFromNLP">
-      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPOutDir" val="/guten/NLP36Out" comment="where the nlp writes its files to"/>
-      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPOutDir" val="/guten/CROut" comment="where the nlp writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPExt" val="out" comment="The extension the NLP appends to the file name"/>
-      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="not a param specific to this function"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="not a param specific to this function"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
     </TaskNode>
     <TaskNode name="TaskNode.StartWork">
@@ -636,8 +636,8 @@
       <TaskItem TaskType="NoArgsFn" do="TblGen" />
     </TaskNode>
     <TaskNode name="TaskNode.DoCaffeFn">
-      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
-      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <!-- <TaskItem TaskType="NoArgsFn" do="LoadGroups" /> -->
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.TblDefsProtoName" val="/devlink/caffe/data/GenGen/TblDefs/tbls.prototxt" />
@@ -651,6 +651,16 @@
       <TaskItem TaskType="NoArgsFn" do="CaffeFn" />
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
       <TaskItem TaskType="LoopEnd" commment="Task.Param.DoCaffeFn.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="CaffeFnComplete" />
+    </TaskNode>
+    <TaskNode name="TaskNode.DoCaffePrepServer">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.TblDefsProtoName" val="/devlink/caffe/data/GenGen/TblDefs/tbls.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.PortNum" val="1544" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="CaffePrepServer" />
       <TaskItem TaskType="NoArgsFn" do="CaffeFnComplete" />
     </TaskNode>
     <TaskNode name="TaskNode.SaveForAEWordVec">
@@ -1200,8 +1210,8 @@
     <ImplementationParameter name="bInitLoadFromGotit" type="constant" val="true" comment="if true, start off by loading the original files from NLP" />
     <ImplementationParameter name="bRecreateInitialGroups" type="constant" val="true" comment="if true, start off by loading the original files from NLP" />
     -->
-    <ImplementationParameter name="Implem.Param.LoadGotitFilesLimit" type="constant" val="500" comment="Limit for the number of gotit modules we load. -1 means no limit" />
-    <ImplementationParameter name="Implem.Param.LoadNLPFilesLimit" type="constant" val="300" comment="Limit for the number of Stanford NLP xml files we load. -1 means no limit" />
+    <ImplementationParameter name="Implem.Param.LoadGotitFilesLimit" type="constant" val="50000" comment="Limit for the number of gotit modules we load. -1 means no limit" />
+    <ImplementationParameter name="Implem.Param.LoadNLPFilesLimit" type="constant" val="-1" comment="Limit for the number of Stanford NLP xml files we load. -1 means no limit" />
     <ImplementationParameter name="Implem.Param.FnParam.CreateGroups.SpecificFinderNm" type="ExtSet" val="" comment="Name of Pat Grp Finder. empty means try them all" />
     <ImplementationParameter name="Implem.Param.FnParam.CreateGroups.Seed" type="ExtSet" val="" comment="Passed as an enternal param. empty should be used only if there is no external param" />
     <ImplementationParameter name="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" type="ExtSet" val="" comment="Only use sentences that conain this word. empty means load all senteces" />
@@ -1251,9 +1261,12 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.SaveForGramValid"  commment="saving valid and invalid ngrams for caffe learn" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="Conditional compilation of desired function" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoTblGen"  commment="Conditional compilation of desired function" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="build data table" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffePrepServer"  commment="listen for call to build data table" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitFromNLP" />
 
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="build data table" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffePrepServer"  commment="listen for call to build data table" />
 
   </ImplementationParameterList>
 </Config>

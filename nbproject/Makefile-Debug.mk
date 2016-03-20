@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/c7f2a17a/GenDef.o \
+	${OBJECTDIR}/_ext/ee867b77/ipc.o \
 	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
@@ -103,6 +104,11 @@ ${OBJECTDIR}/_ext/c7f2a17a/GenDef.o: ../../dev/caffe/src/caffe/GenDef.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/c7f2a17a
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/c7f2a17a/GenDef.o ../../dev/caffe/src/caffe/GenDef.cpp
+
+${OBJECTDIR}/_ext/ee867b77/ipc.o: ../../dev/caffe/src/caffe/util/ipc.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/ee867b77
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/ee867b77/ipc.o ../../dev/caffe/src/caffe/util/ipc.cpp
 
 ${OBJECTDIR}/CaffeFn.o: CaffeFn.cpp 
 	${MKDIR} -p ${OBJECTDIR}

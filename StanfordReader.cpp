@@ -209,32 +209,34 @@ void ConvertStanfordOutput(	string OutputDir, string FileName, string Ext,
 	int LastGov = -1;
 	xml_node<> *TopCorefNode = DocNode->first_node("coreference");
 	//xml_node<> *AllCorefNodes = TopCorefNode->first_node("coreference");
-	for (xml_node<> *CorefNode = TopCorefNode->first_node("coreference"); CorefNode; CorefNode = CorefNode->next_sibling()) {
-		for (xml_node<> *MentionNode = CorefNode->first_node("mention"); MentionNode; MentionNode = MentionNode->next_sibling()) {
-			CorefRec crec;
-			xml_attribute<> *attr = MentionNode->first_attribute("representative");
-			if (attr) {
-				LastGov = CorefList.size();
+	if (TopCorefNode != NULL) {
+		for (xml_node<> *CorefNode = TopCorefNode->first_node("coreference"); CorefNode; CorefNode = CorefNode->next_sibling()) {
+			for (xml_node<> *MentionNode = CorefNode->first_node("mention"); MentionNode; MentionNode = MentionNode->next_sibling()) {
+				CorefRec crec;
+				xml_attribute<> *attr = MentionNode->first_attribute("representative");
+				if (attr) {
+					LastGov = CorefList.size();
+				}
+				for (xml_node<> *node = MentionNode->first_node(); node; node = node->next_sibling()) {
+					if (strcmp(node->name(), "sentence") == 0) {
+						crec.SentenceID = atoi(node->value()) - 1;
+					}
+					else if (strcmp(node->name(), "start") == 0) {
+						crec.StartWordID = atoi(node->value()) - 1;
+					}
+					else if (strcmp(node->name(), "end") == 0) {
+						crec.EndWordID = atoi(node->value()) - 1;
+					}
+					else if (strcmp(node->name(), "head") == 0) {
+						crec.HeadWordId = atoi(node->value()) - 1;
+					}
+				}
+				crec.GovID = LastGov;
+				CorefList.push_back(crec);
 			}
-			for (xml_node<> *node = MentionNode->first_node(); node; node = node->next_sibling()) {
-				if (strcmp(node->name(), "sentence") == 0) {
-					crec.SentenceID = atoi(node->value()) - 1;
-				}
-				else if (strcmp(node->name(), "start") == 0) {
-					crec.StartWordID = atoi(node->value()) - 1;
-				}
-				else if (strcmp(node->name(), "end") == 0) {
-					crec.EndWordID = atoi(node->value()) - 1;
-				}
-				else if (strcmp(node->name(), "head") == 0) {
-					crec.HeadWordId = atoi(node->value()) - 1;
-				}
-			}
-			crec.GovID = LastGov;
-			CorefList.push_back(crec);
 		}
 	}
-
+	
 	{
 		path OrigPath = FileName;
 #ifndef GOTIT_LINUX

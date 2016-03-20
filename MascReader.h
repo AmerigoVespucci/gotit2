@@ -696,8 +696,9 @@ public:
 	void CaffeFn();
 	void CaffeFnInit();
 	void CaffeFnComplete();
-        void TblGenInit();
-        void TblGen();
+	void TblGenInit();
+	void TblGen();
+	void CaffePrepServer();
 	
 private:
 	void WordsCreated();

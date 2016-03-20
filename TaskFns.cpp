@@ -51,6 +51,7 @@ void CGotitEnv::RegisterCallableFunctions()
 	TaskFnMap["CaffeFnComplete"] = &CGotitEnv::CaffeFnComplete;
 	TaskFnMap["TblGen"] = &CGotitEnv::TblGen;
 	TaskFnMap["TblGenInit"] = &CGotitEnv::TblGenInit;
+	TaskFnMap["CaffePrepServer"] = &CGotitEnv::CaffePrepServer;
 }
 
 

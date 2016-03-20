@@ -47,6 +47,7 @@
       <itemPath>XmlParser.cpp</itemPath>
       <itemPath>RF/discrete_dist.cc</itemPath>
       <itemPath>RF/instance_set.cc</itemPath>
+      <itemPath>../../dev/caffe/src/caffe/util/ipc.cpp</itemPath>
       <itemPath>ipc.pb.cc</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>RF/random_forest.cc</itemPath>
@@ -101,6 +102,11 @@
         </linkerTool>
       </compileType>
       <item path="../../dev/caffe/src/caffe/GenDef.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../dev/caffe/src/caffe/util/ipc.cpp"
             ex="false"
             tool="1"
             flavor2="0">
@@ -240,6 +246,11 @@
         </linkerTool>
       </compileType>
       <item path="../../dev/caffe/src/caffe/GenDef.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../dev/caffe/src/caffe/util/ipc.cpp"
             ex="false"
             tool="1"
             flavor2="0">

@@ -35,17 +35,21 @@ void protobuf_ShutdownFile_ipc_2eproto();
 class CaffeIpc;
 class CaffeIpc_InitNetParams;
 class CaffeIpc_DataParam;
+class CaffeIpc_PrepGenParam;
 
 enum CaffeIpc_MsgType {
   CaffeIpc_MsgType_INIT_NET = 1,
   CaffeIpc_MsgType_INIT_NET_DONE = 2,
   CaffeIpc_MsgType_NET_PREDICT = 3,
   CaffeIpc_MsgType_PREDICT_RESULT = 4,
-  CaffeIpc_MsgType_END_NET = 5
+  CaffeIpc_MsgType_END_NET = 5,
+  CaffeIpc_MsgType_PREP_GEN = 6,
+  CaffeIpc_MsgType_PREP_GEN_DONE = 7,
+  CaffeIpc_MsgType_PREP_GEN_FAILED = 8
 };
 bool CaffeIpc_MsgType_IsValid(int value);
 const CaffeIpc_MsgType CaffeIpc_MsgType_MsgType_MIN = CaffeIpc_MsgType_INIT_NET;
-const CaffeIpc_MsgType CaffeIpc_MsgType_MsgType_MAX = CaffeIpc_MsgType_END_NET;
+const CaffeIpc_MsgType CaffeIpc_MsgType_MsgType_MAX = CaffeIpc_MsgType_PREP_GEN_FAILED;
 const int CaffeIpc_MsgType_MsgType_ARRAYSIZE = CaffeIpc_MsgType_MsgType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CaffeIpc_MsgType_descriptor();
@@ -337,6 +341,93 @@ class CaffeIpc_DataParam : public ::google::protobuf::Message {
 };
 // -------------------------------------------------------------------
 
+class CaffeIpc_PrepGenParam : public ::google::protobuf::Message {
+ public:
+  CaffeIpc_PrepGenParam();
+  virtual ~CaffeIpc_PrepGenParam();
+
+  CaffeIpc_PrepGenParam(const CaffeIpc_PrepGenParam& from);
+
+  inline CaffeIpc_PrepGenParam& operator=(const CaffeIpc_PrepGenParam& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CaffeIpc_PrepGenParam& default_instance();
+
+  void Swap(CaffeIpc_PrepGenParam* other);
+
+  // implements Message ----------------------------------------------
+
+  CaffeIpc_PrepGenParam* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CaffeIpc_PrepGenParam& from);
+  void MergeFrom(const CaffeIpc_PrepGenParam& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string gengen_filename = 1;
+  inline bool has_gengen_filename() const;
+  inline void clear_gengen_filename();
+  static const int kGengenFilenameFieldNumber = 1;
+  inline const ::std::string& gengen_filename() const;
+  inline void set_gengen_filename(const ::std::string& value);
+  inline void set_gengen_filename(const char* value);
+  inline void set_gengen_filename(const char* value, size_t size);
+  inline ::std::string* mutable_gengen_filename();
+  inline ::std::string* release_gengen_filename();
+  inline void set_allocated_gengen_filename(::std::string* gengen_filename);
+
+  // @@protoc_insertion_point(class_scope:CaffeIpc.PrepGenParam)
+ private:
+  inline void set_has_gengen_filename();
+  inline void clear_has_gengen_filename();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* gengen_filename_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
+
+  friend void  protobuf_AddDesc_ipc_2eproto();
+  friend void protobuf_AssignDesc_ipc_2eproto();
+  friend void protobuf_ShutdownFile_ipc_2eproto();
+
+  void InitAsDefaultInstance();
+  static CaffeIpc_PrepGenParam* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class CaffeIpc : public ::google::protobuf::Message {
  public:
   CaffeIpc();
@@ -391,6 +482,7 @@ class CaffeIpc : public ::google::protobuf::Message {
 
   typedef CaffeIpc_InitNetParams InitNetParams;
   typedef CaffeIpc_DataParam DataParam;
+  typedef CaffeIpc_PrepGenParam PrepGenParam;
 
   typedef CaffeIpc_MsgType MsgType;
   static const MsgType INIT_NET = CaffeIpc_MsgType_INIT_NET;
@@ -398,6 +490,9 @@ class CaffeIpc : public ::google::protobuf::Message {
   static const MsgType NET_PREDICT = CaffeIpc_MsgType_NET_PREDICT;
   static const MsgType PREDICT_RESULT = CaffeIpc_MsgType_PREDICT_RESULT;
   static const MsgType END_NET = CaffeIpc_MsgType_END_NET;
+  static const MsgType PREP_GEN = CaffeIpc_MsgType_PREP_GEN;
+  static const MsgType PREP_GEN_DONE = CaffeIpc_MsgType_PREP_GEN_DONE;
+  static const MsgType PREP_GEN_FAILED = CaffeIpc_MsgType_PREP_GEN_FAILED;
   static inline bool MsgType_IsValid(int value) {
     return CaffeIpc_MsgType_IsValid(value);
   }
@@ -453,6 +548,15 @@ class CaffeIpc : public ::google::protobuf::Message {
   inline ::CaffeIpc_DataParam* release_data_param();
   inline void set_allocated_data_param(::CaffeIpc_DataParam* data_param);
 
+  // optional .CaffeIpc.PrepGenParam prep_gen_param = 5;
+  inline bool has_prep_gen_param() const;
+  inline void clear_prep_gen_param();
+  static const int kPrepGenParamFieldNumber = 5;
+  inline const ::CaffeIpc_PrepGenParam& prep_gen_param() const;
+  inline ::CaffeIpc_PrepGenParam* mutable_prep_gen_param();
+  inline ::CaffeIpc_PrepGenParam* release_prep_gen_param();
+  inline void set_allocated_prep_gen_param(::CaffeIpc_PrepGenParam* prep_gen_param);
+
   // @@protoc_insertion_point(class_scope:CaffeIpc)
  private:
   inline void set_has_type();
@@ -463,6 +567,8 @@ class CaffeIpc : public ::google::protobuf::Message {
   inline void clear_has_init_net_done();
   inline void set_has_data_param();
   inline void clear_has_data_param();
+  inline void set_has_prep_gen_param();
+  inline void clear_has_prep_gen_param();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -470,9 +576,10 @@ class CaffeIpc : public ::google::protobuf::Message {
   int type_;
   bool init_net_done_;
   ::CaffeIpc_DataParam* data_param_;
+  ::CaffeIpc_PrepGenParam* prep_gen_param_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_ipc_2eproto();
   friend void protobuf_AssignDesc_ipc_2eproto();
@@ -931,6 +1038,80 @@ CaffeIpc_DataParam::mutable_data_val() {
 
 // -------------------------------------------------------------------
 
+// CaffeIpc_PrepGenParam
+
+// required string gengen_filename = 1;
+inline bool CaffeIpc_PrepGenParam::has_gengen_filename() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CaffeIpc_PrepGenParam::set_has_gengen_filename() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CaffeIpc_PrepGenParam::clear_has_gengen_filename() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CaffeIpc_PrepGenParam::clear_gengen_filename() {
+  if (gengen_filename_ != &::google::protobuf::internal::kEmptyString) {
+    gengen_filename_->clear();
+  }
+  clear_has_gengen_filename();
+}
+inline const ::std::string& CaffeIpc_PrepGenParam::gengen_filename() const {
+  return *gengen_filename_;
+}
+inline void CaffeIpc_PrepGenParam::set_gengen_filename(const ::std::string& value) {
+  set_has_gengen_filename();
+  if (gengen_filename_ == &::google::protobuf::internal::kEmptyString) {
+    gengen_filename_ = new ::std::string;
+  }
+  gengen_filename_->assign(value);
+}
+inline void CaffeIpc_PrepGenParam::set_gengen_filename(const char* value) {
+  set_has_gengen_filename();
+  if (gengen_filename_ == &::google::protobuf::internal::kEmptyString) {
+    gengen_filename_ = new ::std::string;
+  }
+  gengen_filename_->assign(value);
+}
+inline void CaffeIpc_PrepGenParam::set_gengen_filename(const char* value, size_t size) {
+  set_has_gengen_filename();
+  if (gengen_filename_ == &::google::protobuf::internal::kEmptyString) {
+    gengen_filename_ = new ::std::string;
+  }
+  gengen_filename_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CaffeIpc_PrepGenParam::mutable_gengen_filename() {
+  set_has_gengen_filename();
+  if (gengen_filename_ == &::google::protobuf::internal::kEmptyString) {
+    gengen_filename_ = new ::std::string;
+  }
+  return gengen_filename_;
+}
+inline ::std::string* CaffeIpc_PrepGenParam::release_gengen_filename() {
+  clear_has_gengen_filename();
+  if (gengen_filename_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = gengen_filename_;
+    gengen_filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CaffeIpc_PrepGenParam::set_allocated_gengen_filename(::std::string* gengen_filename) {
+  if (gengen_filename_ != &::google::protobuf::internal::kEmptyString) {
+    delete gengen_filename_;
+  }
+  if (gengen_filename) {
+    set_has_gengen_filename();
+    gengen_filename_ = gengen_filename;
+  } else {
+    clear_has_gengen_filename();
+    gengen_filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
 // CaffeIpc
 
 // required .CaffeIpc.MsgType type = 1;
@@ -1051,6 +1232,44 @@ inline void CaffeIpc::set_allocated_data_param(::CaffeIpc_DataParam* data_param)
     set_has_data_param();
   } else {
     clear_has_data_param();
+  }
+}
+
+// optional .CaffeIpc.PrepGenParam prep_gen_param = 5;
+inline bool CaffeIpc::has_prep_gen_param() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CaffeIpc::set_has_prep_gen_param() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CaffeIpc::clear_has_prep_gen_param() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CaffeIpc::clear_prep_gen_param() {
+  if (prep_gen_param_ != NULL) prep_gen_param_->::CaffeIpc_PrepGenParam::Clear();
+  clear_has_prep_gen_param();
+}
+inline const ::CaffeIpc_PrepGenParam& CaffeIpc::prep_gen_param() const {
+  return prep_gen_param_ != NULL ? *prep_gen_param_ : *default_instance_->prep_gen_param_;
+}
+inline ::CaffeIpc_PrepGenParam* CaffeIpc::mutable_prep_gen_param() {
+  set_has_prep_gen_param();
+  if (prep_gen_param_ == NULL) prep_gen_param_ = new ::CaffeIpc_PrepGenParam;
+  return prep_gen_param_;
+}
+inline ::CaffeIpc_PrepGenParam* CaffeIpc::release_prep_gen_param() {
+  clear_has_prep_gen_param();
+  ::CaffeIpc_PrepGenParam* temp = prep_gen_param_;
+  prep_gen_param_ = NULL;
+  return temp;
+}
+inline void CaffeIpc::set_allocated_prep_gen_param(::CaffeIpc_PrepGenParam* prep_gen_param) {
+  delete prep_gen_param_;
+  prep_gen_param_ = prep_gen_param;
+  if (prep_gen_param) {
+    set_has_prep_gen_param();
+  } else {
+    clear_has_prep_gen_param();
   }
 }
 

@@ -9,6 +9,7 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/text_format.h>
 #include "stdafx.h"
+#include <boost/asio.hpp>
 
 #include "GenSeed.pb.h"
 #include "GenData.pb.h"
@@ -18,6 +19,10 @@
 #include "MascReader.h"
 #include "H5Cpp.h"
 
+#include "ipc.pb.h"
+#include "/home/eli/dev/caffe/include/caffe/util/ipc.hpp"
+
+using boost::asio::ip::tcp;
 
 #ifndef H5_NO_NAMESPACE
     using namespace H5;
@@ -115,13 +120,111 @@ void CGotitEnv::CaffeFnComplete()
 	CaffeFnOutHandle = NULL;
 }
 
+tcp::socket* IPCServerInit(const char * port_str);
+
+void CGotitEnv::CaffePrepServer()
+{
+//	string sCaffeHostName;
+//	if (!GetImplemParam(sCaffeHostName, "Implem.Param.FnParam.Caffe.HostName")) {
+//		cerr << "No Caffe host name provided\n";
+//		return;
+//	}
+	string sPortNum;
+	if (!GetImplemParam(sPortNum, "Implem.Param.FnParam.Caffe.PortNum")) {
+		cerr << "No Caffe port number provided\n";
+		return;
+	}
+
+	tcp::socket* ServerSocket = IPCServerInit(sPortNum.c_str());	
+
+	for (;;) {
+		CaffeIpc Msg1;
+		CaffeIPCRcvMsg(*ServerSocket, Msg1);
+
+		if (Msg1.type() == CaffeIpc::PREP_GEN) {
+			std::cerr << "Received name " << Msg1.prep_gen_param().gengen_filename() << std::endl;
+			const CaffeIpc::PrepGenParam& param_msg = Msg1.prep_gen_param();
+			SImplemParam Param;
+			Param.Name = "Implem.Param.FnParam.CaffeFn.ModelProtoName"; 
+			Param.Val = param_msg.gengen_filename();
+			ImplemParamTbl[Param.Name] = Param;
+
+			Param.Name = "Implem.Param.FnParam.CaffeFn.LoadYourOwnModules"; 
+			Param.Val = "yes";
+			ImplemParamTbl[Param.Name] = Param;
+
+			Param.Name = "Implem.Param.FnParam.CaffeFn.MinReqDataVecs"; 
+			Param.Val = "128";
+			ImplemParamTbl[Param.Name] = Param;
+			//break;
+			CaffeFnInit();
+			for (int i = 0; i < 6; i++) {
+				SImplemParam LoopParam;
+				LoopParam.Name = "Task.Param.DoCaffeFn.Loop0"; 
+				LoopParam.Val = to_string(i);
+				ImplemParamTbl[LoopParam.Name] = LoopParam;
+				
+				//LoadSentenceListOneMod();
+				CaffeFn();
+				//ClearSentenceRecs();
+			}
+			CaffeFnComplete();
+			
+			Param.Name = "Implem.Param.FnParam.CaffeFn.LoadYourOwnModules"; 
+			Param.Val = "no";
+			ImplemParamTbl[Param.Name] = Param;
+			
+			string sOK;
+			if (GetImplemParam(sOK, "Implem.Param.FnResponse.CaffeFn.OK")) {
+				if (!(sOK[0] == 'y' || sOK[0] == 'Y')) {
+					CaffeIpc Msg2;
+					Msg2.set_type(CaffeIpc::PREP_GEN_FAILED);
+					CaffeIPCSendMsg(*ServerSocket, Msg2);
+				}
+			}
+
+			CaffeIpc Msg2;
+			Msg2.set_type(CaffeIpc::PREP_GEN_DONE);
+			CaffeIPCSendMsg(*ServerSocket, Msg2);
+//			try {
+//				ServerSocket->shutdown(tcp::socket::shutdown_both);
+//				ServerSocket->close();
+//			}
+//			catch (...) {
+//				cerr << "Server socket closed\n";
+//			}
+		}
+	}
+}
+
 void CGotitEnv::CaffeFn()
 {
 
 	if (!CaffeFnDataHandle || !CaffeFnOutHandle)	 {
 		cerr << "CaffeFn can only work if preceeded by a succesful call to CaffeFnInit.\n";
+		SImplemParam Param;
+		Param.Name = "Implem.Param.FnResponse.CaffeFn.OK"; 
+		Param.Val = "no";
+		ImplemParamTbl[Param.Name] = Param;
 		return;
 		
+	}
+
+	string sLoadModules = "no";
+	bool bLoadModules = false;
+	if (GetImplemParam(sLoadModules, "Implem.Param.FnParam.CaffeFn.LoadYourOwnModules")) {
+		if (sLoadModules[0] == 'y' || sLoadModules[0] == 'Y') {
+			bLoadModules  = true;
+		}
+	}
+	
+	bool bKeepGoing = true;
+	bool bFirstRun = true;
+	const int cMinReqDataVecs = 128;
+	int MinReqDataVecs = cMinReqDataVecs;
+	string sMinReqDataVecs;
+	if (GetImplemParam(sMinReqDataVecs, "Implem.Param.FnParam.CaffeFn.MinReqDataVecs")) {
+		MinReqDataVecs = stoi(sMinReqDataVecs);
 	}
 	
 	CaffeGenSeed* gen_seed_config  = (CaffeGenSeed*)CaffeFnOutHandle;	
@@ -135,17 +238,51 @@ void CGotitEnv::CaffeFn()
 
 	vector<pair<int, int> >& InputTranslateTbl = InitData->getInputTranslateTbl();
 	vector<pair<int, int> > OutputTranslateTbl = InitData->getOutputTranslateTbl();
+
+	vector<SDataForVecs > DataForVecs;
+	int NumModsLoaded = 0;
+	bool bOK = true;
 	
-	CGenModelRun GenModelRun(*InitData, SentenceRec, CorefList, 
-							SentenceAvailList, CorefAvail);
-	
-	if (!GenModelRun.DoRun()) {
-		return;
+	while (bKeepGoing) {
+		if (bLoadModules) {
+			LoadSentenceListOneMod();
+			NumModsLoaded++;
+		}
+
+		CGenModelRun GenModelRun(*InitData, SentenceRec, CorefList, 
+								SentenceAvailList, CorefAvail, DataForVecs);
+
+		if (!GenModelRun.DoRun(!bFirstRun)) {
+			bKeepGoing = false;
+			bOK = false;
+		}
+		if (bLoadModules) {
+			if (DataForVecs.size() >= MinReqDataVecs) {
+				bKeepGoing = false;
+			} 
+			else if (NumModsLoaded > MinReqDataVecs) {
+				bKeepGoing = false;
+				bOK = false;
+			}
+			ClearSentenceRecs();
+		}
+		else {
+			bKeepGoing = false;
+		}
+
+		
+		bFirstRun = false;
 	}
 	
-	vector<SDataForVecs >& DataForVecs = GenModelRun.getDataForVecs();
+	//vector<SDataForVecs >& DataForVecs = GenModelRun.getDataForVecs();
 
-
+	if (!bOK) {
+		SImplemParam Param;
+		Param.Name = "Implem.Param.FnResponse.CaffeFn.OK"; 
+		Param.Val = "no";
+		ImplemParamTbl[Param.Name] = Param;
+		return;
+	}
 	const string& CoreDir = gen_def->files_core_dir();
 	string sConfigLoopNum;
 	if (!GetImplemParam(sConfigLoopNum, "Task.Param.DoCaffeFn.Loop0")) {
@@ -271,6 +408,11 @@ void CGotitEnv::CaffeFn()
 	// the following two repeatedly set. No harm AFAICS
 	gen_seed_config->set_num_output_nodes(NumOutputNodesNeeded);
 	gen_seed_config->set_net_end_type((CaffeGenSeed::NetEndType)gen_def->net_end_type());
+
+	SImplemParam Param;
+	Param.Name = "Implem.Param.FnResponse.CaffeFn.OK"; 
+	Param.Val = "yes";
+	ImplemParamTbl[Param.Name] = Param;
 	
 
 }
