@@ -10,6 +10,7 @@
 #include <google/protobuf/text_format.h>
 #include "stdafx.h"
 #include <boost/asio.hpp>
+#include <glog/logging.h>
 
 #include "GenSeed.pb.h"
 #include "GenData.pb.h"
@@ -104,6 +105,7 @@ void CGotitEnv::CaffeFnComplete()
 	//ofstream f_config(ConfigFileName); // I think this one is wrong
 	if (config_ofs.is_open()) {
 		//CaffeGenSeed config;
+		//vector<int>& output_set_num_nodes = InitData->getOutputSetNumNodes();
 		gen_seed_config->set_test_list_file_name(H5TestListFileName);
 		gen_seed_config->set_train_list_file_name(H5TrainListFileName);
 		gen_seed_config->set_model_file_name(CoreDir + gen_def->model_file_name());
@@ -158,6 +160,7 @@ void CGotitEnv::CaffePrepServer()
 			ImplemParamTbl[Param.Name] = Param;
 			//break;
 			CaffeFnInit();
+			bool bCaffeRetGood = true;
 			for (int i = 0; i < 6; i++) {
 				SImplemParam LoopParam;
 				LoopParam.Name = "Task.Param.DoCaffeFn.Loop0"; 
@@ -167,6 +170,13 @@ void CGotitEnv::CaffePrepServer()
 				//LoadSentenceListOneMod();
 				CaffeFn();
 				//ClearSentenceRecs();
+				string sOK;
+				if (GetImplemParam(sOK, "Implem.Param.FnResponse.CaffeFn.OK")) {
+					if (!(sOK[0] == 'y' || sOK[0] == 'Y')) {
+						bCaffeRetGood = false;
+						break;
+					}
+				}
 			}
 			CaffeFnComplete();
 			
@@ -174,15 +184,13 @@ void CGotitEnv::CaffePrepServer()
 			Param.Val = "no";
 			ImplemParamTbl[Param.Name] = Param;
 			
-			string sOK;
-			if (GetImplemParam(sOK, "Implem.Param.FnResponse.CaffeFn.OK")) {
-				if (!(sOK[0] == 'y' || sOK[0] == 'Y')) {
-					CaffeIpc Msg2;
-					Msg2.set_type(CaffeIpc::PREP_GEN_FAILED);
-					CaffeIPCSendMsg(*ServerSocket, Msg2);
-				}
+			if (!bCaffeRetGood) {
+				CaffeIpc Msg2;
+				Msg2.set_type(CaffeIpc::PREP_GEN_FAILED);
+				CaffeIPCSendMsg(*ServerSocket, Msg2);
+				continue;
 			}
-
+			
 			CaffeIpc Msg2;
 			Msg2.set_type(CaffeIpc::PREP_GEN_DONE);
 			CaffeIPCSendMsg(*ServerSocket, Msg2);

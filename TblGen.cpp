@@ -93,6 +93,7 @@ void CGotitEnv::TblGen()
 		map<string, int> WordMapClean;
 
 		const int cMulSoThereAreEnough = 3;
+		const vector<string> AlphaExceptions = {".", ";", ",", "\"", "'", "''", "1", "2", "3", "4", "0"};
 
 
 		int NumWordsToSearch = min(NumWords* cMulSoThereAreEnough, (int)WordsInOrder.size() ); 
@@ -105,6 +106,14 @@ void CGotitEnv::TblGen()
 					if (c < 'a' || c > 'z') {
 						bGood = false;
 						break;
+					}
+				}
+				if (!bGood) {
+					for (int ie = 0; ie < AlphaExceptions.size(); ie++) {
+						if (w == AlphaExceptions[ie]) {
+							bGood = true;
+							break;
+						}
 					}
 				}
 			}

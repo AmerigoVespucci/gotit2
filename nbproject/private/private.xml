@@ -2,7 +2,7 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <data xmlns="http://www.netbeans.org/ns/make-project-private/1">
         <activeConfTypeElem>1</activeConfTypeElem>
-        <activeConfIndexElem>1</activeConfIndexElem>
+        <activeConfIndexElem>0</activeConfIndexElem>
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
@@ -18,7 +18,7 @@
         <group>
             <file>file:/home/eli/dev/caffe/src/caffe/GenDef.cpp</file>
             <file>file:/home/eli/dev/caffe/src/caffe/util/ipc.cpp</file>
-            <file>file:/home/eli/NetBeansProjects/gotit2/Gamer.cpp</file>
+            <file>file:/home/eli/NetBeansProjects/gotit2/main.cpp</file>
             <file>file:/home/eli/NetBeansProjects/gotit2/NodeConfig.xml</file>
             <file>file:/home/eli/NetBeansProjects/gotit2/CaffeFn.cpp</file>
         </group>

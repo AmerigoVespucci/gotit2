@@ -809,6 +809,18 @@ class CaffeGenData : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
+  // required string not_in_use = 3500;
+  inline bool has_not_in_use() const;
+  inline void clear_not_in_use();
+  static const int kNotInUseFieldNumber = 3500;
+  inline const ::std::string& not_in_use() const;
+  inline void set_not_in_use(const ::std::string& value);
+  inline void set_not_in_use(const char* value);
+  inline void set_not_in_use(const char* value, size_t size);
+  inline ::std::string* mutable_not_in_use();
+  inline ::std::string* release_not_in_use();
+  inline void set_allocated_not_in_use(::std::string* not_in_use);
+
   // required string name = 1;
   inline bool has_name() const;
   inline void clear_name();
@@ -995,6 +1007,8 @@ class CaffeGenData : public ::google::protobuf::Message {
 
   // @@protoc_insertion_point(class_scope:CaffeGenData)
  private:
+  inline void set_has_not_in_use();
+  inline void clear_has_not_in_use();
   inline void set_has_name();
   inline void clear_has_name();
   inline void set_has_iterate_type();
@@ -1022,6 +1036,7 @@ class CaffeGenData : public ::google::protobuf::Message {
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
+  ::std::string* not_in_use_;
   ::std::string* name_;
   int iterate_type_;
   int data_src_;
@@ -1041,7 +1056,7 @@ class CaffeGenData : public ::google::protobuf::Message {
   ::std::string* netgen_output_file_name_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(17 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(18 + 31) / 32];
 
   friend void  protobuf_AddDesc_GenData_2eproto();
   friend void protobuf_AssignDesc_GenData_2eproto();
@@ -1698,15 +1713,85 @@ inline void CaffeGenData_DataFilter::set_allocated_match_string(::std::string* m
 
 // CaffeGenData
 
-// required string name = 1;
-inline bool CaffeGenData::has_name() const {
+// required string not_in_use = 3500;
+inline bool CaffeGenData::has_not_in_use() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void CaffeGenData::set_has_name() {
+inline void CaffeGenData::set_has_not_in_use() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void CaffeGenData::clear_has_name() {
+inline void CaffeGenData::clear_has_not_in_use() {
   _has_bits_[0] &= ~0x00000001u;
+}
+inline void CaffeGenData::clear_not_in_use() {
+  if (not_in_use_ != &::google::protobuf::internal::kEmptyString) {
+    not_in_use_->clear();
+  }
+  clear_has_not_in_use();
+}
+inline const ::std::string& CaffeGenData::not_in_use() const {
+  return *not_in_use_;
+}
+inline void CaffeGenData::set_not_in_use(const ::std::string& value) {
+  set_has_not_in_use();
+  if (not_in_use_ == &::google::protobuf::internal::kEmptyString) {
+    not_in_use_ = new ::std::string;
+  }
+  not_in_use_->assign(value);
+}
+inline void CaffeGenData::set_not_in_use(const char* value) {
+  set_has_not_in_use();
+  if (not_in_use_ == &::google::protobuf::internal::kEmptyString) {
+    not_in_use_ = new ::std::string;
+  }
+  not_in_use_->assign(value);
+}
+inline void CaffeGenData::set_not_in_use(const char* value, size_t size) {
+  set_has_not_in_use();
+  if (not_in_use_ == &::google::protobuf::internal::kEmptyString) {
+    not_in_use_ = new ::std::string;
+  }
+  not_in_use_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CaffeGenData::mutable_not_in_use() {
+  set_has_not_in_use();
+  if (not_in_use_ == &::google::protobuf::internal::kEmptyString) {
+    not_in_use_ = new ::std::string;
+  }
+  return not_in_use_;
+}
+inline ::std::string* CaffeGenData::release_not_in_use() {
+  clear_has_not_in_use();
+  if (not_in_use_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = not_in_use_;
+    not_in_use_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CaffeGenData::set_allocated_not_in_use(::std::string* not_in_use) {
+  if (not_in_use_ != &::google::protobuf::internal::kEmptyString) {
+    delete not_in_use_;
+  }
+  if (not_in_use) {
+    set_has_not_in_use();
+    not_in_use_ = not_in_use;
+  } else {
+    clear_has_not_in_use();
+    not_in_use_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required string name = 1;
+inline bool CaffeGenData::has_name() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CaffeGenData::set_has_name() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CaffeGenData::clear_has_name() {
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void CaffeGenData::clear_name() {
   if (name_ != &::google::protobuf::internal::kEmptyString) {
@@ -1770,13 +1855,13 @@ inline void CaffeGenData::set_allocated_name(::std::string* name) {
 
 // required .CaffeGenData.IterateType iterate_type = 2;
 inline bool CaffeGenData::has_iterate_type() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void CaffeGenData::set_has_iterate_type() {
-  _has_bits_[0] |= 0x00000002u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void CaffeGenData::clear_has_iterate_type() {
-  _has_bits_[0] &= ~0x00000002u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void CaffeGenData::clear_iterate_type() {
   iterate_type_ = 1;
@@ -1793,13 +1878,13 @@ inline void CaffeGenData::set_iterate_type(::CaffeGenData_IterateType value) {
 
 // required .CaffeGenData.DataSrc data_src = 3;
 inline bool CaffeGenData::has_data_src() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void CaffeGenData::set_has_data_src() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void CaffeGenData::clear_has_data_src() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void CaffeGenData::clear_data_src() {
   data_src_ = 1;
@@ -1916,13 +2001,13 @@ CaffeGenData::mutable_output_field_translates() {
 
 // required string files_core_dir = 8;
 inline bool CaffeGenData::has_files_core_dir() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
+  return (_has_bits_[0] & 0x00000100u) != 0;
 }
 inline void CaffeGenData::set_has_files_core_dir() {
-  _has_bits_[0] |= 0x00000080u;
+  _has_bits_[0] |= 0x00000100u;
 }
 inline void CaffeGenData::clear_has_files_core_dir() {
-  _has_bits_[0] &= ~0x00000080u;
+  _has_bits_[0] &= ~0x00000100u;
 }
 inline void CaffeGenData::clear_files_core_dir() {
   if (files_core_dir_ != &::google::protobuf::internal::kEmptyString) {
@@ -1986,13 +2071,13 @@ inline void CaffeGenData::set_allocated_files_core_dir(::std::string* files_core
 
 // required string test_list_file_name = 9;
 inline bool CaffeGenData::has_test_list_file_name() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
+  return (_has_bits_[0] & 0x00000200u) != 0;
 }
 inline void CaffeGenData::set_has_test_list_file_name() {
-  _has_bits_[0] |= 0x00000100u;
+  _has_bits_[0] |= 0x00000200u;
 }
 inline void CaffeGenData::clear_has_test_list_file_name() {
-  _has_bits_[0] &= ~0x00000100u;
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void CaffeGenData::clear_test_list_file_name() {
   if (test_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -2056,13 +2141,13 @@ inline void CaffeGenData::set_allocated_test_list_file_name(::std::string* test_
 
 // required string train_list_file_name = 10;
 inline bool CaffeGenData::has_train_list_file_name() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
+  return (_has_bits_[0] & 0x00000400u) != 0;
 }
 inline void CaffeGenData::set_has_train_list_file_name() {
-  _has_bits_[0] |= 0x00000200u;
+  _has_bits_[0] |= 0x00000400u;
 }
 inline void CaffeGenData::clear_has_train_list_file_name() {
-  _has_bits_[0] &= ~0x00000200u;
+  _has_bits_[0] &= ~0x00000400u;
 }
 inline void CaffeGenData::clear_train_list_file_name() {
   if (train_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -2126,13 +2211,13 @@ inline void CaffeGenData::set_allocated_train_list_file_name(::std::string* trai
 
 // required .CaffeGenData.NetEndType net_end_type = 11;
 inline bool CaffeGenData::has_net_end_type() const {
-  return (_has_bits_[0] & 0x00000400u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void CaffeGenData::set_has_net_end_type() {
-  _has_bits_[0] |= 0x00000400u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void CaffeGenData::clear_has_net_end_type() {
-  _has_bits_[0] &= ~0x00000400u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void CaffeGenData::clear_net_end_type() {
   net_end_type_ = 1;
@@ -2149,13 +2234,13 @@ inline void CaffeGenData::set_net_end_type(::CaffeGenData_NetEndType value) {
 
 // required string proto_file_name = 12;
 inline bool CaffeGenData::has_proto_file_name() const {
-  return (_has_bits_[0] & 0x00000800u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void CaffeGenData::set_has_proto_file_name() {
-  _has_bits_[0] |= 0x00000800u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void CaffeGenData::clear_has_proto_file_name() {
-  _has_bits_[0] &= ~0x00000800u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void CaffeGenData::clear_proto_file_name() {
   if (proto_file_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -2219,13 +2304,13 @@ inline void CaffeGenData::set_allocated_proto_file_name(::std::string* proto_fil
 
 // required string model_file_name = 13;
 inline bool CaffeGenData::has_model_file_name() const {
-  return (_has_bits_[0] & 0x00001000u) != 0;
+  return (_has_bits_[0] & 0x00002000u) != 0;
 }
 inline void CaffeGenData::set_has_model_file_name() {
-  _has_bits_[0] |= 0x00001000u;
+  _has_bits_[0] |= 0x00002000u;
 }
 inline void CaffeGenData::clear_has_model_file_name() {
-  _has_bits_[0] &= ~0x00001000u;
+  _has_bits_[0] &= ~0x00002000u;
 }
 inline void CaffeGenData::clear_model_file_name() {
   if (model_file_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -2289,13 +2374,13 @@ inline void CaffeGenData::set_allocated_model_file_name(::std::string* model_fil
 
 // required string config_file_name = 14;
 inline bool CaffeGenData::has_config_file_name() const {
-  return (_has_bits_[0] & 0x00002000u) != 0;
+  return (_has_bits_[0] & 0x00004000u) != 0;
 }
 inline void CaffeGenData::set_has_config_file_name() {
-  _has_bits_[0] |= 0x00002000u;
+  _has_bits_[0] |= 0x00004000u;
 }
 inline void CaffeGenData::clear_has_config_file_name() {
-  _has_bits_[0] &= ~0x00002000u;
+  _has_bits_[0] &= ~0x00004000u;
 }
 inline void CaffeGenData::clear_config_file_name() {
   if (config_file_name_ != &::google::protobuf::internal::kEmptyString) {
@@ -2359,13 +2444,13 @@ inline void CaffeGenData::set_allocated_config_file_name(::std::string* config_f
 
 // optional int32 num_accuracy_candidates = 15;
 inline bool CaffeGenData::has_num_accuracy_candidates() const {
-  return (_has_bits_[0] & 0x00004000u) != 0;
+  return (_has_bits_[0] & 0x00008000u) != 0;
 }
 inline void CaffeGenData::set_has_num_accuracy_candidates() {
-  _has_bits_[0] |= 0x00004000u;
+  _has_bits_[0] |= 0x00008000u;
 }
 inline void CaffeGenData::clear_has_num_accuracy_candidates() {
-  _has_bits_[0] &= ~0x00004000u;
+  _has_bits_[0] &= ~0x00008000u;
 }
 inline void CaffeGenData::clear_num_accuracy_candidates() {
   num_accuracy_candidates_ = 0;
@@ -2406,13 +2491,13 @@ CaffeGenData::mutable_data_filters() {
 
 // required string netgen_output_file_name = 21;
 inline bool CaffeGenData::has_netgen_output_file_name() const {
-  return (_has_bits_[0] & 0x00010000u) != 0;
+  return (_has_bits_[0] & 0x00020000u) != 0;
 }
 inline void CaffeGenData::set_has_netgen_output_file_name() {
-  _has_bits_[0] |= 0x00010000u;
+  _has_bits_[0] |= 0x00020000u;
 }
 inline void CaffeGenData::clear_has_netgen_output_file_name() {
-  _has_bits_[0] &= ~0x00010000u;
+  _has_bits_[0] &= ~0x00020000u;
 }
 inline void CaffeGenData::clear_netgen_output_file_name() {
   if (netgen_output_file_name_ != &::google::protobuf::internal::kEmptyString) {

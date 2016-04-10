@@ -146,13 +146,15 @@ inline bool CaffeGenDef_DataTranslateType_Parse(
 }
 enum CaffeGenDef_VarExtractType {
   CaffeGenDef_VarExtractType_vetPOS = 1,
-  CaffeGenDef_VarExtractType_vetWordCode = 2,
+  CaffeGenDef_VarExtractType_vetWordCore = 2,
   CaffeGenDef_VarExtractType_vetWord = 3,
-  CaffeGenDef_VarExtractType_vetDepName = 4
+  CaffeGenDef_VarExtractType_vetDepName = 4,
+  CaffeGenDef_VarExtractType_vetDummy = 5,
+  CaffeGenDef_VarExtractType_vetNumDepGovs = 6
 };
 bool CaffeGenDef_VarExtractType_IsValid(int value);
 const CaffeGenDef_VarExtractType CaffeGenDef_VarExtractType_VarExtractType_MIN = CaffeGenDef_VarExtractType_vetPOS;
-const CaffeGenDef_VarExtractType CaffeGenDef_VarExtractType_VarExtractType_MAX = CaffeGenDef_VarExtractType_vetDepName;
+const CaffeGenDef_VarExtractType CaffeGenDef_VarExtractType_VarExtractType_MAX = CaffeGenDef_VarExtractType_vetNumDepGovs;
 const int CaffeGenDef_VarExtractType_VarExtractType_ARRAYSIZE = CaffeGenDef_VarExtractType_VarExtractType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CaffeGenDef_VarExtractType_descriptor();
@@ -1056,9 +1058,11 @@ class CaffeGenDef : public ::google::protobuf::Message {
 
   typedef CaffeGenDef_VarExtractType VarExtractType;
   static const VarExtractType vetPOS = CaffeGenDef_VarExtractType_vetPOS;
-  static const VarExtractType vetWordCode = CaffeGenDef_VarExtractType_vetWordCode;
+  static const VarExtractType vetWordCore = CaffeGenDef_VarExtractType_vetWordCore;
   static const VarExtractType vetWord = CaffeGenDef_VarExtractType_vetWord;
   static const VarExtractType vetDepName = CaffeGenDef_VarExtractType_vetDepName;
+  static const VarExtractType vetDummy = CaffeGenDef_VarExtractType_vetDummy;
+  static const VarExtractType vetNumDepGovs = CaffeGenDef_VarExtractType_vetNumDepGovs;
   static inline bool VarExtractType_IsValid(int value) {
     return CaffeGenDef_VarExtractType_IsValid(value);
   }

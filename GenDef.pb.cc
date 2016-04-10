@@ -236,7 +236,7 @@ void protobuf_AddDesc_GenDef_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014GenDef.proto\"\277\017\n\013CaffeGenDef\022\014\n\004name\030\001"
+    "\n\014GenDef.proto\"\340\017\n\013CaffeGenDef\022\014\n\004name\030\001"
     " \002(\t\022\037\n\027NumSentenceRecsToSearch\030\002 \001(\005\022.\n"
     "\raccess_fields\030\003 \003(\0132\027.CaffeGenDef.DataA"
     "ccess\022-\n\014data_filters\030\004 \003(\0132\027.CaffeGenDe"
@@ -282,10 +282,11 @@ void protobuf_AddDesc_GenDef_2eproto() {
     "\022\023\n\017dttRWID_TO_WORD\020\001\022\024\n\020dttRWID_TO_CORE"
     "F\020\002\022\023\n\017dttRWID_TO_RDID\020\003\022\027\n\023dttRDID_TO_D"
     "EP_NAME\020\004\022\027\n\023dttRDID_TO_GOV_RWID\020\005\022\027\n\023dt"
-    "tRDID_TO_DEP_RWID\020\006\"J\n\016VarExtractType\022\n\n"
-    "\006vetPOS\020\001\022\017\n\013vetWordCode\020\002\022\013\n\007vetWord\020\003\022"
-    "\016\n\nvetDepName\020\004\"\?\n\nNetEndType\022\r\n\tEND_VAL"
-    "ID\020\001\022\017\n\013END_ONE_HOT\020\002\022\021\n\rEND_MULTI_HOT\020\003", 2000);
+    "tRDID_TO_DEP_RWID\020\006\"k\n\016VarExtractType\022\n\n"
+    "\006vetPOS\020\001\022\017\n\013vetWordCore\020\002\022\013\n\007vetWord\020\003\022"
+    "\016\n\nvetDepName\020\004\022\014\n\010vetDummy\020\005\022\021\n\rvetNumD"
+    "epGovs\020\006\"\?\n\nNetEndType\022\r\n\tEND_VALID\020\001\022\017\n"
+    "\013END_ONE_HOT\020\002\022\021\n\rEND_MULTI_HOT\020\003", 2033);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "GenDef.proto", &protobuf_RegisterTypes);
   CaffeGenDef::default_instance_ = new CaffeGenDef();
@@ -447,6 +448,8 @@ bool CaffeGenDef_VarExtractType_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
+    case 6:
       return true;
     default:
       return false;
@@ -455,9 +458,11 @@ bool CaffeGenDef_VarExtractType_IsValid(int value) {
 
 #ifndef _MSC_VER
 const CaffeGenDef_VarExtractType CaffeGenDef::vetPOS;
-const CaffeGenDef_VarExtractType CaffeGenDef::vetWordCode;
+const CaffeGenDef_VarExtractType CaffeGenDef::vetWordCore;
 const CaffeGenDef_VarExtractType CaffeGenDef::vetWord;
 const CaffeGenDef_VarExtractType CaffeGenDef::vetDepName;
+const CaffeGenDef_VarExtractType CaffeGenDef::vetDummy;
+const CaffeGenDef_VarExtractType CaffeGenDef::vetNumDepGovs;
 const CaffeGenDef_VarExtractType CaffeGenDef::VarExtractType_MIN;
 const CaffeGenDef_VarExtractType CaffeGenDef::VarExtractType_MAX;
 const int CaffeGenDef::VarExtractType_ARRAYSIZE;

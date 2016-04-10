@@ -90,7 +90,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lboost_system -lboost_filesystem -lhdf5 -lhdf5_cpp -lpthread -lprotobuf
+LDLIBSOPTIONS=-lboost_system -lboost_filesystem -lhdf5 -lhdf5_cpp -lpthread -lprotobuf -lglog -lgflags
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

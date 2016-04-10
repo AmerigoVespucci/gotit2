@@ -621,8 +621,8 @@
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
     </TaskNode>
     <TaskNode name="TaskNode.DoTblGen">
-      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/NLP36Out" comment="where InitLoadFromNLP writes its files to"/>
-      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/NLP36Out/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.TblGen.ModelProtoName" val="/devlink/caffe/tables/DepNum.prototxt" />
       <TaskItem TaskType="NoArgsFn" do="TblGen" />
@@ -661,7 +661,6 @@
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.PortNum" val="1544" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
       <TaskItem TaskType="NoArgsFn" do="CaffePrepServer" />
-      <TaskItem TaskType="NoArgsFn" do="CaffeFnComplete" />
     </TaskNode>
     <TaskNode name="TaskNode.SaveForAEWordVec">
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
