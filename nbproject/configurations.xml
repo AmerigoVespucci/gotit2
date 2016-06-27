@@ -19,6 +19,7 @@
       <itemPath>CaffeFn.cpp</itemPath>
       <itemPath>CheckersIntf.cpp</itemPath>
       <itemPath>CheckersText.cpp</itemPath>
+      <itemPath>Closeness.cpp</itemPath>
       <itemPath>DepGrps.cpp</itemPath>
       <itemPath>ForLearn.cpp</itemPath>
       <itemPath>Gamer.cpp</itemPath>
@@ -138,6 +139,8 @@
       <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CheckersText.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Closeness.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="DepGrps.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -284,6 +287,8 @@
       <item path="CheckersIntf.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="CheckersText.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Closeness.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="DepGrps.cpp" ex="false" tool="1" flavor2="0">
       </item>

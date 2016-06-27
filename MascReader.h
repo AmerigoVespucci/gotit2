@@ -699,6 +699,10 @@ public:
 	void TblGenInit();
 	void TblGen();
 	void CaffePrepServer();
+	void Closeness();
+	void ClosenessInit();
+	void ClosenessComplete();
+	void PrepCauseData();
 	
 private:
 	void WordsCreated();

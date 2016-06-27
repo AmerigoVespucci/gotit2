@@ -52,6 +52,12 @@ void CGotitEnv::CaffeFnInit()
 		return;
 	}
 
+	string sPrepFromSrc;
+	bool bPrepFromSrc = false;
+	if (GetImplemParam(sPrepFromSrc, "Implem.Param.FnParam.CaffeFn.PrepFromSrc")) {
+		bPrepFromSrc = true;
+	}
+
 	CGenDefTbls * GenTbls = new CGenDefTbls(sTblDefsProtoName);
 	if (!GenTbls->bInitDone) {
 		cerr << "Failed to initialize tables def file. Terminating.\n";
@@ -62,7 +68,7 @@ void CGotitEnv::CaffeFnInit()
 	CGenDef * InitData = new CGenDef(GenTbls, cb_model_owns_tbls);
 
 	if (	!InitData->ModelInit(sModelProtoName)
-		||	!InitData->ModelPrep()) {
+		||	!InitData->ModelPrep(bPrepFromSrc)) {
 		delete InitData;
 		return;
 	}
@@ -204,6 +210,63 @@ void CGotitEnv::CaffePrepServer()
 		}
 	}
 }
+
+void CGotitEnv::PrepCauseData()
+{
+	string sSrcProtoFileName;
+	if (!GetImplemParam(sSrcProtoFileName, "Implem.Param.PrepCauseData.SrcProtoName")) {
+		cerr << "PrepCauseData requires param Implem.Param.PrepCauseData.SrcProtoName to be set\n";
+		return;
+	}
+
+	std::cerr << "Src Proto name " << sSrcProtoFileName << std::endl;
+	SImplemParam Param;
+	Param.Name = "Implem.Param.FnParam.CaffeFn.ModelProtoName"; 
+	Param.Val = sSrcProtoFileName;
+	ImplemParamTbl[Param.Name] = Param;
+
+	Param.Name = "Implem.Param.FnParam.CaffeFn.LoadYourOwnModules"; 
+	Param.Val = "yes";
+	ImplemParamTbl[Param.Name] = Param;
+
+	Param.Name = "Implem.Param.FnParam.CaffeFn.MinReqDataVecs"; 
+	Param.Val = "128";
+	ImplemParamTbl[Param.Name] = Param;
+			//break;
+	Param.Name = "Implem.Param.FnParam.CaffeFn.PrepFromSrc"; 
+	Param.Val = "because";
+	ImplemParamTbl[Param.Name] = Param;
+
+	CaffeFnInit();
+	bool bCaffeRetGood = true;
+	for (int i = 0; i < 60; i++) {
+		SImplemParam LoopParam;
+		LoopParam.Name = "Task.Param.DoCaffeFn.Loop0"; 
+		LoopParam.Val = to_string(i);
+		ImplemParamTbl[LoopParam.Name] = LoopParam;
+
+		//LoadSentenceListOneMod();
+		CaffeFn();
+		//ClearSentenceRecs();
+//		string sOK;
+//		if (GetImplemParam(sOK, "Implem.Param.FnResponse.CaffeFn.OK")) {
+//			if (!(sOK[0] == 'y' || sOK[0] == 'Y')) {
+//				bCaffeRetGood = false;
+//				break;
+//			}
+//		}
+	}
+	CaffeFnComplete();
+			
+//			try {
+//				ServerSocket->shutdown(tcp::socket::shutdown_both);
+//				ServerSocket->close();
+//			}
+//			catch (...) {
+//				cerr << "Server socket closed\n";
+//			}
+}
+
 
 void CGotitEnv::CaffeFn()
 {

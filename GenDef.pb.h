@@ -286,10 +286,22 @@ class CaffeGenDef_DataAccess : public ::google::protobuf::Message {
   inline ::std::string* release_pos_to_match();
   inline void set_allocated_pos_to_match(::std::string* pos_to_match);
 
-  // optional int32 var_idx = 5;
+  // optional string word_to_match = 5;
+  inline bool has_word_to_match() const;
+  inline void clear_word_to_match();
+  static const int kWordToMatchFieldNumber = 5;
+  inline const ::std::string& word_to_match() const;
+  inline void set_word_to_match(const ::std::string& value);
+  inline void set_word_to_match(const char* value);
+  inline void set_word_to_match(const char* value, size_t size);
+  inline ::std::string* mutable_word_to_match();
+  inline ::std::string* release_word_to_match();
+  inline void set_allocated_word_to_match(::std::string* word_to_match);
+
+  // optional int32 var_idx = 6;
   inline bool has_var_idx() const;
   inline void clear_var_idx();
-  static const int kVarIdxFieldNumber = 5;
+  static const int kVarIdxFieldNumber = 6;
   inline ::google::protobuf::int32 var_idx() const;
   inline void set_var_idx(::google::protobuf::int32 value);
 
@@ -317,6 +329,8 @@ class CaffeGenDef_DataAccess : public ::google::protobuf::Message {
   inline void clear_has_dep_type_to_match();
   inline void set_has_pos_to_match();
   inline void clear_has_pos_to_match();
+  inline void set_has_word_to_match();
+  inline void clear_has_word_to_match();
   inline void set_has_var_idx();
   inline void clear_has_var_idx();
   inline void set_has_max_srec_beyond();
@@ -328,14 +342,15 @@ class CaffeGenDef_DataAccess : public ::google::protobuf::Message {
 
   ::std::string* var_name_;
   ::std::string* dep_type_to_match_;
+  ::std::string* pos_to_match_;
   int access_type_;
   ::google::protobuf::int32 var_idx_;
-  ::std::string* pos_to_match_;
+  ::std::string* word_to_match_;
   ::google::protobuf::int32 max_srec_beyond_;
   ::google::protobuf::int32 min_srec_beyond_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
 
   friend void  protobuf_AddDesc_GenDef_2eproto();
   friend void protobuf_AssignDesc_GenDef_2eproto();
@@ -1569,15 +1584,85 @@ inline void CaffeGenDef_DataAccess::set_allocated_pos_to_match(::std::string* po
   }
 }
 
-// optional int32 var_idx = 5;
-inline bool CaffeGenDef_DataAccess::has_var_idx() const {
+// optional string word_to_match = 5;
+inline bool CaffeGenDef_DataAccess::has_word_to_match() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void CaffeGenDef_DataAccess::set_has_var_idx() {
+inline void CaffeGenDef_DataAccess::set_has_word_to_match() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void CaffeGenDef_DataAccess::clear_has_var_idx() {
+inline void CaffeGenDef_DataAccess::clear_has_word_to_match() {
   _has_bits_[0] &= ~0x00000010u;
+}
+inline void CaffeGenDef_DataAccess::clear_word_to_match() {
+  if (word_to_match_ != &::google::protobuf::internal::kEmptyString) {
+    word_to_match_->clear();
+  }
+  clear_has_word_to_match();
+}
+inline const ::std::string& CaffeGenDef_DataAccess::word_to_match() const {
+  return *word_to_match_;
+}
+inline void CaffeGenDef_DataAccess::set_word_to_match(const ::std::string& value) {
+  set_has_word_to_match();
+  if (word_to_match_ == &::google::protobuf::internal::kEmptyString) {
+    word_to_match_ = new ::std::string;
+  }
+  word_to_match_->assign(value);
+}
+inline void CaffeGenDef_DataAccess::set_word_to_match(const char* value) {
+  set_has_word_to_match();
+  if (word_to_match_ == &::google::protobuf::internal::kEmptyString) {
+    word_to_match_ = new ::std::string;
+  }
+  word_to_match_->assign(value);
+}
+inline void CaffeGenDef_DataAccess::set_word_to_match(const char* value, size_t size) {
+  set_has_word_to_match();
+  if (word_to_match_ == &::google::protobuf::internal::kEmptyString) {
+    word_to_match_ = new ::std::string;
+  }
+  word_to_match_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CaffeGenDef_DataAccess::mutable_word_to_match() {
+  set_has_word_to_match();
+  if (word_to_match_ == &::google::protobuf::internal::kEmptyString) {
+    word_to_match_ = new ::std::string;
+  }
+  return word_to_match_;
+}
+inline ::std::string* CaffeGenDef_DataAccess::release_word_to_match() {
+  clear_has_word_to_match();
+  if (word_to_match_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = word_to_match_;
+    word_to_match_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CaffeGenDef_DataAccess::set_allocated_word_to_match(::std::string* word_to_match) {
+  if (word_to_match_ != &::google::protobuf::internal::kEmptyString) {
+    delete word_to_match_;
+  }
+  if (word_to_match) {
+    set_has_word_to_match();
+    word_to_match_ = word_to_match;
+  } else {
+    clear_has_word_to_match();
+    word_to_match_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional int32 var_idx = 6;
+inline bool CaffeGenDef_DataAccess::has_var_idx() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CaffeGenDef_DataAccess::set_has_var_idx() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CaffeGenDef_DataAccess::clear_has_var_idx() {
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void CaffeGenDef_DataAccess::clear_var_idx() {
   var_idx_ = 0;
@@ -1593,13 +1678,13 @@ inline void CaffeGenDef_DataAccess::set_var_idx(::google::protobuf::int32 value)
 
 // optional int32 max_srec_beyond = 11;
 inline bool CaffeGenDef_DataAccess::has_max_srec_beyond() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void CaffeGenDef_DataAccess::set_has_max_srec_beyond() {
-  _has_bits_[0] |= 0x00000020u;
+  _has_bits_[0] |= 0x00000040u;
 }
 inline void CaffeGenDef_DataAccess::clear_has_max_srec_beyond() {
-  _has_bits_[0] &= ~0x00000020u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline void CaffeGenDef_DataAccess::clear_max_srec_beyond() {
   max_srec_beyond_ = 0;
@@ -1615,13 +1700,13 @@ inline void CaffeGenDef_DataAccess::set_max_srec_beyond(::google::protobuf::int3
 
 // optional int32 min_srec_beyond = 12;
 inline bool CaffeGenDef_DataAccess::has_min_srec_beyond() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
+  return (_has_bits_[0] & 0x00000080u) != 0;
 }
 inline void CaffeGenDef_DataAccess::set_has_min_srec_beyond() {
-  _has_bits_[0] |= 0x00000040u;
+  _has_bits_[0] |= 0x00000080u;
 }
 inline void CaffeGenDef_DataAccess::clear_has_min_srec_beyond() {
-  _has_bits_[0] &= ~0x00000040u;
+  _has_bits_[0] &= ~0x00000080u;
 }
 inline void CaffeGenDef_DataAccess::clear_min_srec_beyond() {
   min_srec_beyond_ = 0;

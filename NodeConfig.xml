@@ -620,6 +620,21 @@
       <TaskItem TaskType="NoArgsFn" do="SaveNGrams" />
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
     </TaskNode>
+    <TaskNode name="TaskNode.DoCloseness">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="NoArgsFn" do="ClosenessInit" />
+      <TaskItem TaskType="SetParam" do="Task.Param.DoCloseness.Loop0" val="6" should_be_val="40" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.DoCloseness.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.DoCloseness.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.DoCloseness.Loop0" />
+      <TaskItem TaskType="NoArgsFn" do="Closeness" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="NoArgsFn" do="ClosenessComplete" />
+    </TaskNode>
     <TaskNode name="TaskNode.DoTblGen">
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
@@ -661,6 +676,15 @@
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.Caffe.PortNum" val="1544" />
       <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
       <TaskItem TaskType="NoArgsFn" do="CaffePrepServer" />
+    </TaskNode>
+    <TaskNode name="TaskNode.DoPrepCauseData">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.CaffeFn.TblDefsProtoName" val="/devlink/caffe/data/GenGen/TblDefs/tbls.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.PrepCauseData.SrcProtoName" val="/devlink/caffe/data/Cause/SrcProto/gengen_because.prototxt" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="PrepCauseData" />
     </TaskNode>
     <TaskNode name="TaskNode.SaveForAEWordVec">
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
@@ -1263,9 +1287,11 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffeFn"  commment="build data table" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffePrepServer"  commment="listen for call to build data table" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitFromNLP" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCloseness"  commment="create closeness data" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoPrepCauseData"  commment="build data tables for cause data based on because keyword" />
 
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCaffePrepServer"  commment="listen for call to build data table" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoPrepCauseData"  commment="build data tables for cause data based on because keyword" />
 
   </ImplementationParameterList>
 </Config>

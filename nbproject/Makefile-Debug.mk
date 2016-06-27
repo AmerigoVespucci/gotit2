@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/CaffeFn.o \
 	${OBJECTDIR}/CheckersIntf.o \
 	${OBJECTDIR}/CheckersText.o \
+	${OBJECTDIR}/Closeness.o \
 	${OBJECTDIR}/DepGrps.o \
 	${OBJECTDIR}/ForLearn.o \
 	${OBJECTDIR}/Gamer.o \
@@ -124,6 +125,11 @@ ${OBJECTDIR}/CheckersText.o: CheckersText.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/CheckersText.o CheckersText.cpp
+
+${OBJECTDIR}/Closeness.o: Closeness.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Closeness.o Closeness.cpp
 
 ${OBJECTDIR}/DepGrps.o: DepGrps.cpp 
 	${MKDIR} -p ${OBJECTDIR}
