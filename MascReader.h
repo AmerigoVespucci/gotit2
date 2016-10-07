@@ -703,6 +703,7 @@ public:
 	void ClosenessInit();
 	void ClosenessComplete();
 	void PrepCauseData();
+        void OMA();
 	
 private:
 	void WordsCreated();
@@ -771,6 +772,7 @@ private:
 	vector<string> DynamicTypeListsNames;
 	u64 LastMaintenance;
 	map<string, bool> ModsAlreadyUsed;
+        string LastModLoaded; // normally the mod from which SentenceRec was loaded or last added to from.
 	vector<pair<float, string> > PeerVec;; // return param from CreatePeerList
 //	void * CaffeFnHandle; // Avoiding declaring CaffeGenData, a ::google::protobuf::Message at this level
 	void * CaffeFnOutHandle; // as above

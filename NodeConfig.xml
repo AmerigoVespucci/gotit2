@@ -448,6 +448,20 @@
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="not a param specific to this function"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
     </TaskNode>
+    <TaskNode name="TaskNode.InitGutenFragsFromNLP">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPOutDir" val="/guten/GutenFragsNLP/killed" comment="where the nlp writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.LoadedOutDir" val="/guten/GutenFragsReady/killed" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPExt" val="out" comment="The extension the NLP appends to the file name"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/killed/NamedCounts.bin" comment="not a param specific to this function"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
+    </TaskNode>
+    <TaskNode name="TaskNode.InitGutenNlpieFromNLP">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPOutDir" val="/guten/GutenFragsNLP/nlpie" comment="where the nlp writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.LoadedOutDir" val="/guten/GutenFragsReady/nlpie" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadFromNLP.NLPExt" val="out" comment="The extension the NLP appends to the file name"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/nlpie/NamedCounts.bin" comment="not a param specific to this function"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadFromNLP" />
+    </TaskNode>
     <TaskNode name="TaskNode.StartWork">
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
       <TaskItem TaskType="NoArgsFn" do="LoadGroups" />
@@ -634,6 +648,31 @@
       <TaskItem TaskType="NoArgsFn" do="Closeness" />
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
       <TaskItem TaskType="NoArgsFn" do="ClosenessComplete" />
+    </TaskNode>
+    <TaskNode name="TaskNode.DoOMA">
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/GutenFragsReady/killed" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/killed/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+       <TaskItem TaskType="SetParam" do="Task.Param.DoOMA.Loop0" val="40" should_be_val="40" />
+      <TaskItem TaskType="LoopStart" do="Task.Param.DoOMA.Loop0" />
+      <TaskItem TaskType="DecrParam" do="Task.Param.DoOMA.Loop0" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="NoArgsFn" do="OMA" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
+      <TaskItem TaskType="LoopEnd" commment="Task.Param.DoOMA.Loop0" />
+    </TaskNode>
+    <TaskNode name="TaskNode.DoNlpie">
+      <TaskItem TaskType="CallTask" do="TaskNode.InitGutenNlpieFromNLP" comment = "In testing, no pain in initializing each time." />
+      <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/GutenFragsReady/nlpie" comment="where InitLoadFromNLP writes its files to"/>
+      <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/nlpie/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
+      <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.OnlyIfWordsPresent" val="" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.UseModName" val="1" />
+      <TaskItem TaskType="SetParam" do="Implem.Param.FnParam.LoadSentenceListOneMod.ModName" val="/guten/GutenFragsReady/nlpie/1.txt.mod" />
+      <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
+      <TaskItem TaskType="NoArgsFn" do="OMA" />
+      <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
     </TaskNode>
     <TaskNode name="TaskNode.DoTblGen">
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
@@ -1289,9 +1328,13 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitFromNLP" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoCloseness"  commment="create closeness data" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoPrepCauseData"  commment="build data tables for cause data based on because keyword" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitGutenFragsFromNLP" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoOMA"  commment="work on OMA stuff" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitGutenNlpieFromNLP" comment = "int from NLP for nlpie testing"/>
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoNlpie"  commment="work on nlpie testing via OMA stuff" />
 
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoPrepCauseData"  commment="build data tables for cause data based on because keyword" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoNlpie"  commment="work on nlpie testing via OMA stuff" />
 
   </ImplementationParameterList>
 </Config>

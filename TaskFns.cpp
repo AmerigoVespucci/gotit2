@@ -56,6 +56,7 @@ void CGotitEnv::RegisterCallableFunctions()
 	TaskFnMap["ClosenessInit"] = &CGotitEnv::ClosenessInit;
 	TaskFnMap["ClosenessComplete"] = &CGotitEnv::ClosenessComplete;
 	TaskFnMap["PrepCauseData"] = &CGotitEnv::PrepCauseData;
+	TaskFnMap["OMA"] = &CGotitEnv::OMA;
 }
 
 
@@ -230,6 +231,10 @@ void CGotitEnv::InitLoadFromNLP()
 	if (!GetImplemParam(sNLPOutFileExt, "Implem.Param.InitLoadFromNLP.NLPExt")) {
 		sNLPOutFileExt = ".xml";
 	}
+    
+    if (!TestFileExists(sNLPOutFileExt)) {
+        boost::filesystem::create_directory(boost::filesystem::path(sGotitOutDirName));
+    }
 
 	CModNames ModNamesCntrlNLP;
 	ModNamesCntrlNLP.LoadModuleNames(	sNLPOutDirName, cbIfExt, sNLPOutFileExt, 
@@ -332,6 +337,7 @@ void CGotitEnv::LoadSentenceListOneMod()
 		int NumModsToTry = ModNamesCntrl.getSize() * 3;
 		while (!bModFound) {
 			ModName = ModNamesCntrl.GetRandModName(bGetOOB);
+            LastModLoaded = ModName;
 			map<string, bool>::iterator itUsed = ModsAlreadyUsed.find(ModName);
 			if (itUsed != ModsAlreadyUsed.end()) {
 				NumModTries++;

@@ -526,6 +526,10 @@ string& CModNames::GetRandModName(bool bOOB)
 	int rim;
 	while (true) {
 		rim = rand() % ModNames.size();
+        if (ModNames.size() < cOOBDenom) {
+            // for very small number of files, OOB is irrelevant.
+            return ModNames[rim];
+        }
 		if ((rim % cOOBDenom) > 0) {
 			if (!bOOB) return ModNames[rim];
 		}
@@ -1130,8 +1134,8 @@ bool GroupingSort(CGroupingRec * r1, CGroupingRec * r2)
 }
 #endif // OLD_CODE
 
-static const uint cSafeopenWaitTime = 1000;
-static const uint cSafeOpenNumTries = 300;
+static const uint cSafeopenWaitTime = 1000; // ms. Note linux sleep is in seconds so / 1000 when used
+static const uint cSafeOpenNumTries = 5;
 
 
 bool TestFileExists(string& FName)
@@ -1142,6 +1146,17 @@ bool TestFileExists(string& FName)
 	using namespace boost::filesystem;
 #endif
 	return (exists(path(FName)));
+}
+
+bool CreateDirectory(string& DirName)
+{
+#ifndef GOTIT_LINUX
+	using namespace std::tr2::sys;
+#else
+	using namespace boost::filesystem;
+#endif
+	return (create_directory(path(DirName)));
+    
 }
 
 bool FileRemove(string& FName)
@@ -1196,7 +1211,7 @@ bool SafeOpen(fstream& f, string FName, ios::openmode Flags)
 		}
 
 #ifdef GOTIT_LINUX                    
-		sleep(cSafeopenWaitTime);
+		sleep(cSafeopenWaitTime/1000);
 #else
 		Sleep(cSafeopenWaitTime);
 #endif                

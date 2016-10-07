@@ -35,6 +35,7 @@
       <itemPath>MascFiles.cpp</itemPath>
       <itemPath>MascReader.cpp</itemPath>
       <itemPath>NodeConfig.cpp</itemPath>
+      <itemPath>OMA.cpp</itemPath>
       <itemPath>Regex2D.cpp</itemPath>
       <itemPath>RegexLearn.cpp</itemPath>
       <itemPath>StanfordReader.cpp</itemPath>
@@ -169,6 +170,8 @@
       <item path="MascReader.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="NodeConfig.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OMA.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="RF/discrete_dist.cc" ex="false" tool="1" flavor2="0">
       </item>
@@ -317,6 +320,8 @@
       <item path="MascReader.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="NodeConfig.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="OMA.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="RF/discrete_dist.cc" ex="false" tool="1" flavor2="0">
       </item>

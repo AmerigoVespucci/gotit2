@@ -55,6 +55,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/MascFiles.o \
 	${OBJECTDIR}/MascReader.o \
 	${OBJECTDIR}/NodeConfig.o \
+	${OBJECTDIR}/OMA.o \
 	${OBJECTDIR}/RF/discrete_dist.o \
 	${OBJECTDIR}/RF/instance_set.o \
 	${OBJECTDIR}/RF/random_forest.o \
@@ -200,6 +201,11 @@ ${OBJECTDIR}/NodeConfig.o: NodeConfig.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/NodeConfig.o NodeConfig.cpp
+
+${OBJECTDIR}/OMA.o: OMA.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/OMA.o OMA.cpp
 
 ${OBJECTDIR}/RF/discrete_dist.o: RF/discrete_dist.cc 
 	${MKDIR} -p ${OBJECTDIR}/RF
