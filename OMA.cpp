@@ -1,5 +1,5 @@
 // OMA.cpp : 
-// Takes a GenData proto file and produces all the data needed to rnu a GenSeed Caffe NN generation
+// process the mod file content for OMA
 //
 
 

@@ -673,7 +673,10 @@
       <TaskItem TaskType="NoArgsFn" do="LoadSentenceListOneMod" />
       <TaskItem TaskType="NoArgsFn" do="OMA" />
       <TaskItem TaskType="NoArgsFn" do="ClearSentenceRecs" />
-    </TaskNode>
+    </TaskNode>    
+    <TaskNode name="TaskNode.LoadWordNetDB">
+      <TaskItem TaskType="NoArgsFn" do="WordNetDBLoad" />
+    </TaskNode>    
     <TaskNode name="TaskNode.DoTblGen">
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/H5Staging" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/H5Staging/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
@@ -1332,9 +1335,10 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoOMA"  commment="work on OMA stuff" />
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.InitGutenNlpieFromNLP" comment = "int from NLP for nlpie testing"/>
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoNlpie"  commment="work on nlpie testing via OMA stuff" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LoadWordNetDB"  commment="load the files from word net into an in-memory db" />
 
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoNlpie"  commment="work on nlpie testing via OMA stuff" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LoadWordNetDB"  commment="load the files from word net into an in-memory db" />
 
   </ImplementationParameterList>
 </Config>

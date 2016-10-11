@@ -57,6 +57,7 @@ void CGotitEnv::RegisterCallableFunctions()
 	TaskFnMap["ClosenessComplete"] = &CGotitEnv::ClosenessComplete;
 	TaskFnMap["PrepCauseData"] = &CGotitEnv::PrepCauseData;
 	TaskFnMap["OMA"] = &CGotitEnv::OMA;
+	TaskFnMap["WordNetDBLoad"] = &CGotitEnv::WordNetDBLoad;
 }
 
 

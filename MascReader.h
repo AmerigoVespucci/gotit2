@@ -704,6 +704,7 @@ public:
 	void ClosenessComplete();
 	void PrepCauseData();
         void OMA();
+        void WordNetDBLoad();
 	
 private:
 	void WordsCreated();

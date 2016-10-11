@@ -57,6 +57,7 @@
       <itemPath>RF/tree.cc</itemPath>
       <itemPath>RF/tree_node.cc</itemPath>
       <itemPath>RF/weights.cc</itemPath>
+      <itemPath>wordnet.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -213,6 +214,8 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="wordnet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -362,6 +365,8 @@
       <item path="ipc.pb.cc" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="wordnet.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

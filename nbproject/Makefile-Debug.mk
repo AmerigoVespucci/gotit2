@@ -75,7 +75,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/WordSwap.o \
 	${OBJECTDIR}/XmlParser.o \
 	${OBJECTDIR}/ipc.pb.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/wordnet.o
 
 
 # C Compiler Flags
@@ -306,6 +307,11 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/wordnet.o: wordnet.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -DGOTIT_LINUX -IRF -I../../dev/caffe/.build_debug/src -I../../dev/caffe/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/wordnet.o wordnet.cpp
 
 # Subprojects
 .build-subprojects:
