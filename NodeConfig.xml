@@ -1338,7 +1338,7 @@
     <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LoadWordNetDB"  commment="load the files from word net into an in-memory db" />
 
     -->
-    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.LoadWordNetDB"  commment="load the files from word net into an in-memory db" />
+    <ImplementationParameter name="Implem.Param.Cntrl.MainTask" type="constant" val="TaskNode.DoNlpie"  commment="work on nlpie testing via OMA stuff" />
 
   </ImplementationParameterList>
 </Config>

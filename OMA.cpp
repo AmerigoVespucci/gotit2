@@ -298,8 +298,16 @@ struct NlpieTestEl {
     
 };
 struct NlpieTest {
-    vector<NlpieVar> VarTbl;
+    vector<NlpieVar> VarTblSrc;
+    vector<NlpieVar> VarTbl; // current working VarTbl 
+    list<vector<NlpieVar> > VarTblStack;
+    list<vector<NlpieVar> > VarTblStackNew;
     vector<NlpieTestEl> TestTbl; 
+    NlpieTest(vector<NlpieVar> aVarTbl, vector<NlpieTestEl> aTestTbl) {
+        VarTblSrc = aVarTbl;
+        TestTbl = aTestTbl;
+        
+    }
     bool DoTest();
 private:
     // helper functions
@@ -355,7 +363,10 @@ bool NlpieTest::FindGovOnAddLadder( NlpieTriple& trDB, int iBoundNode,
 
             NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                                 make_pair(iParentTriple, NODE_LEFT));
-            VarTbl[iUnboundVar] = BoundVal;
+            vector<NlpieVar> NewVarTbl = VarTbl; 
+            NewVarTbl[iUnboundVar] = BoundVal;
+            VarTblStackNew.push_back(NewVarTbl);
+            //VarTbl[iUnboundVar] = BoundVal;
             return true;
 
         }
@@ -427,7 +438,10 @@ bool NlpieTest::TestRightDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
 
         NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                             make_pair(iGovsDepRepTriple, NODE_LEFT));
-        VarTbl[iUnboundVar] = BoundVal;
+        vector<NlpieVar> NewVarTbl = VarTbl; 
+        NewVarTbl[iUnboundVar] = BoundVal;
+        VarTblStackNew.push_back(NewVarTbl);
+//        VarTbl[iUnboundVar] = BoundVal;
         return true;
     }
     else {
@@ -466,7 +480,10 @@ bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
             NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                                 make_pair(iBoundNode, 
                                 (bBoundNodeOnLeft ? NODE_RIGHT : NODE_LEFT))); 
-            VarTbl[iUnboundVar] = BoundVal;
+            vector<NlpieVar> NewVarTbl = VarTbl; 
+            NewVarTbl[iUnboundVar] = BoundVal;
+            VarTblStackNew.push_back(NewVarTbl);
+//            VarTbl[iUnboundVar] = BoundVal;
             //bAllTestElsPassedSoFar = true;
             return true;
         }
@@ -576,7 +593,10 @@ bool NlpieTest::FindStringOffDepRel(    int iTripleOnTop, NlpieTriple& trSearch,
             << "\n";
     NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                         make_pair(iTripleOnTop, NODE_LEFT)); // 1 because the scheme is head, left, right : 0, 1, 2
-    VarTbl[iUnboundVar] = BoundVal;
+    vector<NlpieVar> NewVarTbl = VarTbl; 
+    NewVarTbl[iUnboundVar] = BoundVal;
+    VarTblStackNew.push_back(NewVarTbl);
+//    VarTbl[iUnboundVar] = BoundVal;
     return true;
     
 }
@@ -614,7 +634,10 @@ bool NlpieTest::TestTripleOffAdd(int iTripleOffAdd, NlpieTriple& trSearch,
                 << get<string>(TripleOffAdd.right.val)  << "\n";
         NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                             make_pair(iTripleOffAdd, NODE_RIGHT)); // 2 because the scheme is head, left, right : 0, 1, 2
-        VarTbl[iUnboundVar] = BoundVal;
+        vector<NlpieVar> NewVarTbl = VarTbl; 
+        NewVarTbl[iUnboundVar] = BoundVal;
+        VarTblStackNew.push_back(NewVarTbl);
+//        VarTbl[iUnboundVar] = BoundVal;
         return true;
         //bAllTestElsPassedSoFar = true;
     }
@@ -630,180 +653,224 @@ bool NlpieTest::TestTripleOffAdd(int iTripleOffAdd, NlpieTriple& trSearch,
 
 }
 
+
 bool NlpieTest::DoTest()
 {
     //vector<vector<NlpieVar> > VarTblOptions;
     bool bFailWithErr = false;
-    bool bAllTestElsPassedSoFar = true;
+//    bool bAllTestElsPassedSoFar = true;
     bool bLastIsMust = true;
+    // The following is subtle
+    // for each test el, we iterate through checking if the cand generates
+    // a following. On a bMust there must be a following and if  !must there 
+    // must not be a following
+    vector<vector<NlpieVar> > VarTblTestElCands; 
+    vector<vector<NlpieVar> > VarTblTestElCandsNew; 
+    VarTblTestElCands.clear();
+    VarTblTestElCands.push_back(VarTblSrc);
     for (auto& el : TestTbl) {
-        if ((bAllTestElsPassedSoFar ^ bLastIsMust)) {
-            cerr << "Not all test els matched TripleDB. Discontinuing search\n";
-            return false;
-        }
+//        if ((bAllTestElsPassedSoFar ^ bLastIsMust)) {
+//            cerr << "Not all test els matched TripleDB. Discontinuing search\n";
+//            return false;
+//        }
         if (bFailWithErr) return false;
+        bool bLastElCand;
+        for (auto VarTblElCand : VarTblTestElCands) {
+            VarTblStackNew.clear();
+            VarTblStackNew.push_back(VarTblElCand);
+            // do the stuff
         //bAllTestElsPassedSoFar = false;
         //bool bAllTestElsPassedSoFar = true;
-        auto FindVarNode = [&] (int& iVar, string& VarName) {
-            for (int iv = 0; iv < VarTbl.size(); iv++) {
-                auto v = VarTbl[iv];
-                if (v.VarName == VarName) {
-                    iVar = iv;
-                    break;          
-                }
-            }
-            if (iVar == -1) {
-                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
-                bFailWithErr = true;
-                return false;
-            }
-            return true;
-        };
-        for (auto& triple : el.TestTripleVec) {
-            if ((bAllTestElsPassedSoFar ^ bLastIsMust)) {
-                cerr << "Test did not match all els.\n";
-                break;
-            }
-            bAllTestElsPassedSoFar = false;
-            bLastIsMust = el.bMust;
-            
-            bool bSomethingToSearchFor = false;
-            bool bSearchingOnLeft = false;
-            string SearchString;
-            NlpieNode OtherNode;
-            NlpieNode SearchHeadNode;
-            SearchHeadNode = triple.head;
-            if ((triple.head.nt == ntEqual) && (get<string>(triple.head.val) == "string")) {
-//                if (triple.left.nt == ntStringVal) {
-//                    bSearchingOnLeft = true;
-//                    SearchString = get<string>(triple.left.val);
-//                    bSomethingToSearchFor = true;
-//                    OtherNode = triple.right;
-//                }
-                if (triple.right.nt == ntStringVal) {
-                    SearchString = get<string>(triple.right.val);
-                    bSomethingToSearchFor = true;                
-                    OtherNode = triple.left;
-                }
-                else {
-                    cerr << "Badly formed query. Right side of ntEqual must be ntStringVar.\n";
-                    bFailWithErr = true;
-                    return false;
-                }
-                if (!bSomethingToSearchFor) {
-                    continue;
-                }
-                int iVar = -1;
-                string VarName;
-                if (OtherNode.nt == ntVar) {
-                    VarName = get<string>(OtherNode.val);
-                    if (!FindVarNode(iVar, VarName)) {
+            for (auto& trSearch : el.TestTripleVec) {
+                VarTblStack.clear();
+                VarTblStack = VarTblStackNew;
+                VarTblStackNew.clear();
+                while (!VarTblStack.empty() ) {
+                    VarTbl = VarTblStack.front();
+                    VarTblStack.pop_front();
+                    auto FindVarNode = [&] (int& iVar, string& VarName) {
+                        for (int iv = 0; iv < VarTbl.size(); iv++) {
+                            auto v = VarTbl[iv];
+                            if (v.VarName == VarName) {
+                                iVar = iv;
+                                break;          
+                            }
+                        }
+                        if (iVar == -1) {
+                            cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                            bFailWithErr = true;
+                            return false;
+                        }
+                        return true;
+                    };
+//                    if ((bAllTestElsPassedSoFar ^ bLastIsMust)) {
+//                        cerr << "Test did not match all els.\n";
+//                        break;
+//                    }
+//                    bAllTestElsPassedSoFar = false;
+//                    bLastIsMust = el.bMust;
+
+                    bool bSomethingToSearchFor = false;
+                    bool bSearchingOnLeft = false;
+                    string SearchString;
+                    NlpieNode OtherNode;
+                    NlpieNode SearchHeadNode;
+                    SearchHeadNode = trSearch.head;
+                    if ((trSearch.head.nt == ntEqual) && (get<string>(trSearch.head.val) == "string")) {
+        //                if (triple.left.nt == ntStringVal) {
+        //                    bSearchingOnLeft = true;
+        //                    SearchString = get<string>(triple.left.val);
+        //                    bSomethingToSearchFor = true;
+        //                    OtherNode = triple.right;
+        //                }
+                        if (trSearch.right.nt == ntStringVal) {
+                            SearchString = get<string>(trSearch.right.val);
+                            bSomethingToSearchFor = true;                
+                            OtherNode = trSearch.left;
+                        }
+                        else {
+                            cerr << "Badly formed query. Right side of ntEqual must be ntStringVar.\n";
+                            bFailWithErr = true;
+                            return false;
+                        }
+                        if (!bSomethingToSearchFor) {
+                            continue;
+                        }
+                        int iVar = -1;
+                        string VarName;
+                        if (OtherNode.nt == ntVar) {
+                            VarName = get<string>(OtherNode.val);
+                            if (!FindVarNode(iVar, VarName)) {
+                                return false;
+                            }
+                        }
+                        else {
+                            cerr << "Badly formed query. Left side of ntEqual must be ntVar.\n";
+                            bFailWithErr = true;
+                            return false;
+                        }
+                        int itrDB = -1;
+                        bool bMatchFound = false;
+                        for (auto& trDB : TripleTbl) {
+                            vector<NlpieVar> NewVarTbl = VarTbl; 
+                            itrDB++;
+                            if ((trDB.left.nt == ntStringVal) && (SearchString == get<string>(trDB.left.val))) {
+                                NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
+                                                    make_pair(itrDB, NODE_LEFT)); // the node being bound is on the left of the db triple
+                                NewVarTbl[iVar] = BoundVal;
+                                VarTblStackNew.push_back(NewVarTbl);
+                                bMatchFound = true;
+                            }
+                            if ((trDB.right.nt == ntStringVal) && (SearchString == get<string>(trDB.right.val))) {
+                                NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
+                                                    make_pair(itrDB, NODE_RIGHT)); 
+                                NewVarTbl[iVar] = BoundVal;
+                                VarTblStackNew.push_back(NewVarTbl);
+                                bMatchFound = true;
+                            }
+
+                        }
+                        if (bMatchFound) {
+                            cerr << "Test El scored. Bound a node to " << VarName << " that matched string '" << SearchString << "'\n";
+//                            bAllTestElsPassedSoFar = true;
+                        }
+                        continue;
+                    }
+                    // very specific search for ntDepRel and two vars, exactly one of which is bound
+                    // expand to evolve code
+                    if (!(      (trSearch.head.nt = ntDepRel) 
+                            &&  (trSearch.left.nt == ntVar)
+                            &&  (trSearch.right.nt == ntVar))) {
+                        cerr << "For now, only dealing with Dep and two vars. Test will fail.\n";
+                        bFailWithErr = true;
+                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail.
+                    }
+                    int iLeftVar = -1, iRightVar = -1;
+                    string VarName = get<string>(trSearch.left.val);
+                    if (!FindVarNode(iLeftVar, VarName)) {
+                        bFailWithErr = true;
+                        return false;
+                    }
+                    VarName = get<string>(trSearch.right.val);
+                    if (!FindVarNode(iRightVar, VarName)) {
+                        bFailWithErr = true;
+                        return false;
+                    }
+                    if (VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+                        cerr << "Test will fail because code not written for this situation.\n";
+                        continue;
+                    }
+                    if (!VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+                        // for now we won't allow open-ended search
+                        cerr << "Test will fail because code not written for this situation.\n";
+                        continue;
+                    }
+                    NlpieTriple trDB;
+                    int iBoundVar, iUnboundVar;
+                    bool bSearchBoundOnLeft = true;
+                    if (!VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+                        iBoundVar = iRightVar;
+                        iUnboundVar = iLeftVar;
+                        bSearchBoundOnLeft = false;
+                    }
+                    if (VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+                        iBoundVar = iLeftVar;
+                        iUnboundVar = iRightVar;                
+                    }
+                    if (VarTbl[iBoundVar].nvt != nvtNode) {
+                        cerr << "Test will fail because fr now the only type of bound var is nvtNode.\n";
+                        bFailWithErr = true;
+                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail
+                    }
+                    pair<int, int> BoundNodeID = get<pair<int, int> >(VarTbl[iBoundVar].val);
+                    string UnboundVarName = VarTbl[iUnboundVar].VarName;
+                     bool bBoundNodeOnLeft = (BoundNodeID.second == 1);
+                    trDB = TripleTbl[BoundNodeID.first];
+                    if (bSearchBoundOnLeft) {
+                        if (TestLeftDep(trDB, trSearch, 
+                                        BoundNodeID.first, bBoundNodeOnLeft, 
+                                        iUnboundVar, bFailWithErr )) {
+//                            bAllTestElsPassedSoFar = true;
+                            continue;
+                        }
+                    }
+                    else {
+                        if (TestRightDep(trDB, trSearch, 
+                                        BoundNodeID.first, bBoundNodeOnLeft, 
+                                        iUnboundVar, bFailWithErr )) {
+//                            bAllTestElsPassedSoFar = true;
+                            continue;
+                        }
+                    }
+                    if (bFailWithErr) {
                         return false;
                     }
                 }
-                else {
-                    cerr << "Badly formed query. Left side of ntEqual must be ntVar.\n";
-                    bFailWithErr = true;
-                    return false;
-                }
-                int itrDB = -1;
-                bool bMatchFound = false;
-                for (auto& trDB : TripleTbl) {
-                    itrDB++;
-                    if ((trDB.left.nt == ntStringVal) && (SearchString == get<string>(trDB.left.val))) {
-                        NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
-                                            make_pair(itrDB, NODE_LEFT)); // the node being bound is on the left of the db triple
-                        VarTbl[iVar] = BoundVal;
-                        bMatchFound = true;
+            } // End triples in test el loop
+            // post-processing of test el loop
+            if (el.bMust) {
+                if (!VarTblStackNew.empty()) {
+                    for (auto NewVarTblElCand : VarTblStackNew) {
+                        VarTblTestElCandsNew.push_back(NewVarTblElCand);
                     }
-                    if ((trDB.right.nt == ntStringVal) && (SearchString == get<string>(trDB.right.val))) {
-                        NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
-                                            make_pair(itrDB, NODE_RIGHT)); 
-                        VarTbl[iVar] = BoundVal;
-                        bMatchFound = true;
-                    }
-                    
-                }
-                if (bMatchFound) {
-                    cerr << "Test El scored. Bound a node to " << VarName << " that matched string '" << SearchString << "'\n";
-                    bAllTestElsPassedSoFar = true;
-                }
-                continue;
-            }
-            // very specific search for ntDepRel and two vars, exactly one of which is bound
-            // expand to evolve code
-            if (!(      (triple.head.nt = ntDepRel) 
-                    &&  (triple.left.nt == ntVar)
-                    &&  (triple.right.nt == ntVar))) {
-                cerr << "For now, only dealing with Dep and two vars. Test will fail.\n";
-                bFailWithErr = true;
-                continue; // not resetting bAllTestElsPassedSoFar, so test will fail.
-            }
-            int iLeftVar = -1, iRightVar = -1;
-            string VarName = get<string>(triple.left.val);
-            if (!FindVarNode(iLeftVar, VarName)) {
-                bFailWithErr = true;
-                return false;
-            }
-            VarName = get<string>(triple.right.val);
-            if (!FindVarNode(iRightVar, VarName)) {
-                bFailWithErr = true;
-                return false;
-            }
-            if (VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
-                cerr << "Test will fail because code not written for this situation.\n";
-                continue;
-            }
-            if (!VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
-                // for now we won't allow open-ended search
-                cerr << "Test will fail because code not written for this situation.\n";
-                continue;
-            }
-            NlpieTriple trDB;
-            int iBoundVar, iUnboundVar;
-            bool bSearchBoundOnLeft = true;
-            if (!VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
-                iBoundVar = iRightVar;
-                iUnboundVar = iLeftVar;
-                bSearchBoundOnLeft = false;
-            }
-            if (VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
-                iBoundVar = iLeftVar;
-                iUnboundVar = iRightVar;                
-            }
-            if (VarTbl[iBoundVar].nvt != nvtNode) {
-                cerr << "Test will fail because fr now the only type of bound var is nvtNode.\n";
-                bFailWithErr = true;
-                continue; // not resetting bAllTestElsPassedSoFar, so test will fail
-            }
-            pair<int, int> BoundNodeID = get<pair<int, int> >(VarTbl[iBoundVar].val);
-            string UnboundVarName = VarTbl[iUnboundVar].VarName;
-             bool bBoundNodeOnLeft = (BoundNodeID.second == 1);
-            trDB = TripleTbl[BoundNodeID.first];
-            if (bSearchBoundOnLeft) {
-                if (TestLeftDep(trDB, triple, 
-                                BoundNodeID.first, bBoundNodeOnLeft, 
-                                iUnboundVar, bFailWithErr )) {
-                    bAllTestElsPassedSoFar = true;
-                    continue;
+                    VarTblStackNew.clear();
                 }
             }
-            else {
-                if (TestRightDep(trDB, triple, 
-                                BoundNodeID.first, bBoundNodeOnLeft, 
-                                iUnboundVar, bFailWithErr )) {
-                    bAllTestElsPassedSoFar = true;
-                    continue;
+            else { // !bMust
+                if (VarTblStackNew.empty()) {
+                    VarTblTestElCandsNew.push_back(VarTblElCand);
                 }
+                
             }
-            if (bFailWithErr) {
-                return false;
-            }
-                            
-        }
-    }
+        } // end for VarTblTestElCands 
+        VarTblTestElCands.clear();
+        VarTblTestElCands = VarTblTestElCandsNew;
+        VarTblTestElCandsNew.clear();
+            
+    } // end TestEl loop
     if (bFailWithErr) return false;
-    if (!(bAllTestElsPassedSoFar ^ bLastIsMust)) {
+//    if (!(bAllTestElsPassedSoFar ^ bLastIsMust)) {
+    if (!VarTblTestElCands.empty()) {
         cerr << "Test passed for TripleDB.\n";
 
         return true;
