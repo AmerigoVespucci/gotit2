@@ -36,6 +36,87 @@ using boost::asio::ip::tcp;
 #pragma warning(disable : 4503)
 #endif
 
+
+    
+#ifdef ORIG_CODE    
+void CGotitEnv::OMA()
+{
+
+	//int i_curr_rec = 0;
+	const int c_srec_keep_size = 3;
+    const string cSearchWord = "killed";
+	string lw;
+    vector<SSentenceRec> KeySentences;
+    vector<int> KeyIndex;
+    static int nGoodCount = 0;
+
+	for (int isr = 0; isr < SentenceRec.size(); isr++) {
+        KeySentences.clear();
+        KeyIndex.clear();
+		SSentenceRec rec = SentenceRec[isr];
+        bool bKeySentence = false;
+        int FoundIndex = -1;
+		for (int iwrec = 0; iwrec < rec.OneWordRec.size(); iwrec++) {
+			string& w = rec.OneWordRec[iwrec].Word;
+			lw.clear();
+			bool b_is_word = true;
+			for (auto c : w) {
+				lw += tolower(c);
+				if (!isalpha(c)) {
+					b_is_word = false;
+				}
+			}
+			if (!b_is_word) continue; 
+			if (w == "killed") {
+				//cerr << "Sentence is: " << rec.Sentence << endl;
+                bKeySentence = true;
+                FoundIndex = iwrec;
+			}
+        }
+        if (bKeySentence) {
+            KeySentences.push_back(rec);
+            KeyIndex.push_back(FoundIndex);
+            
+        }
+        
+        int idepNsubj = DepTypes["nsubj"];
+        int idepDobj = DepTypes["dobj"];
+        for (int ir = 0; ir < KeySentences.size(); ir++) {
+            SSentenceRec rec = KeySentences[ir];    
+            int FoundIndex = KeyIndex[ir];
+            auto& deps = rec.Deps;
+            bool bNsubjFound = false;
+            bool bDobjFound = false;
+            int iNsubj = -1;
+            int iDobj = -1;
+            for (auto& dep : deps) {
+                if (dep.Gov == FoundIndex) {
+                    if (dep.iDep == idepNsubj) {
+                        bNsubjFound = true;
+                        iNsubj = (int)dep.Dep;
+                    }
+                    if (dep.iDep == idepDobj) {
+                        bDobjFound = true;
+                        iDobj = (int)dep.Dep;
+                    }
+                }
+            }
+            if (bNsubjFound && bDobjFound) {
+                cerr << LastModLoaded << " :\n";
+                cerr << "Sentence has nsubj && dobj: " << rec.Sentence << endl;
+                cerr << rec.OneWordRec[iNsubj].Word << " killed " << rec.OneWordRec[iDobj].Word << endl;
+                nGoodCount++;
+            }
+        }
+	}
+    
+    cerr << nGoodCount << " cases found\n";
+	
+
+}
+
+#endif // ORIG_CODE
+
 enum NlpieType {
     ntInvalid,
     ntStringVal,
@@ -375,7 +456,6 @@ NlpieNode * getNode(NlpieVal NodeID) {
             return &(pTr->right);
     }
 }
-
 
 bool NlpieTest::FindGovOnAddLadder( NlpieTriple& trDB, int iBoundNode, 
                                     int iUnboundVar, bool& bFailWithErr) {
@@ -726,7 +806,6 @@ bool NlpieTest::BindStringVar(string VarName, string ConstVal)
     return true;
 }
 
-
 bool NlpieTest::DoTest()
 {
     //vector<vector<NlpieVar> > VarTblOptions;
@@ -797,6 +876,27 @@ bool NlpieTest::DoTest()
                 while (!VarTblStack.empty() ) {
                     VarTbl = VarTblStack.front();
                     VarTblStack.pop_front();
+//                    auto FindVarNode = [&] (int& iVar, string& VarName) {
+//                        for (int iv = 0; iv < VarTbl.size(); iv++) {
+//                            auto v = VarTbl[iv];
+//                            if (v.VarName == VarName) {
+//                                iVar = iv;
+//                                break;          
+//                            }
+//                        }
+//                        if (iVar == -1) {
+//                            cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+//                            bFailWithErr = true;
+//                            return false;
+//                        }
+//                        return true;
+//                    };
+//                    if ((bAllTestElsPassedSoFar ^ bLastIsMust)) {
+//                        cerr << "Test did not match all els.\n";
+//                        break;
+//                    }
+//                    bAllTestElsPassedSoFar = false;
+//                    bLastIsMust = el.bMust;
 
                     bool bSearchingOnLeft = false;
                     string SearchString;
@@ -804,6 +904,12 @@ bool NlpieTest::DoTest()
                     NlpieNode SearchHeadNode;
                     SearchHeadNode = trSearch.head;
                     if ((trSearch.head.nt == ntEqual) && (get<string>(trSearch.head.val) == "string")) {
+        //                if (triple.left.nt == ntStringVal) {
+        //                    bSearchingOnLeft = true;
+        //                    SearchString = get<string>(triple.left.val);
+        //                    bSomethingToSearchFor = true;
+        //                    OtherNode = triple.right;
+        //                }
                         bool bSearchStringValid = false;
                         if (trSearch.right.nt == ntStringVal) {
                             SearchString = get<string>(trSearch.right.val);
@@ -821,6 +927,8 @@ bool NlpieTest::DoTest()
                                     SearchString = get<string>(Var.val);
                                 }
                             }
+//                                &&  (trSearch.right.)
+//                                &&  () ) 
                             
                         }
                         if (!bSearchStringValid) {
@@ -1103,6 +1211,106 @@ void DisplayTripleTree() {
     
 }
 
+
+#ifdef LEAVE_OUT
+NlpieTest t1_bad = {    {NlpieVar("x")}, 
+                    {NlpieTestEl(   true, 
+                                    {   NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
+                                                    NlpieNode(ntStringVal, "hit"), 
+                                                    NlpieNode(ntVar, "x"))
+                                    }
+                                )
+                    }
+                };
+NlpieTest t1a = {   {NlpieVar("x", nvtNode), NlpieVar("z", nvtNode)}, 
+                    {NlpieTestEl(   true, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntEqual, "string"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntStringVal, "hit")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "x"))
+                                    }
+                                )         
+                    }
+                };
+NlpieTest t1b = {   {NlpieVar("x", nvtNode), NlpieVar("z", nvtNode)}, 
+                    {NlpieTestEl(   true, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntEqual, "string"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntStringVal, "balls")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                                    NlpieNode(ntVar, "x"), 
+                                                    NlpieNode(ntVar, "z"))
+                                    }
+                                )         
+                    }
+                };
+// there exists x,y where nsubj(hit, x) & dobj(hit, y)
+NlpieTest t2_bad = {    {NlpieVar("x"), NlpieVar("y")}, 
+                    {NlpieTestEl(   true, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
+                                                    NlpieNode(ntStringVal, "hit"), 
+                                                    NlpieNode(ntVar, "x")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                                    NlpieNode(ntStringVal, "hit"), 
+                                                    NlpieNode(ntVar, "y"))
+                                    }
+                                )
+                    }
+                };
+// there exists x,y,z where string(z,"hit"), nsubj(z, x) & dobj(z, y)
+NlpieTest t3 = {    {NlpieVar("x"), NlpieVar("y"), NlpieVar("z")}, 
+                    {NlpieTestEl(   true, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntEqual, "string"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntStringVal, "hit")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "x")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "y"))
+                                    }
+                                )
+                    }
+                };
+NlpieTest t4 = {    {NlpieVar("x"), NlpieVar("y"), NlpieVar("z"), NlpieVar("t"), NlpieVar("s")}, 
+                    {   NlpieTestEl(true, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntEqual, "string"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntStringVal, "hit")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "x")),
+                                        NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "y"))
+                                    }
+                                ),
+                        NlpieTestEl(false, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntDepRel, "neg"), 
+                                                    NlpieNode(ntVar, "y"), 
+                                                    NlpieNode(ntVar, "t"))
+                                    }
+                                ),
+                        NlpieTestEl(false, 
+                                    {   
+                                        NlpieTriple(NlpieNode(ntDepRel, "neg"), 
+                                                    NlpieNode(ntVar, "z"), 
+                                                    NlpieNode(ntVar, "s"))
+                                    }
+                                )
+                    }
+                };
+#endif // LEAVE_OUT
+
 void CGotitEnv::OMA()
 {
     AllTestMap.clear();
@@ -1323,3 +1531,4 @@ void CGotitEnv::OMA()
 	
 
 }
+
