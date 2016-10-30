@@ -321,7 +321,7 @@ void ConvertDBOffsetsToIDBs() {
 }
 
 #define PTR_TYPE_HYPERNYM "@"
-bool WordNetIsHypernym(string sHypoCand, string sHyperCand, char SynetType) {
+bool CGotitEnv::WordNetIsHypernym(string sHypoCand, string sHyperCand, char SynetType) {
     string SearchWord = string(1, SynetType) + ":" + sHypoCand;
     auto itWordIndex = WordToIndexMap.find(SearchWord);
     if (itWordIndex == WordToIndexMap.end()) {

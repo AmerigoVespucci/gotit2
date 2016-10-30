@@ -660,6 +660,7 @@ public:
 	void AddWordGrpLink(string& W, int GrpID, int NumOccurs);
 	map<string, SWordData>& getWordTbl() { return MapWordToData;  }
 	int getWordHitCount(string& W);
+        bool WordNetIsHypernym(string sHypoCand, string sHyperCand, char SynetType);
 
 	// callable Task Functions
 	void InitLoadFromNLP();

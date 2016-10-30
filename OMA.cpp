@@ -50,6 +50,8 @@ enum NlpieType {
     ntVar, // not a DB n type. Holds bounds variables in search/match
     ntEqual, // not a DB n type but used for match
     ntNode, // could be a DB n type, but currently used for matching
+    ntExtract, // get a value from a node, such as its string val
+    ntIsHypernym, // test a condition against a WordNet lookup
 };
 
 enum NlpieVarType {
@@ -57,6 +59,7 @@ enum NlpieVarType {
     nvtString,
     nvtNode,
 };
+
 typedef boost::variant <int , float , string, pair<int, int> > NlpieVal;
 //typedef boost::variant <int , float , string > NlpieVal;
 struct NlpieNode {
@@ -140,7 +143,11 @@ struct NlpieTriple {
 };
 
 struct NlpieVar {
-    NlpieVar(string aVarName) : nvt(nvtInvalid), val(-1) {
+    NlpieVar() : nvt(nvtInvalid), val(-1) {
+        VarName = "";
+        bBound = false;
+    }
+    NlpieVar(string aVarName) : nvt(nvtNode), val(-1) {
         VarName = aVarName;
         bBound = false;
     }
@@ -206,6 +213,7 @@ struct NlpieTest {
     //vector<NlpieTestEl> TestTbl; 
     vector<NlpieTestImportHybrid> TestsAndImportsList;
     string TestName;
+    CGotitEnv * pTheEnv;
 //    NlpieTest(vector<NlpieVar> aVarTbl, vector<NlpieTestEl> aTestTbl) {
 //        VarTblSrc = aVarTbl;
 //        TestTbl = aTestTbl;
@@ -215,10 +223,14 @@ struct NlpieTest {
         TestName = aTestName;
         VarTblSrc = aVarTbl;
         TestsAndImportsList = TestImportsHybrids;
+        pTheEnv = NULL;
         //TestTbl = aTestTbl;
         
     }
     static bool GetVarIndex(int& iVar, string& VarName, vector<NlpieVar>& VarTbl);
+    // Run the query against the TripleTbl (currently the sentence)
+    // If the test passes, returns true and creates a stack of possible matches
+    // as a list of VarTbl instances in VarTblStck
     bool DoTest();
     bool BindStringVar(string VarName, string ConstVal);
 private:
@@ -251,6 +263,23 @@ private:
 // there exists some x where nsubj(hit, x)
 vector<NlpieTest> AllTests = {
     NlpieTest ( 
+            "BindSubjObj",
+            {NlpieVar("x"), NlpieVar("y"), NlpieVar("z")}, 
+            {   
+                NlpieTestImportHybrid(
+                        true, 
+                        {   
+                            NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
+                                        NlpieNode(ntVar, "z"), 
+                                        NlpieNode(ntVar, "x")),
+                            NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
+                                        NlpieNode(ntVar, "z"), 
+                                        NlpieNode(ntVar, "y"))
+                        }
+                )
+            }
+    ),
+    NlpieTest ( 
             "VerbGet",
             {NlpieVar("vname", nvtString), NlpieVar("x"), NlpieVar("y"), NlpieVar("z"), NlpieVar("t"), NlpieVar("s"), NlpieVar("r")}, 
             {   
@@ -270,16 +299,9 @@ vector<NlpieTest> AllTests = {
                                         NlpieNode(ntVar, "z"))
                         }
                 ),
-                NlpieTestImportHybrid(
-                        true, 
-                        {   
-                            NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
-                                        NlpieNode(ntVar, "z"), 
-                                        NlpieNode(ntVar, "x")),
-                            NlpieTriple(NlpieNode(ntDepRel, "dobj"), 
-                                        NlpieNode(ntVar, "z"), 
-                                        NlpieNode(ntVar, "y"))
-                        }
+                NlpieTestImportHybrid   (
+                        {{"z", "z"}, {"x", "x"}, {"y", "y"}},
+                        "BindSubjObj"
                 ),
                 NlpieTestImportHybrid(
                         false, 
@@ -302,28 +324,24 @@ vector<NlpieTest> AllTests = {
     NlpieTest (
             "HTest",
             {
-                NlpieVar("subj"), NlpieVar("obj")
+                NlpieVar("subj"), NlpieVar("obj"), NlpieVar("ObjName", nvtString)
             }, 
             {
-                // the following two are dummies; just to test the compiler
-                NlpieTestImportHybrid(   
-                        true, 
-                        {   NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
-                                        NlpieNode(ntStringVal, "hit"), 
-                                        NlpieNode(ntVar, "x"))
-                        }
-                ),
-                NlpieTestImportHybrid(   
-                        true, 
-                        {   NlpieTriple(NlpieNode(ntDepRel, "nsubj"), 
-                                        NlpieNode(ntStringVal, "hit"), 
-                                        NlpieNode(ntVar, "x"))
-                        }
-                ),
                 NlpieTestImportHybrid   (
                         // for now, binding to a const , as opposed to a var, done by referring to a name not in the var table
                         {{"vname", "hit"}, {"x", "subj"}, {"y", "obj"}},
                         "VerbGet"
+                ),
+                NlpieTestImportHybrid(
+                        true, 
+                        {   
+                            NlpieTriple(NlpieNode(ntExtract, "string"), 
+                                        NlpieNode(ntVar, "obj"), 
+                                        NlpieNode(ntVar, "ObjName")),
+                            NlpieTriple(NlpieNode(ntIsHypernym, "n"), 
+                                        NlpieNode(ntVar, "ObjName"), 
+                                        NlpieNode(ntStringVal, "person"))
+                        }
                 )
             }
     )
@@ -696,6 +714,7 @@ bool NlpieTest::TestTripleOffAdd(int iTripleOffAdd, NlpieTriple& trSearch,
 }
 
 bool NlpieTest::GetVarIndex(int& iVar, string& VarName, vector<NlpieVar>& VarTbl) {
+    iVar = -1;
     for (int iv = 0; iv < VarTbl.size(); iv++) {
         auto v = VarTbl[iv];
         if (v.VarName == VarName) {
@@ -704,7 +723,7 @@ bool NlpieTest::GetVarIndex(int& iVar, string& VarName, vector<NlpieVar>& VarTbl
         }
     }
     if (iVar == -1) {
-        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+        //cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
         //bFailWithErr = true;
         return false;
     }
@@ -713,8 +732,9 @@ bool NlpieTest::GetVarIndex(int& iVar, string& VarName, vector<NlpieVar>& VarTbl
 
 bool NlpieTest::BindStringVar(string VarName, string ConstVal)
 {
-    int iVar;
+    int iVar = -1;
     if (!GetVarIndex(iVar, VarName, VarTblSrc)) {
+        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
         return false;
     }
     if (VarTblSrc[iVar].nvt != nvtString) {
@@ -737,21 +757,35 @@ bool NlpieTest::DoTest()
     // for each test el, we iterate through checking if the cand generates
     // a following. On a bMust there must be a following and if  !must there 
     // must not be a following
-    vector<vector<NlpieVar> > VarTblTestElCands; 
-    vector<vector<NlpieVar> > VarTblTestElCandsNew; 
-    VarTblTestElCands.clear();
-    VarTblTestElCands.push_back(VarTblSrc);
+    struct VarTblCand {
+        VarTblCand() { CandSrcIdx = 0; }
+        VarTblCand(int SrcIdx, vector<NlpieVar>& aVarTbl) {
+            CandSrcIdx = SrcIdx;
+            VarTbl = aVarTbl;
+        }
+        vector<NlpieVar>  VarTbl;
+        int CandSrcIdx; // Index in Import Stack of source of the candidate
+    };
+//    vector<vector<NlpieVar> > VarTblTestElCands; 
+//    vector<vector<NlpieVar> > VarTblTestElCandsNew; 
+    vector<VarTblCand> VarTblTestElCands(1); 
+    vector<VarTblCand> VarTblTestElCandsNew(0); 
+    //VarTblTestElCands.clear();
+    VarTblTestElCands[0].VarTbl = VarTblSrc;
     vector<NlpieTestImportHybrid> TestsAndImportsEls = TestsAndImportsList;
 
     struct ImportStackEl {
         string TestName;
         int LastTestElIdx;
-        vector<vector<NlpieVar> > VarTblCands; 
+        vector<VarTblCand > VarTblCands; 
+        vector<pair<string, string> > PushingVarMap; // belongs to the new not the pushed
     };
     list<ImportStackEl> ImportStack;
     string CurrTestName = TestName;
+    int iTestAndImport = 0; 
     
-    for (int iTestAndImport = 0; /* no test */; iTestAndImport++ ) { // convert to Hybrid please
+    //for (int iTestAndImport = 0; /* no test */; iTestAndImport++ ) { // convert to Hybrid please
+    while (true) {
         
         NlpieTestImportHybrid* pTestOrImportEl = &(TestsAndImportsEls[iTestAndImport]);
         if (pTestOrImportEl->bImport) {
@@ -766,27 +800,57 @@ bool NlpieTest::DoTest()
             StackEl.TestName = CurrTestName;
             StackEl.LastTestElIdx = iTestAndImport;
             StackEl.VarTblCands = VarTblTestElCands;
+            StackEl.PushingVarMap = pTestOrImportEl->VarMap;
             NlpieTest NewTest = AllTests[itAllTestsMap->second];
             CurrTestName = NewTestName;
             VarTblTestElCands.clear();
-            for (auto OneCand : StackEl.VarTblCands) {
-                VarTblTestElCands.push_back(NewTest.VarTblSrc);
+            for (int iCand = 0; iCand < StackEl.VarTblCands.size(); iCand++) {
+                VarTblTestElCands.push_back(VarTblCand(iCand, NewTest.VarTblSrc));
             }
             for (auto VarTrans : pTestOrImportEl->VarMap) {
                 int iSrcVar = -1;
-                GetVarIndex(iSrcVar, VarTrans.second, StackEl.VarTblCands[0]);
+                GetVarIndex(iSrcVar, VarTrans.second, StackEl.VarTblCands[0].VarTbl);
                 int iDestVar = -1;
                 GetVarIndex(iDestVar, VarTrans.first, NewTest.VarTblSrc);
+                if (iDestVar == -1) {
+                    cerr    << "Error! Query specifies binding to a var " 
+                            << VarTrans.first << " the does not exist in test " 
+                            << CurrTestName << endl;
+                    return false;
+                }
                 for (int iCand = 0; iCand < VarTblTestElCands.size(); iCand++) {
-                    //if (StackEl.VarTblCands[iCand][iSrcVar]
+                    if (iSrcVar == -1) {
+                        if (VarTblTestElCands[iCand].VarTbl[iDestVar].nvt != nvtString) {
+                            cerr << "Error! For now, only a var of type nvtString can be bound to const.\n";
+                            return false;
+                        }
+                        VarTblTestElCands[iCand].VarTbl[iDestVar].val = VarTrans.second;
+                        VarTblTestElCands[iCand].VarTbl[iDestVar].bBound = true;
+                        //VarTblTestElCands[iCand].VarTbl[iDestVar].nvt = nvtString;
+                        continue;
+                    }
+                    if (StackEl.VarTblCands[iCand].VarTbl[iSrcVar].bBound) {
+                        if (    StackEl.VarTblCands[iCand].VarTbl[iSrcVar].nvt 
+                            !=  StackEl.VarTblCands[iCand].VarTbl[iSrcVar].nvt) {
+                            cerr << "Error. Attempting to copy the value of a node to that of a non-matching type.\n";
+                            return false;
+                        }
+                        VarTblTestElCands[iCand].VarTbl[iDestVar].val 
+                                = StackEl.VarTblCands[iCand].VarTbl[iSrcVar].val;
+                        VarTblTestElCands[iCand].VarTbl[iDestVar].bBound = true;
+                    }
                 }
             }
+            TestsAndImportsEls.clear();
+            TestsAndImportsEls = NewTest.TestsAndImportsList;
+            iTestAndImport = 0;
+            pTestOrImportEl = &(TestsAndImportsEls[0]);
         }
         if (bFailWithErr) return false;
         bool bLastElCand;
         for (auto VarTblElCand : VarTblTestElCands) {
             VarTblStackNew.clear();
-            VarTblStackNew.push_back(VarTblElCand);
+            VarTblStackNew.push_back(VarTblElCand.VarTbl);
             // do the stuff
         //bAllTestElsPassedSoFar = false;
         //bool bAllTestElsPassedSoFar = true;
@@ -803,7 +867,111 @@ bool NlpieTest::DoTest()
                     NlpieNode OtherNode;
                     NlpieNode SearchHeadNode;
                     SearchHeadNode = trSearch.head;
-                    if ((trSearch.head.nt == ntEqual) && (get<string>(trSearch.head.val) == "string")) {
+                    if (trSearch.head.nt == ntIsHypernym) {
+                        string SynetName = get<string>(trSearch.head.val);
+                        string sHyponym;
+                        if (trSearch.left.nt == ntVar) {
+                            string VarName = get<string>(trSearch.left.val);
+                            int iVar = -1;
+                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Syntax error in search. For hypernym, left requests unknown var.\n";
+                                return false;
+                            }
+                            if (VarTbl[iVar].nvt != nvtString) {
+                                cerr << "Syntax error in search. For hypernym, searching a var that is not nvtString.\n";
+                                return false;
+                            }
+                            if (!VarTbl[iVar].bBound) {
+                                continue; // fail silently
+                            }
+                            sHyponym = get<string>(VarTbl[iVar].val);
+                        }
+                        else if (trSearch.left.nt == ntStringVal) {
+                            sHyponym = get<string>(trSearch.left.val);
+                        }
+                        else {
+                            cerr << "Syntax error in search. For hypernym, the hyponym must be a var or a string const.\n";
+                            return false;
+                        }
+                        string sHypernym;
+                        if (trSearch.right.nt == ntVar) {
+                            string VarName = get<string>(trSearch.right.val);
+                            int iVar = -1;
+                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Syntax error in search. For hypernym, right requests unknown var.\n";
+                                return false;
+                            }
+                            if (VarTbl[iVar].nvt != nvtString) {
+                                cerr << "Syntax error in search. For hypernym, right searching a var that is not nvtString.\n";
+                                return false;
+                            }
+                            if (!VarTbl[iVar].bBound) {
+                                continue; // fail silently
+                            }
+                            sHypernym = get<string>(VarTbl[iVar].val);
+                        }
+                        else if (trSearch.right.nt == ntStringVal) {
+                            sHypernym = get<string>(trSearch.right.val);
+                        }
+                        else {
+                            cerr << "Syntax error in search. For hypernym, the hypernym must be a var or a string const.\n";
+                            return false;
+                        }
+                        if (pTheEnv == NULL) {
+                            cerr << "Hypernym search error. Pointer to TheEnv not initialized\n";
+                            return false;
+                        }
+                        if (pTheEnv->WordNetIsHypernym(sHyponym, sHypernym, SynetName[0])) {
+                            // no new variables are bound for ntIsHypernym, so the var table is simply put on the stack as is
+                            VarTblStackNew.push_back(VarTbl);
+                        }
+                        continue;
+                    }
+                    else if (    (trSearch.head.nt == ntExtract) 
+                        &&  (get<string>(trSearch.head.val) == "string")) {
+                        if ((trSearch.left.nt != ntVar) ||  (trSearch.right.nt != ntVar)) {
+                            cerr << "Syntax error in search. For extract, left must be a node and right a string var.\n";
+                            return false;
+                        }
+                        string SrcVarName = get<string>(trSearch.left.val);
+                        int iSrcVar = -1;
+                        if (!GetVarIndex(iSrcVar, SrcVarName, VarTbl)) {
+                            cerr << "Syntax error in search. For extract, left requests unknown var.\n";
+                            return false;
+                        }
+                        string DestVarName = get<string>(trSearch.right.val);
+                        int iDestVar = -1;
+                        if (!GetVarIndex(iDestVar, DestVarName, VarTbl)) {
+                            cerr << "Syntax error in search. For extract, right requests unknown var.\n";
+                            return false;
+                        }
+                        if ((VarTbl[iSrcVar].nvt != nvtNode) ||  (VarTbl[iDestVar].nvt != nvtString)) {
+                            cerr << "Syntax error in search. For extract, left VAR must be a node and right a string var.\n";
+                            return false;
+                        }
+                         if (!VarTbl[iSrcVar].bBound || VarTbl[iDestVar].bBound) {
+                            continue; // silent fail. Not an error
+                        }
+                        vector<NlpieVar> NewVarTbl = VarTbl; 
+                        pair<int, int> NodeID = get<pair<int, int> >(VarTbl[iSrcVar].val);
+                        NlpieTriple& trBoundNode = TripleTbl[NodeID.first];
+                        string sVal;
+                        // should check for ntString in bound node
+                        if (NodeID.second == NODE_LEFT) {
+                            sVal = get<string>(trBoundNode.left.val);
+                        }
+                        else {
+                            sVal = get<string>(trBoundNode.right.val);
+                        }
+                        NlpieVar BoundVal(  DestVarName, nvtString, sVal); 
+                        NewVarTbl[iDestVar] = BoundVal;
+                        VarTblStackNew.push_back(NewVarTbl);
+                        continue;
+
+                        
+                    }
+                    else if (   (trSearch.head.nt == ntEqual) 
+                            &&  (get<string>(trSearch.head.val) == "string")) {
                         bool bSearchStringValid = false;
                         if (trSearch.right.nt == ntStringVal) {
                             SearchString = get<string>(trSearch.right.val);
@@ -821,6 +989,10 @@ bool NlpieTest::DoTest()
                                     SearchString = get<string>(Var.val);
                                 }
                             }
+                            else {
+                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                                return false;
+                            }
                             
                         }
                         if (!bSearchStringValid) {
@@ -833,6 +1005,7 @@ bool NlpieTest::DoTest()
                         if (OtherNode.nt == ntVar) {
                             VarName = get<string>(OtherNode.val);
                             if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
                                 bFailWithErr = true;
                                 return false;
                             }
@@ -881,11 +1054,13 @@ bool NlpieTest::DoTest()
                     int iLeftVar = -1, iRightVar = -1;
                     string VarName = get<string>(trSearch.left.val);
                     if (!GetVarIndex(iLeftVar, VarName, VarTbl)) {
+                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
                         bFailWithErr = true;
                         return false;
                     }
                     VarName = get<string>(trSearch.right.val);
                     if (!GetVarIndex(iRightVar, VarName, VarTbl)) {
+                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
                         bFailWithErr = true;
                         return false;
                     }
@@ -943,8 +1118,8 @@ bool NlpieTest::DoTest()
             // post-processing of test el loop
             if (pTestOrImportEl->bMust) {
                 if (!VarTblStackNew.empty()) {
-                    for (auto NewVarTblElCand : VarTblStackNew) {
-                        VarTblTestElCandsNew.push_back(NewVarTblElCand);
+                    for (auto NewVarTbl : VarTblStackNew) {
+                        VarTblTestElCandsNew.push_back(VarTblCand(VarTblElCand.CandSrcIdx, NewVarTbl));
                     }
                     VarTblStackNew.clear();
                 }
@@ -959,11 +1134,77 @@ bool NlpieTest::DoTest()
         VarTblTestElCands.clear();
         VarTblTestElCands = VarTblTestElCandsNew;
         VarTblTestElCandsNew.clear();
+        iTestAndImport++;
+        bool bEndOfTestEls = false;
+        while (iTestAndImport >= TestsAndImportsEls.size() ) {
+            if (VarTblTestElCands.empty()) {
+                bEndOfTestEls = true;
+                break; // no point going up the stack
+            }
+            if (ImportStack.empty()) {
+                bEndOfTestEls = true;
+                break; // call tests done. end TestEl loop
+            }
+            ImportStackEl& StackEl = ImportStack.back();
+            CurrTestName = StackEl.TestName;
+            iTestAndImport = StackEl.LastTestElIdx + 1;
+            vector<VarTblCand > StackVarTblCands  = StackEl.VarTblCands;
+            vector<pair<string, string> > VarMap = StackEl.PushingVarMap;
+            ImportStack.pop_back();
+            vector<VarTblCand > RecreatedVarTblCands;
+            for (auto& PushingCand : VarTblTestElCands) {
+                VarTblCand& StackCand = StackVarTblCands[PushingCand.CandSrcIdx];
+                RecreatedVarTblCands.push_back(StackCand);
+                
+            }
+            auto itAllTestsMap = AllTestMap.find(CurrTestName);
+            if (itAllTestsMap == AllTestMap.end()) {
+                cerr << "Error in search map definition. Test " << CurrTestName << " not found.\n";
+                return false;
+            }
+            NlpieTest StackTest = AllTests[itAllTestsMap->second];
+            for (auto VarTrans : VarMap) {
+                int iSrcVar = -1;
+                // first of the pair is the name of the var in the importED var tbl
+                GetVarIndex(iSrcVar, VarTrans.first, VarTblTestElCands[0].VarTbl);
+                int iDestVar = -1;
+                GetVarIndex(iDestVar, VarTrans.second, StackTest.VarTblSrc);
+                if (iSrcVar == -1 || iDestVar == -1) {
+                    continue; // if there is an error it's been reported. If a const value, its been assigned
+                    return false;
+                }
+                for (int iCand = 0; iCand < VarTblTestElCands.size(); iCand++) {
+                    if (    VarTblTestElCands[iCand].VarTbl[iSrcVar].bBound
+                        &&  !RecreatedVarTblCands[iCand].VarTbl[iDestVar].bBound) {
+                        if (    RecreatedVarTblCands[iCand].VarTbl[iDestVar].nvt 
+                            !=  VarTblTestElCands[iCand].VarTbl[iSrcVar].nvt) {
+                            cerr << "Error. Attempting to copy the value of a node to that of a non-matching type.\n";
+                            return false;
+                        }
+                        RecreatedVarTblCands[iCand].VarTbl[iDestVar].val 
+                                = VarTblTestElCands[iCand].VarTbl[iSrcVar].val;
+                        RecreatedVarTblCands[iCand].VarTbl[iDestVar].bBound = true;
+                    }
+                }
+            }
+            TestsAndImportsEls.clear();
+            TestsAndImportsEls = StackTest.TestsAndImportsList;
+            //pTestOrImportEl = &(TestsAndImportsEls[iTestAndImport]);
+            VarTblTestElCands.clear();
+            VarTblTestElCands = RecreatedVarTblCands ;
+        }
+        if (bEndOfTestEls) {
+            break; 
+        }
             
     } // end TestEl loop
     if (bFailWithErr) return false;
 //    if (!(bAllTestElsPassedSoFar ^ bLastIsMust)) {
     if (!VarTblTestElCands.empty()) {
+        VarTblStack.clear();
+        for (auto& OneCand : VarTblTestElCands) {
+            VarTblStack.push_back(OneCand.VarTbl);
+        }
         cerr << "Test passed for TripleDB.\n";
 
         return true;
@@ -1105,6 +1346,8 @@ void DisplayTripleTree() {
 
 void CGotitEnv::OMA()
 {
+    WordNetDBLoad(); // Major performance hit. Run only if you need it.
+    
     AllTestMap.clear();
     for (int itest = 0; itest <  AllTests.size(); itest++) {
         AllTestMap[AllTests[itest].TestName] = itest;
@@ -1283,13 +1526,19 @@ void CGotitEnv::OMA()
             TripleTblPrint();
             DisplayTripleTree();
 
-            auto itTestMap = AllTestMap.find("VerbGet");
+//            auto itTestMap = AllTestMap.find("VerbGet");
+            auto itTestMap = AllTestMap.find("HTest");
             if (itTestMap == AllTestMap.end()) {
                 cerr << "Error: Test not found";
                 return ;
             }
             NlpieTest TheTest = AllTests[itTestMap->second];
-            TheTest.BindStringVar("vname", "hit");
+            TheTest.pTheEnv = this;
+            
+//            if (!TheTest.BindStringVar("vname", "hit")) {
+//                cerr << "Error: Binding var failed.\n";
+//                return ;
+//            }
             TheTest.DoTest();
             
 #ifdef OLD_CODE
