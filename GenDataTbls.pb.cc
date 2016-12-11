@@ -133,6 +133,7 @@ const int CaffeGenDataTbls_VecTbl::kPathFieldNumber;
 CaffeGenDataTbls_VecTbl::CaffeGenDataTbls_VecTbl()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeGenDataTbls.VecTbl)
 }
 
 void CaffeGenDataTbls_VecTbl::InitAsDefaultInstance() {
@@ -142,24 +143,27 @@ CaffeGenDataTbls_VecTbl::CaffeGenDataTbls_VecTbl(const CaffeGenDataTbls_VecTbl& 
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeGenDataTbls.VecTbl)
 }
 
 void CaffeGenDataTbls_VecTbl::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  path_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CaffeGenDataTbls_VecTbl::~CaffeGenDataTbls_VecTbl() {
+  // @@protoc_insertion_point(destructor:CaffeGenDataTbls.VecTbl)
   SharedDtor();
 }
 
 void CaffeGenDataTbls_VecTbl::SharedDtor() {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete name_;
   }
-  if (path_ != &::google::protobuf::internal::kEmptyString) {
+  if (path_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete path_;
   }
   if (this != default_instance_) {
@@ -188,14 +192,14 @@ CaffeGenDataTbls_VecTbl* CaffeGenDataTbls_VecTbl::New() const {
 }
 
 void CaffeGenDataTbls_VecTbl::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+  if (_has_bits_[0 / 32] & 3) {
     if (has_name()) {
-      if (name_ != &::google::protobuf::internal::kEmptyString) {
+      if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         name_->clear();
       }
     }
     if (has_path()) {
-      if (path_ != &::google::protobuf::internal::kEmptyString) {
+      if (path_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         path_->clear();
       }
     }
@@ -206,21 +210,25 @@ void CaffeGenDataTbls_VecTbl::Clear() {
 
 bool CaffeGenDataTbls_VecTbl::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeGenDataTbls.VecTbl)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string name = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->name().data(), this->name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_path;
         break;
@@ -228,26 +236,27 @@ bool CaffeGenDataTbls_VecTbl::MergePartialFromCodedStream(
 
       // required string path = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_path:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_path()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->path().data(), this->path().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "path");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -255,27 +264,35 @@ bool CaffeGenDataTbls_VecTbl::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeGenDataTbls.VecTbl)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeGenDataTbls.VecTbl)
+  return false;
 #undef DO_
 }
 
 void CaffeGenDataTbls_VecTbl::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeGenDataTbls.VecTbl)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->name(), output);
   }
 
   // required string path = 2;
   if (has_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->path().data(), this->path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "path");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->path(), output);
   }
 
@@ -283,15 +300,18 @@ void CaffeGenDataTbls_VecTbl::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeGenDataTbls.VecTbl)
 }
 
 ::google::protobuf::uint8* CaffeGenDataTbls_VecTbl::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeGenDataTbls.VecTbl)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->name(), target);
@@ -299,9 +319,10 @@ void CaffeGenDataTbls_VecTbl::SerializeWithCachedSizes(
 
   // required string path = 2;
   if (has_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->path().data(), this->path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "path");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->path(), target);
@@ -311,6 +332,7 @@ void CaffeGenDataTbls_VecTbl::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeGenDataTbls.VecTbl)
   return target;
 }
 
@@ -418,6 +440,7 @@ const int CaffeGenDataTbls::kDepNameVecTblFieldNumber;
 CaffeGenDataTbls::CaffeGenDataTbls()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeGenDataTbls)
 }
 
 void CaffeGenDataTbls::InitAsDefaultInstance() {
@@ -427,28 +450,31 @@ CaffeGenDataTbls::CaffeGenDataTbls(const CaffeGenDataTbls& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeGenDataTbls)
 }
 
 void CaffeGenDataTbls::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  vec_tbls_core_path_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  dep_name_vec_tbl_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  vec_tbls_core_path_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  dep_name_vec_tbl_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CaffeGenDataTbls::~CaffeGenDataTbls() {
+  // @@protoc_insertion_point(destructor:CaffeGenDataTbls)
   SharedDtor();
 }
 
 void CaffeGenDataTbls::SharedDtor() {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete name_;
   }
-  if (vec_tbls_core_path_ != &::google::protobuf::internal::kEmptyString) {
+  if (vec_tbls_core_path_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete vec_tbls_core_path_;
   }
-  if (dep_name_vec_tbl_ != &::google::protobuf::internal::kEmptyString) {
+  if (dep_name_vec_tbl_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete dep_name_vec_tbl_;
   }
   if (this != default_instance_) {
@@ -477,19 +503,19 @@ CaffeGenDataTbls* CaffeGenDataTbls::New() const {
 }
 
 void CaffeGenDataTbls::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+  if (_has_bits_[0 / 32] & 11) {
     if (has_name()) {
-      if (name_ != &::google::protobuf::internal::kEmptyString) {
+      if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         name_->clear();
       }
     }
     if (has_vec_tbls_core_path()) {
-      if (vec_tbls_core_path_ != &::google::protobuf::internal::kEmptyString) {
+      if (vec_tbls_core_path_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         vec_tbls_core_path_->clear();
       }
     }
     if (has_dep_name_vec_tbl()) {
-      if (dep_name_vec_tbl_ != &::google::protobuf::internal::kEmptyString) {
+      if (dep_name_vec_tbl_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         dep_name_vec_tbl_->clear();
       }
     }
@@ -501,21 +527,25 @@ void CaffeGenDataTbls::Clear() {
 
 bool CaffeGenDataTbls::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeGenDataTbls)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string name = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->name().data(), this->name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_vec_tbls_core_path;
         break;
@@ -523,16 +553,16 @@ bool CaffeGenDataTbls::MergePartialFromCodedStream(
 
       // required string vec_tbls_core_path = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_vec_tbls_core_path:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_vec_tbls_core_path()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "vec_tbls_core_path");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(26)) goto parse_vec_tbls;
         break;
@@ -540,13 +570,12 @@ bool CaffeGenDataTbls::MergePartialFromCodedStream(
 
       // repeated .CaffeGenDataTbls.VecTbl vec_tbls = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 26) {
          parse_vec_tbls:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                 input, add_vec_tbls()));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(26)) goto parse_vec_tbls;
         if (input->ExpectTag(34)) goto parse_dep_name_vec_tbl;
@@ -555,26 +584,27 @@ bool CaffeGenDataTbls::MergePartialFromCodedStream(
 
       // required string dep_name_vec_tbl = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 34) {
          parse_dep_name_vec_tbl:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_dep_name_vec_tbl()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "dep_name_vec_tbl");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -582,27 +612,35 @@ bool CaffeGenDataTbls::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeGenDataTbls)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeGenDataTbls)
+  return false;
 #undef DO_
 }
 
 void CaffeGenDataTbls::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeGenDataTbls)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->name(), output);
   }
 
   // required string vec_tbls_core_path = 2;
   if (has_vec_tbls_core_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "vec_tbls_core_path");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->vec_tbls_core_path(), output);
   }
 
@@ -614,10 +652,11 @@ void CaffeGenDataTbls::SerializeWithCachedSizes(
 
   // required string dep_name_vec_tbl = 4;
   if (has_dep_name_vec_tbl()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "dep_name_vec_tbl");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->dep_name_vec_tbl(), output);
   }
 
@@ -625,15 +664,18 @@ void CaffeGenDataTbls::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeGenDataTbls)
 }
 
 ::google::protobuf::uint8* CaffeGenDataTbls::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeGenDataTbls)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->name(), target);
@@ -641,9 +683,10 @@ void CaffeGenDataTbls::SerializeWithCachedSizes(
 
   // required string vec_tbls_core_path = 2;
   if (has_vec_tbls_core_path()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->vec_tbls_core_path().data(), this->vec_tbls_core_path().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "vec_tbls_core_path");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->vec_tbls_core_path(), target);
@@ -658,9 +701,10 @@ void CaffeGenDataTbls::SerializeWithCachedSizes(
 
   // required string dep_name_vec_tbl = 4;
   if (has_dep_name_vec_tbl()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->dep_name_vec_tbl().data(), this->dep_name_vec_tbl().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "dep_name_vec_tbl");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         4, this->dep_name_vec_tbl(), target);
@@ -670,6 +714,7 @@ void CaffeGenDataTbls::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeGenDataTbls)
   return target;
 }
 
@@ -762,9 +807,7 @@ void CaffeGenDataTbls::CopyFrom(const CaffeGenDataTbls& from) {
 bool CaffeGenDataTbls::IsInitialized() const {
   if ((_has_bits_[0] & 0x0000000b) != 0x0000000b) return false;
 
-  for (int i = 0; i < vec_tbls_size(); i++) {
-    if (!this->vec_tbls(i).IsInitialized()) return false;
-  }
+  if (!::google::protobuf::internal::AllAreInitialized(this->vec_tbls())) return false;
   return true;
 }
 

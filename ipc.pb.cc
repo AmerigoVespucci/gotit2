@@ -245,6 +245,7 @@ const int CaffeIpc_InitNetParams::kInputWidthIdxFieldNumber;
 CaffeIpc_InitNetParams::CaffeIpc_InitNetParams()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeIpc.InitNetParams)
 }
 
 void CaffeIpc_InitNetParams::InitAsDefaultInstance() {
@@ -254,15 +255,17 @@ CaffeIpc_InitNetParams::CaffeIpc_InitNetParams(const CaffeIpc_InitNetParams& fro
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeIpc.InitNetParams)
 }
 
 void CaffeIpc_InitNetParams::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  model_file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  trained_file_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  input_layer_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  model_file_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  trained_file_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  input_layer_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   input_layer_bottom_idx_ = 0;
-  output_layer_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  output_layer_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   output_layer_top_idx_ = 0;
   input_num_channels_idx_ = 0;
   input_height_idx_ = 0;
@@ -271,20 +274,21 @@ void CaffeIpc_InitNetParams::SharedCtor() {
 }
 
 CaffeIpc_InitNetParams::~CaffeIpc_InitNetParams() {
+  // @@protoc_insertion_point(destructor:CaffeIpc.InitNetParams)
   SharedDtor();
 }
 
 void CaffeIpc_InitNetParams::SharedDtor() {
-  if (model_file_ != &::google::protobuf::internal::kEmptyString) {
+  if (model_file_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete model_file_;
   }
-  if (trained_file_ != &::google::protobuf::internal::kEmptyString) {
+  if (trained_file_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete trained_file_;
   }
-  if (input_layer_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (input_layer_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete input_layer_name_;
   }
-  if (output_layer_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (output_layer_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete output_layer_name_;
   }
   if (this != default_instance_) {
@@ -313,56 +317,69 @@ CaffeIpc_InitNetParams* CaffeIpc_InitNetParams::New() const {
 }
 
 void CaffeIpc_InitNetParams::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CaffeIpc_InitNetParams*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(input_layer_bottom_idx_, input_height_idx_);
     if (has_model_file()) {
-      if (model_file_ != &::google::protobuf::internal::kEmptyString) {
+      if (model_file_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         model_file_->clear();
       }
     }
     if (has_trained_file()) {
-      if (trained_file_ != &::google::protobuf::internal::kEmptyString) {
+      if (trained_file_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         trained_file_->clear();
       }
     }
     if (has_input_layer_name()) {
-      if (input_layer_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (input_layer_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         input_layer_name_->clear();
       }
     }
-    input_layer_bottom_idx_ = 0;
     if (has_output_layer_name()) {
-      if (output_layer_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (output_layer_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         output_layer_name_->clear();
       }
     }
-    output_layer_top_idx_ = 0;
-    input_num_channels_idx_ = 0;
-    input_height_idx_ = 0;
   }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    input_width_idx_ = 0;
-  }
+  input_width_idx_ = 0;
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeIpc.InitNetParams)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string model_file = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_model_file()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->model_file().data(), this->model_file().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "model_file");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_trained_file;
         break;
@@ -370,16 +387,16 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required string trained_file = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_trained_file:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_trained_file()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->trained_file().data(), this->trained_file().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "trained_file");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(26)) goto parse_input_layer_name;
         break;
@@ -387,16 +404,16 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required string input_layer_name = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 26) {
          parse_input_layer_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_input_layer_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->input_layer_name().data(), this->input_layer_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "input_layer_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(32)) goto parse_input_layer_bottom_idx;
         break;
@@ -404,15 +421,14 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required int32 input_layer_bottom_idx = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 32) {
          parse_input_layer_bottom_idx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &input_layer_bottom_idx_)));
           set_has_input_layer_bottom_idx();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(42)) goto parse_output_layer_name;
         break;
@@ -420,16 +436,16 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required string output_layer_name = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 42) {
          parse_output_layer_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_output_layer_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->output_layer_name().data(), this->output_layer_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "output_layer_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(48)) goto parse_output_layer_top_idx;
         break;
@@ -437,15 +453,14 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required int32 output_layer_top_idx = 6;
       case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 48) {
          parse_output_layer_top_idx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &output_layer_top_idx_)));
           set_has_output_layer_top_idx();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(56)) goto parse_input_num_channels_idx;
         break;
@@ -453,15 +468,14 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required int32 input_num_channels_idx = 7;
       case 7: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 56) {
          parse_input_num_channels_idx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &input_num_channels_idx_)));
           set_has_input_num_channels_idx();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(64)) goto parse_input_height_idx;
         break;
@@ -469,15 +483,14 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required int32 input_height_idx = 8;
       case 8: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 64) {
          parse_input_height_idx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &input_height_idx_)));
           set_has_input_height_idx();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(72)) goto parse_input_width_idx;
         break;
@@ -485,25 +498,25 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
 
       // required int32 input_width_idx = 9;
       case 9: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 72) {
          parse_input_width_idx:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &input_width_idx_)));
           set_has_input_width_idx();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -511,36 +524,45 @@ bool CaffeIpc_InitNetParams::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeIpc.InitNetParams)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeIpc.InitNetParams)
+  return false;
 #undef DO_
 }
 
 void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeIpc.InitNetParams)
   // required string model_file = 1;
   if (has_model_file()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->model_file().data(), this->model_file().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "model_file");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->model_file(), output);
   }
 
   // required string trained_file = 2;
   if (has_trained_file()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->trained_file().data(), this->trained_file().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "trained_file");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->trained_file(), output);
   }
 
   // required string input_layer_name = 3;
   if (has_input_layer_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->input_layer_name().data(), this->input_layer_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "input_layer_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->input_layer_name(), output);
   }
 
@@ -551,10 +573,11 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
 
   // required string output_layer_name = 5;
   if (has_output_layer_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->output_layer_name().data(), this->output_layer_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "output_layer_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       5, this->output_layer_name(), output);
   }
 
@@ -582,15 +605,18 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeIpc.InitNetParams)
 }
 
 ::google::protobuf::uint8* CaffeIpc_InitNetParams::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeIpc.InitNetParams)
   // required string model_file = 1;
   if (has_model_file()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->model_file().data(), this->model_file().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "model_file");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->model_file(), target);
@@ -598,9 +624,10 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
 
   // required string trained_file = 2;
   if (has_trained_file()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->trained_file().data(), this->trained_file().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "trained_file");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->trained_file(), target);
@@ -608,9 +635,10 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
 
   // required string input_layer_name = 3;
   if (has_input_layer_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->input_layer_name().data(), this->input_layer_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "input_layer_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->input_layer_name(), target);
@@ -623,9 +651,10 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
 
   // required string output_layer_name = 5;
   if (has_output_layer_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->output_layer_name().data(), this->output_layer_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "output_layer_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         5, this->output_layer_name(), target);
@@ -655,6 +684,7 @@ void CaffeIpc_InitNetParams::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeIpc.InitNetParams)
   return target;
 }
 
@@ -841,6 +871,7 @@ const int CaffeIpc_DataParam::kDataValFieldNumber;
 CaffeIpc_DataParam::CaffeIpc_DataParam()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeIpc.DataParam)
 }
 
 void CaffeIpc_DataParam::InitAsDefaultInstance() {
@@ -850,6 +881,7 @@ CaffeIpc_DataParam::CaffeIpc_DataParam(const CaffeIpc_DataParam& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeIpc.DataParam)
 }
 
 void CaffeIpc_DataParam::SharedCtor() {
@@ -859,6 +891,7 @@ void CaffeIpc_DataParam::SharedCtor() {
 }
 
 CaffeIpc_DataParam::~CaffeIpc_DataParam() {
+  // @@protoc_insertion_point(destructor:CaffeIpc.DataParam)
   SharedDtor();
 }
 
@@ -889,9 +922,7 @@ CaffeIpc_DataParam* CaffeIpc_DataParam::New() const {
 }
 
 void CaffeIpc_DataParam::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    num_params_ = 0;
-  }
+  num_params_ = 0;
   data_val_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -899,20 +930,23 @@ void CaffeIpc_DataParam::Clear() {
 
 bool CaffeIpc_DataParam::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeIpc.DataParam)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required int32 num_params = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &num_params_)));
           set_has_num_params();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(21)) goto parse_data_val;
         break;
@@ -920,31 +954,29 @@ bool CaffeIpc_DataParam::MergePartialFromCodedStream(
 
       // repeated float data_val = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED32) {
+        if (tag == 21) {
          parse_data_val:
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  1, 21, input, this->mutable_data_val())));
-        } else if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag)
-                   == ::google::protobuf::internal::WireFormatLite::
-                      WIRETYPE_LENGTH_DELIMITED) {
+        } else if (tag == 18) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitiveNoInline<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
                  input, this->mutable_data_val())));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(21)) goto parse_data_val;
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -952,12 +984,18 @@ bool CaffeIpc_DataParam::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeIpc.DataParam)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeIpc.DataParam)
+  return false;
 #undef DO_
 }
 
 void CaffeIpc_DataParam::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeIpc.DataParam)
   // required int32 num_params = 1;
   if (has_num_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->num_params(), output);
@@ -973,10 +1011,12 @@ void CaffeIpc_DataParam::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeIpc.DataParam)
 }
 
 ::google::protobuf::uint8* CaffeIpc_DataParam::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeIpc.DataParam)
   // required int32 num_params = 1;
   if (has_num_params()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->num_params(), target);
@@ -992,6 +1032,7 @@ void CaffeIpc_DataParam::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeIpc.DataParam)
   return target;
 }
 
@@ -1094,6 +1135,7 @@ const int CaffeIpc_PrepGenParam::kGengenFilenameFieldNumber;
 CaffeIpc_PrepGenParam::CaffeIpc_PrepGenParam()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeIpc.PrepGenParam)
 }
 
 void CaffeIpc_PrepGenParam::InitAsDefaultInstance() {
@@ -1103,20 +1145,23 @@ CaffeIpc_PrepGenParam::CaffeIpc_PrepGenParam(const CaffeIpc_PrepGenParam& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeIpc.PrepGenParam)
 }
 
 void CaffeIpc_PrepGenParam::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  gengen_filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  gengen_filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CaffeIpc_PrepGenParam::~CaffeIpc_PrepGenParam() {
+  // @@protoc_insertion_point(destructor:CaffeIpc.PrepGenParam)
   SharedDtor();
 }
 
 void CaffeIpc_PrepGenParam::SharedDtor() {
-  if (gengen_filename_ != &::google::protobuf::internal::kEmptyString) {
+  if (gengen_filename_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete gengen_filename_;
   }
   if (this != default_instance_) {
@@ -1145,11 +1190,9 @@ CaffeIpc_PrepGenParam* CaffeIpc_PrepGenParam::New() const {
 }
 
 void CaffeIpc_PrepGenParam::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_gengen_filename()) {
-      if (gengen_filename_ != &::google::protobuf::internal::kEmptyString) {
-        gengen_filename_->clear();
-      }
+  if (has_gengen_filename()) {
+    if (gengen_filename_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+      gengen_filename_->clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1158,31 +1201,36 @@ void CaffeIpc_PrepGenParam::Clear() {
 
 bool CaffeIpc_PrepGenParam::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeIpc.PrepGenParam)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string gengen_filename = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_gengen_filename()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->gengen_filename().data(), this->gengen_filename().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "gengen_filename");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1190,18 +1238,25 @@ bool CaffeIpc_PrepGenParam::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeIpc.PrepGenParam)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeIpc.PrepGenParam)
+  return false;
 #undef DO_
 }
 
 void CaffeIpc_PrepGenParam::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeIpc.PrepGenParam)
   // required string gengen_filename = 1;
   if (has_gengen_filename()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->gengen_filename().data(), this->gengen_filename().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "gengen_filename");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->gengen_filename(), output);
   }
 
@@ -1209,15 +1264,18 @@ void CaffeIpc_PrepGenParam::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeIpc.PrepGenParam)
 }
 
 ::google::protobuf::uint8* CaffeIpc_PrepGenParam::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeIpc.PrepGenParam)
   // required string gengen_filename = 1;
   if (has_gengen_filename()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->gengen_filename().data(), this->gengen_filename().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "gengen_filename");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->gengen_filename(), target);
@@ -1227,6 +1285,7 @@ void CaffeIpc_PrepGenParam::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeIpc.PrepGenParam)
   return target;
 }
 
@@ -1324,6 +1383,7 @@ const int CaffeIpc::kPrepGenParamFieldNumber;
 CaffeIpc::CaffeIpc()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeIpc)
 }
 
 void CaffeIpc::InitAsDefaultInstance() {
@@ -1336,6 +1396,7 @@ CaffeIpc::CaffeIpc(const CaffeIpc& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeIpc)
 }
 
 void CaffeIpc::SharedCtor() {
@@ -1349,6 +1410,7 @@ void CaffeIpc::SharedCtor() {
 }
 
 CaffeIpc::~CaffeIpc() {
+  // @@protoc_insertion_point(destructor:CaffeIpc)
   SharedDtor();
 }
 
@@ -1382,7 +1444,7 @@ CaffeIpc* CaffeIpc::New() const {
 }
 
 void CaffeIpc::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+  if (_has_bits_[0 / 32] & 31) {
     type_ = 1;
     if (has_init_net_params()) {
       if (init_net_params_ != NULL) init_net_params_->::CaffeIpc_InitNetParams::Clear();
@@ -1401,14 +1463,17 @@ void CaffeIpc::Clear() {
 
 bool CaffeIpc::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeIpc)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required .CaffeIpc.MsgType type = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -1419,7 +1484,7 @@ bool CaffeIpc::MergePartialFromCodedStream(
             mutable_unknown_fields()->AddVarint(1, value);
           }
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_init_net_params;
         break;
@@ -1427,13 +1492,12 @@ bool CaffeIpc::MergePartialFromCodedStream(
 
       // optional .CaffeIpc.InitNetParams init_net_params = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_init_net_params:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_init_net_params()));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_init_net_done;
         break;
@@ -1441,15 +1505,14 @@ bool CaffeIpc::MergePartialFromCodedStream(
 
       // optional bool init_net_done = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_init_net_done:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &init_net_done_)));
           set_has_init_net_done();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(34)) goto parse_data_param;
         break;
@@ -1457,13 +1520,12 @@ bool CaffeIpc::MergePartialFromCodedStream(
 
       // optional .CaffeIpc.DataParam data_param = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 34) {
          parse_data_param:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_data_param()));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(42)) goto parse_prep_gen_param;
         break;
@@ -1471,23 +1533,23 @@ bool CaffeIpc::MergePartialFromCodedStream(
 
       // optional .CaffeIpc.PrepGenParam prep_gen_param = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 42) {
          parse_prep_gen_param:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_prep_gen_param()));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1495,12 +1557,18 @@ bool CaffeIpc::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeIpc)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeIpc)
+  return false;
 #undef DO_
 }
 
 void CaffeIpc::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeIpc)
   // required .CaffeIpc.MsgType type = 1;
   if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
@@ -1534,10 +1602,12 @@ void CaffeIpc::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeIpc)
 }
 
 ::google::protobuf::uint8* CaffeIpc::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeIpc)
   // required .CaffeIpc.MsgType type = 1;
   if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
@@ -1574,6 +1644,7 @@ void CaffeIpc::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeIpc)
   return target;
 }
 

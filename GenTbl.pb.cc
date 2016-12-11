@@ -143,6 +143,7 @@ const int CaffeGenTbl::kOneHotFieldNumber;
 CaffeGenTbl::CaffeGenTbl()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeGenTbl)
 }
 
 void CaffeGenTbl::InitAsDefaultInstance() {
@@ -152,14 +153,16 @@ CaffeGenTbl::CaffeGenTbl(const CaffeGenTbl& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeGenTbl)
 }
 
 void CaffeGenTbl::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  files_core_dir_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  files_core_dir_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tbl_type_ = 1;
-  input_vec_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  input_vec_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   max_words_ = 0;
   alpha_only_ = false;
   one_hot_ = false;
@@ -167,17 +170,18 @@ void CaffeGenTbl::SharedCtor() {
 }
 
 CaffeGenTbl::~CaffeGenTbl() {
+  // @@protoc_insertion_point(destructor:CaffeGenTbl)
   SharedDtor();
 }
 
 void CaffeGenTbl::SharedDtor() {
-  if (name_ != &::google::protobuf::internal::kEmptyString) {
+  if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete name_;
   }
-  if (files_core_dir_ != &::google::protobuf::internal::kEmptyString) {
+  if (files_core_dir_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete files_core_dir_;
   }
-  if (input_vec_file_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (input_vec_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete input_vec_file_name_;
   }
   if (this != default_instance_) {
@@ -206,48 +210,64 @@ CaffeGenTbl* CaffeGenTbl::New() const {
 }
 
 void CaffeGenTbl::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CaffeGenTbl*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 127) {
+    ZR_(max_words_, one_hot_);
     if (has_name()) {
-      if (name_ != &::google::protobuf::internal::kEmptyString) {
+      if (name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         name_->clear();
       }
     }
     if (has_files_core_dir()) {
-      if (files_core_dir_ != &::google::protobuf::internal::kEmptyString) {
+      if (files_core_dir_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         files_core_dir_->clear();
       }
     }
     tbl_type_ = 1;
     if (has_input_vec_file_name()) {
-      if (input_vec_file_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (input_vec_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         input_vec_file_name_->clear();
       }
     }
-    max_words_ = 0;
-    alpha_only_ = false;
-    one_hot_ = false;
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CaffeGenTbl::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeGenTbl)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string name = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->name().data(), this->name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_files_core_dir;
         break;
@@ -255,16 +275,16 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // required string files_core_dir = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_files_core_dir:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_files_core_dir()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->files_core_dir().data(), this->files_core_dir().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "files_core_dir");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_tbl_type;
         break;
@@ -272,8 +292,7 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // required .CaffeGenTbl.TblType tbl_type = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_tbl_type:
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
@@ -285,7 +304,7 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
             mutable_unknown_fields()->AddVarint(3, value);
           }
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(34)) goto parse_input_vec_file_name;
         break;
@@ -293,16 +312,16 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // optional string input_vec_file_name = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 34) {
          parse_input_vec_file_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_input_vec_file_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->input_vec_file_name().data(), this->input_vec_file_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "input_vec_file_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(40)) goto parse_max_words;
         break;
@@ -310,15 +329,14 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // optional int32 max_words = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 40) {
          parse_max_words:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &max_words_)));
           set_has_max_words();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(48)) goto parse_alpha_only;
         break;
@@ -326,15 +344,14 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // optional bool alpha_only = 6;
       case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 48) {
          parse_alpha_only:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &alpha_only_)));
           set_has_alpha_only();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(56)) goto parse_one_hot;
         break;
@@ -342,25 +359,25 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
 
       // optional bool one_hot = 7;
       case 7: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 56) {
          parse_one_hot:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &one_hot_)));
           set_has_one_hot();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -368,27 +385,35 @@ bool CaffeGenTbl::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeGenTbl)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeGenTbl)
+  return false;
 #undef DO_
 }
 
 void CaffeGenTbl::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeGenTbl)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->name(), output);
   }
 
   // required string files_core_dir = 2;
   if (has_files_core_dir()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->files_core_dir().data(), this->files_core_dir().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "files_core_dir");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->files_core_dir(), output);
   }
 
@@ -400,10 +425,11 @@ void CaffeGenTbl::SerializeWithCachedSizes(
 
   // optional string input_vec_file_name = 4;
   if (has_input_vec_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->input_vec_file_name().data(), this->input_vec_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "input_vec_file_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->input_vec_file_name(), output);
   }
 
@@ -426,15 +452,18 @@ void CaffeGenTbl::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeGenTbl)
 }
 
 ::google::protobuf::uint8* CaffeGenTbl::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeGenTbl)
   // required string name = 1;
   if (has_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->name().data(), this->name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->name(), target);
@@ -442,9 +471,10 @@ void CaffeGenTbl::SerializeWithCachedSizes(
 
   // required string files_core_dir = 2;
   if (has_files_core_dir()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->files_core_dir().data(), this->files_core_dir().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "files_core_dir");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->files_core_dir(), target);
@@ -458,9 +488,10 @@ void CaffeGenTbl::SerializeWithCachedSizes(
 
   // optional string input_vec_file_name = 4;
   if (has_input_vec_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->input_vec_file_name().data(), this->input_vec_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "input_vec_file_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         4, this->input_vec_file_name(), target);
@@ -485,6 +516,7 @@ void CaffeGenTbl::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeGenTbl)
   return target;
 }
 

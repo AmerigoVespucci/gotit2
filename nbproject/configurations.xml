@@ -88,12 +88,16 @@
             <pElem>RF</pElem>
             <pElem>../../dev/caffe/.build_debug/src</pElem>
             <pElem>../../dev/caffe/include</pElem>
+            <pElem>/usr/include/hdf5/serial</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GOTIT_LINUX</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/lib/x86_64-linux-gnu/hdf5/serial</pElem>
+          </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
@@ -232,8 +236,9 @@
           <standard>8</standard>
           <incDir>
             <pElem>RF</pElem>
-            <pElem>../../dev/caffe/.build_release/src</pElem>
+            <pElem>../../dev/caffe/.build_debug/src</pElem>
             <pElem>../../dev/caffe/include</pElem>
+            <pElem>/usr/include/hdf5/serial</pElem>
           </incDir>
           <preprocessorList>
             <Elem>GOTIT_LINUX</Elem>
@@ -246,6 +251,9 @@
           <developmentMode>5</developmentMode>
         </asmTool>
         <linkerTool>
+          <linkerAddLib>
+            <pElem>/usr/lib/x86_64-linux-gnu/hdf5</pElem>
+          </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>

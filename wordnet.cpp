@@ -379,7 +379,7 @@ void CGotitEnv::WordNetDBLoad()
     
     ConvertDBOffsetsToIDBs();
     
-    WordNetIsHypernym("indian", "person", 'n');
+    // test: WordNetIsHypernym("indian", "person", 'n');
     
     
     

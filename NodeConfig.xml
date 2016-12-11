@@ -650,6 +650,7 @@
       <TaskItem TaskType="NoArgsFn" do="ClosenessComplete" />
     </TaskNode>
     <TaskNode name="TaskNode.DoOMA">
+      <TaskItem TaskType="NoArgsFn" do="WordNetDBLoad" />
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/GutenFragsReady/killed" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/killed/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>
       <TaskItem TaskType="NoArgsFn" do="InitLoadProcessed" />
@@ -663,6 +664,7 @@
       <TaskItem TaskType="LoopEnd" commment="Task.Param.DoOMA.Loop0" />
     </TaskNode>
     <TaskNode name="TaskNode.DoNlpie">
+      <TaskItem TaskType="NoArgsFn" do="WordNetDBLoad" />
       <TaskItem TaskType="CallTask" do="TaskNode.InitGutenNlpieFromNLP" comment = "In testing, no pain in initializing each time." />
       <TaskItem TaskType="SetParam" do="Implem.Param.InitLoadProcessed.LoadedOutDir" val="/guten/GutenFragsReady/nlpie" comment="where InitLoadFromNLP writes its files to"/>
       <TaskItem TaskType="SetParam" do="Implem.Param.NamedCountsFileName" val="/guten/GutenFragsReady/nlpie/NamedCounts.bin" comment="where InitLoadFromNLP wrote the NameCounts file to"/>

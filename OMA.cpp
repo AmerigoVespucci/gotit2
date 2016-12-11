@@ -36,22 +36,27 @@ using boost::asio::ip::tcp;
 #pragma warning(disable : 4503)
 #endif
 
+const bool cbAND = true;
+const bool cbMust = true;
+
 enum NlpieType {
     ntInvalid,
-    ntStringVal,
-    ntDepRel,
+    ntStringVal, // a direct string value node. Currently in search node
+    ntDepRel, // a head node of the TripleDB indicating a dependency relation 
     ntIntVal,
     ntFloatVal,
-    ntTriple,
-    ntAddStart,
-    ntAddCont,
-    ntAddEnd,
-    ntLeftNull,
+    ntTriple, // a non-head node in the TripleDB whose value is an index into another triple in the DB
+    ntAddStart, // a head node of the TripleDB used to start a string of dependency relationns
+    ntAddCont, // a head node indicating neither the start nor end of a string of Add nodes - each with their own DepRel
+    ntAddEnd, // a head node indicating the end of the above string
+    ntLeftNull, // a left node in a triple in the TripleDB used when the relation is really a binary rather than a triple
+    ntSRec, // a non-head node in the TripleDB indicating a word. Comprosed of a pair: the id of the sentence and the id of word. The SRec iteself, in turn contains a range of data: word, lemma, POS, NER or REF separate table))
     ntVar, // not a DB n type. Holds bounds variables in search/match
-    ntEqual, // not a DB n type but used for match
+    ntSRecMatch, // not a DB n type but used for match
     ntNode, // could be a DB n type, but currently used for matching
     ntExtract, // get a value from a node, such as its string val
     ntIsHypernym, // test a condition against a WordNet lookup
+    ntTestStringEq, // tests that vars or literal strings are simply equal
 };
 
 enum NlpieVarType {
@@ -66,7 +71,7 @@ struct NlpieNode {
     NlpieNode() : nt(ntInvalid), val(-1) {}
     NlpieNode(NlpieType ant, NlpieVal aval) : nt(ant) , val(aval) 
     {}
-    string Print() {
+    string Print(vector<SSentenceRec>& SRecs) {
         string TypeName;
         string ValString;
         bool bInt = false;
@@ -80,6 +85,15 @@ struct NlpieNode {
                 TypeName = "ntStringVal";
                 ValString = get<string>(val);
                 break;
+            case ntSRec: {
+                pair<int, int> SRecVal = get<pair<int, int> >(val);
+                TypeName = "ntSRec";
+                ValString = string("[") + to_string(SRecVal.first) + ":" 
+                            + to_string(SRecVal.second) + "] (" 
+                            + SRecs[SRecVal.first].OneWordRec[SRecVal.second].Word 
+                            + ")";
+                break;
+            }
             case ntDepRel:
                 TypeName = "ntDepRel";
                 ValString = get<string>(val);
@@ -137,8 +151,8 @@ struct NlpieTriple {
     NlpieNode head;
     NlpieNode left;
     NlpieNode right;
-    void Print() {
-        cerr << head.Print() << left.Print() << right.Print() << endl;
+    void Print(vector<SSentenceRec>& SRecs) {
+        cerr << head.Print(SRecs) << left.Print(SRecs) << right.Print(SRecs) << endl;
     }
 };
 
@@ -193,13 +207,26 @@ struct NlpieTestImportHybrid {
         VarMap = aVarMap;
         ImportTestName = aImportTestName;
         bImport = true;
+        bAND = true; // not sure if this is relevant for Import
     }
     NlpieTestImportHybrid(bool abMust, vector<NlpieTriple> aTripleVec) {
         bMust = abMust;
         TestTripleVec = aTripleVec;
         bImport = false;
+        bAND = true;
+    }
+    NlpieTestImportHybrid(bool abMust, bool abAND, vector<NlpieTriple> aTripleVec) {
+        bMust = abMust;
+        TestTripleVec = aTripleVec;
+        bImport = false;
+        bAND = abAND;
     }
     bool bMust; /// as opposed to must not
+    // For AND each triple builds of the stack of the other and must result 
+    // in at least one valid VarTbl
+    // for OR, each triple build of the initial VarTbl coming on from the
+    // stack. Any one must succeed
+    bool bAND; // as opposed to OR.
     vector<NlpieTriple> TestTripleVec;
     vector<pair<string, string> > VarMap;
     string ImportTestName;
@@ -219,11 +246,13 @@ struct NlpieTest {
 //        TestTbl = aTestTbl;
 //        
 //    }
-    NlpieTest(string aTestName, vector<NlpieVar> aVarTbl, vector<NlpieTestImportHybrid> TestImportsHybrids) {
+    NlpieTest(  string aTestName, vector<NlpieVar> aVarTbl, bool abAND,
+                vector<NlpieTestImportHybrid> TestImportsHybrids) {
         TestName = aTestName;
         VarTblSrc = aVarTbl;
         TestsAndImportsList = TestImportsHybrids;
         pTheEnv = NULL;
+        bAND = abAND ;
         //TestTbl = aTestTbl;
         
     }
@@ -231,8 +260,9 @@ struct NlpieTest {
     // Run the query against the TripleTbl (currently the sentence)
     // If the test passes, returns true and creates a stack of possible matches
     // as a list of VarTbl instances in VarTblStck
-    bool DoTest();
+    bool DoTest(vector<SSentenceRec>& SRecs);
     bool BindStringVar(string VarName, string ConstVal);
+    bool bAND; // If true, all hybrids must work and drive from each others's variables
 private:
     // helper functions
     // test the triple off an add node and its descendents for a specific
@@ -240,16 +270,19 @@ private:
     // fail without error if the dep rel just isn't there
     // otherwise a fail is a badly formed tree
     bool TestTripleOffAdd(  int iTripleOffAdd, NlpieTriple& trSearch,
-                            int iUnboundVar, bool& bFailWithErr);
+                            int iUnboundVar, bool& bFailWithErr,
+                            vector<SSentenceRec>& SRecs);
     // find the string on the right of a ntDepRel. A failure is possible 
     // only if the database tree is badly formed
     bool FindStringOffDepRel(   int iTripleOffAdd, NlpieTriple& trSearch,
-                                int iUnboundVar);
+                                int iUnboundVar,
+                                vector<SSentenceRec>& SRecs);
     // search for the other side of the dep when the bound node of the search 
     // is on the left. e.g. looking for the nsubj of hit
     bool TestLeftDep(   NlpieTriple& trDB, NlpieTriple& trSearch,
                         int NodeID, int bBoundNodeOnLeft,
-                        int iUnboundVar, bool& bFailWithErr);
+                        int iUnboundVar, bool& bFailWithErr,
+                        vector<SSentenceRec>& SRecs);
     // search for the other side of the dep when the bound node of the search 
     // is on the right. e.g. looking for the gov for which the dep of the dobj is ball
     bool TestRightDep(   NlpieTriple& trDB, NlpieTriple& trSearch,
@@ -257,6 +290,83 @@ private:
                         int iUnboundVar, bool& bFailWithErr);
     bool FindGovOnAddLadder(NlpieTriple& trDB, int iBoundNode, 
                             int iUnboundVar, bool& bFailWithErr) ;
+    
+    bool TestTripleAgainstVarTbl(NlpieTriple& trSearch, vector<SSentenceRec>& SRecs, bool& bFailWithErr);
+};
+
+// different types of match on the ntEqual and ntVarMatch. 
+// WHAT it is that matches can either be in the TripleDB (ntEqual)
+// or in the Var table or in the Var Table (ntVarMatch)
+enum NlipieMatchTypeEqual {
+    nmteInvalid,
+    nmteString, // matching a node of type ntStringVal only for ntVarMatch
+    nmteWord, // match the word in the SRec
+    nmteLemma,
+    nmteNER,
+    nmtePOS,
+    nmteRegion,
+    nmteCoref, // points to an ID in the coref table. Each line of corefs has its own ID
+    
+};
+
+vector<pair<string, NlipieMatchTypeEqual> > nmteTbl = {
+    {"string", nmteString},
+    {"word", nmteWord}, 
+    {"lemma", nmteLemma},
+    {"NER", nmteNER},
+    {"POS", nmtePOS},
+    {"region", nmteRegion},
+    {"coref", nmteCoref}
+};
+
+class NlpieSRecKey {
+public:
+    NlpieSRecKey(NlpieNode& node) {
+        nmte = nmteInvalid;
+        for_each(nmteTbl.begin(), nmteTbl.end(), [&] (pair<string, NlipieMatchTypeEqual> Cand) {
+            if (Cand.first == get<string>(node.val)) {
+                nmte = Cand.second;
+            }
+        } );
+        
+    }
+    NlipieMatchTypeEqual getType() {
+        return nmte;
+    }
+    bool getVal(string& sVal, WordRec& wrec) {
+//                                    string sVal; 
+//                                    WordRec wrec = rec.OneWordRec[SRecID.second];
+       switch (nmte) {
+            case nmteWord: {
+                sVal = wrec.Word;
+                break;
+            }
+            case nmteLemma: {
+                sVal = wrec.WordCore;
+                break;
+            }
+            case nmtePOS: {
+                sVal = wrec.POS;
+                break;
+            }
+            case nmteNER: {
+                sVal = wrec.NER;
+                break;
+            }
+            case nmteRegion: {
+                sVal = wrec.RegionName;
+                break;
+            }
+            default: {
+                cerr << "Error in query. Cannot process nmte type " << nmte << endl;
+                return false;
+            }
+        }
+        return true;
+    }
+    
+private:
+    NlipieMatchTypeEqual nmte;
 };
 
 
@@ -265,6 +375,7 @@ vector<NlpieTest> AllTests = {
     NlpieTest ( 
             "BindSubjObj",
             {NlpieVar("x"), NlpieVar("y"), NlpieVar("z")}, 
+            cbAND,
             {   
                 NlpieTestImportHybrid(
                         true, 
@@ -282,11 +393,12 @@ vector<NlpieTest> AllTests = {
     NlpieTest ( 
             "VerbGet",
             {NlpieVar("vname", nvtString), NlpieVar("x"), NlpieVar("y"), NlpieVar("z"), NlpieVar("t"), NlpieVar("s"), NlpieVar("r")}, 
+            cbAND,
             {   
                 NlpieTestImportHybrid(
                         true, 
                         {   
-                            NlpieTriple(NlpieNode(ntEqual, "string"), 
+                            NlpieTriple(NlpieNode(ntSRecMatch, "word"), 
                                         NlpieNode(ntVar, "z"), 
                                         NlpieNode(ntVar, "vname")),
                         }
@@ -322,26 +434,67 @@ vector<NlpieTest> AllTests = {
             }
     ),
     NlpieTest (
-            "HTest",
+            "IsPerson",
             {
-                NlpieVar("subj"), NlpieVar("obj"), NlpieVar("ObjName", nvtString)
+                NlpieVar("subj"), NlpieVar("obj"), NlpieVar("ObjName", nvtString), 
+                NlpieVar("ObjPOS", nvtString)
             }, 
+            !cbAND,
             {
-                NlpieTestImportHybrid   (
-                        // for now, binding to a const , as opposed to a var, done by referring to a name not in the var table
-                        {{"vname", "hit"}, {"x", "subj"}, {"y", "obj"}},
-                        "VerbGet"
-                ),
                 NlpieTestImportHybrid(
                         true, 
                         {   
-                            NlpieTriple(NlpieNode(ntExtract, "string"), 
+                            NlpieTriple(NlpieNode(ntExtract, "word"), 
                                         NlpieNode(ntVar, "obj"), 
                                         NlpieNode(ntVar, "ObjName")),
                             NlpieTriple(NlpieNode(ntIsHypernym, "n"), 
                                         NlpieNode(ntVar, "ObjName"), 
                                         NlpieNode(ntStringVal, "person"))
                         }
+                ),
+                NlpieTestImportHybrid(
+                        true, 
+                        {   
+                            NlpieTriple(NlpieNode(ntExtract, "POS"), 
+                                        NlpieNode(ntVar, "obj"), 
+                                        NlpieNode(ntVar, "ObjPOS")),
+                            NlpieTriple(NlpieNode(ntTestStringEq, "string"), 
+                                        NlpieNode(ntVar, "ObjPOS"), 
+                                        NlpieNode(ntStringVal, "PRP"))
+                        }
+                )
+            }
+    ),
+    NlpieTest (
+            "PassThru",
+            {
+                NlpieVar("subj"), NlpieVar("obj")
+            }, 
+            !cbAND,
+            {
+                NlpieTestImportHybrid   (
+                        // for now, binding to a const , as opposed to a var, done by referring to a name not in the var table
+                        {{"subj", "subj"}, {"obj", "obj"}},
+                        "IsPerson"
+                ),               
+            }
+    ),
+    NlpieTest (
+            "HTest",
+            {
+                NlpieVar("subj"), NlpieVar("obj")
+            }, 
+            cbAND,
+            {
+                NlpieTestImportHybrid   (
+                        // for now, binding to a const , as opposed to a var, done by referring to a name not in the var table
+                        {{"vname", "hit"}, {"x", "subj"}, {"y", "obj"}},
+                        "VerbGet"
+                ),
+                NlpieTestImportHybrid   (
+                        // for now, binding to a const , as opposed to a var, done by referring to a name not in the var table
+                        {{"subj", "subj"}, {"obj", "obj"}},
+                        "PassThru"
                 )
             }
     )
@@ -355,12 +508,12 @@ map<string, int> AllTestMap; // map for AllTests, filled in at the start of OMA(
 #define NODE_RIGHT  2
 
 vector<NlpieTriple> TripleTbl;
-void TripleTblPrint() {
+void TripleTblPrint(vector<SSentenceRec>& SRecs) {
     cerr << "Printing TripleTbl with " << TripleTbl.size() << " els\n";
     int itt = 0;
-    for (auto t : TripleTbl) {
+    for (NlpieTriple t : TripleTbl) {
         cerr << itt++ << ": ";
-        t.Print();
+        t.Print(SRecs);
     }
 }
 // returns an index of the triple that holds the input triple index -- essentially a back-pointer
@@ -516,7 +669,8 @@ bool NlpieTest::TestRightDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
 
 bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
         int iBoundNode, int bBoundNodeOnLeft,
-        int iUnboundVar, bool& bFailWithErr) {
+        int iUnboundVar, bool& bFailWithErr,
+        vector<SSentenceRec>& SRecs) {
     string UnboundVarName = VarTbl[iUnboundVar].VarName;
     // two basic scenarios. In one the dep rel we are looking for is the head
     // this will occur if the gov has only one dep rel
@@ -561,7 +715,7 @@ bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
         // there is only one dep rel and the dep is a triple but we don't know if it
         // in turn has only one dep rel of its own or a string of them
         if (FindStringOffDepRel(   get<int>(trDB.right.val), trSearch,
-                                        iUnboundVar)) {
+                                        iUnboundVar, SRecs)) {
             //bAllTestElsPassedSoFar = true;
             return true;
         }
@@ -601,7 +755,7 @@ bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
             }
             if (TestTripleOffAdd(   get<int>(ptrCurr->left.val), 
                                     trSearch,
-                                    iUnboundVar, bFailWithErr)) {
+                                    iUnboundVar, bFailWithErr, SRecs)) {
                 //bAllTestElsPassedSoFar = true;
                 return true;
             }
@@ -612,7 +766,7 @@ bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
                 // will also have ab OffAdd triple on its right
                 if (TestTripleOffAdd(   get<int>(ptrCurr->right.val), 
                                         trSearch,
-                                        iUnboundVar, bFailWithErr)) {
+                                        iUnboundVar, bFailWithErr, SRecs)) {
                     return true;
                 }
                 return false; // if bAllTestElsPassedSoFar not set by prev if, test will fail
@@ -626,7 +780,7 @@ bool NlpieTest::TestLeftDep(  NlpieTriple& trDB, NlpieTriple& trSearch,
 }
 
 bool NlpieTest::FindStringOffDepRel(    int iTripleOnTop, NlpieTriple& trSearch,
-                                        int iUnboundVar) {
+                                        int iUnboundVar, vector<SSentenceRec>& SRecs) {
     string UnboundVarName = VarTbl[iUnboundVar].VarName;
     NlpieTriple& TripleOnTop 
             = TripleTbl[iTripleOnTop];
@@ -639,18 +793,22 @@ bool NlpieTest::FindStringOffDepRel(    int iTripleOnTop, NlpieTriple& trSearch,
        return false;                       
     }
 
-    if (TripleOnTop.left.nt != ntStringVal) {
+    if (TripleOnTop.left.nt != ntSRec) {
         cerr << "Badly formed TripleDB. Node on right of "
                 "(ntDepRel or ntAddStart) off of ntAddCont "
-                "or ntAddEnd must be a ntStringVal\n";
+                "or ntAddEnd must be a ntSRec\n";
         return false;                       
     }
 
+    pair<int, int> SRecVal = get<pair<int, int> >(TripleOnTop.left.val);
+    string sWord = SRecs[SRecVal.first].OneWordRec[SRecVal.second].Word;
     cerr    << "Test el passed! var " 
             << UnboundVarName 
-            << " bound to " 
-            << get<string>(TripleOnTop.left.val) 
-            << "\n";
+            << " bound to TripleTbl index " 
+            << iTripleOnTop 
+            << " on the left. (word: "
+            << sWord
+            << "). \n";
     NlpieVar BoundVal(  UnboundVarName, nvtNode, 
                         make_pair(iTripleOnTop, NODE_LEFT)); // 1 because the scheme is head, left, right : 0, 1, 2
     vector<NlpieVar> NewVarTbl = VarTbl; 
@@ -661,8 +819,9 @@ bool NlpieTest::FindStringOffDepRel(    int iTripleOnTop, NlpieTriple& trSearch,
     
 }
 
-bool NlpieTest::TestTripleOffAdd(int iTripleOffAdd, NlpieTriple& trSearch,
-                                    int iUnboundVar, bool& bFailWithErr) {
+bool NlpieTest::TestTripleOffAdd(   int iTripleOffAdd, NlpieTriple& trSearch,
+                                    int iUnboundVar, bool& bFailWithErr,
+                                    vector<SSentenceRec>& SRecs) {
     bFailWithErr = false;
     string UnboundVarName = VarTbl[iUnboundVar].VarName;
     // Note. The & is taking a pointer to a vector
@@ -688,28 +847,32 @@ bool NlpieTest::TestTripleOffAdd(int iTripleOffAdd, NlpieTriple& trSearch,
     // there's now only two choices. Either the dep of the DepRel is the string on the left
     // or it has it's own tree starting with a ntAddStart but the string we want is on the string
     // on the left of the top node of the tree
-    if (TripleOffAdd.right.nt == ntStringVal) {
+    if (TripleOffAdd.right.nt == ntSRec) {
+        pair<int, int> SRecVal = get<pair<int, int> >(TripleOffAdd.right.val);
+        string sWord = SRecs[SRecVal.first].OneWordRec[SRecVal.second].Word;
+        
         cerr    << "Test El Passed! var " 
-                << UnboundVarName << " bound to " 
-                << get<string>(TripleOffAdd.right.val)  << "\n";
+                << UnboundVarName << " bound to TripleTbl index " 
+                << iTripleOffAdd  << " on the right. (word: " 
+                << sWord << ").\n";
         NlpieVar BoundVal(  UnboundVarName, nvtNode, 
-                            make_pair(iTripleOffAdd, NODE_RIGHT)); // 2 because the scheme is head, left, right : 0, 1, 2
+                            make_pair(iTripleOffAdd, NODE_RIGHT)); 
         vector<NlpieVar> NewVarTbl = VarTbl; 
         NewVarTbl[iUnboundVar] = BoundVal;
         VarTblStackNew.push_back(NewVarTbl);
-//        VarTbl[iUnboundVar] = BoundVal;
+//        VarTbl[iUnboundVa] = BoundVal;
         return true;
         //bAllTestElsPassedSoFar = true;
     }
     if (TripleOffAdd.right.nt != ntTriple) {
         cerr << "Badly formed TripleDB. "
                 "node on right of ntDepRel "
-                "must be either a ntStringVal or ntTriple\n";
+                "must be either a ntSRec or ntTriple\n";
         bFailWithErr = false;
         return false; 
     }
     return (FindStringOffDepRel(    get<int>(TripleOffAdd.right.val), trSearch,
-                                    iUnboundVar));
+                                    iUnboundVar, SRecs));
 
 }
 
@@ -746,8 +909,399 @@ bool NlpieTest::BindStringVar(string VarName, string ConstVal)
     return true;
 }
 
+bool NlpieTest::TestTripleAgainstVarTbl(NlpieTriple& trSearch, vector<SSentenceRec>& SRecs, bool& bFailWithErr) {
+    bool bSearchingOnLeft = false;
+    string SearchString;
+    NlpieNode OtherNode;
+    NlpieNode SearchHeadNode;
+    SearchHeadNode = trSearch.head;
+    if (trSearch.head.nt == ntIsHypernym) {
+        string SynetName = get<string>(trSearch.head.val);
+        string sHyponym;
+        if (trSearch.left.nt == ntVar) {
+            string VarName = get<string>(trSearch.left.val);
+            int iVar = -1;
+            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                cerr << "Syntax error in search. For hypernym, left requests unknown var.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (VarTbl[iVar].nvt != nvtString) {
+                cerr << "Syntax error in search. For hypernym, searching a var that is not nvtString.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (!VarTbl[iVar].bBound) {
+                return true; // fail silently
+            }
+            sHyponym = get<string>(VarTbl[iVar].val);
+        }
+        else if (trSearch.left.nt == ntStringVal) {
+            sHyponym = get<string>(trSearch.left.val);
+        }
+        else {
+            cerr << "Syntax error in search. For hypernym, the hyponym must be a var or a string const.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        string sHypernym;
+        if (trSearch.right.nt == ntVar) {
+            string VarName = get<string>(trSearch.right.val);
+            int iVar = -1;
+            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                cerr << "Syntax error in search. For hypernym, right requests unknown var.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (VarTbl[iVar].nvt != nvtString) {
+                cerr << "Syntax error in search. For hypernym, right searching a var that is not nvtString.\n";
+                return false;
+            }
+            if (!VarTbl[iVar].bBound) {
+                return true; // fail silently
+            }
+            sHypernym = get<string>(VarTbl[iVar].val);
+        }
+        else if (trSearch.right.nt == ntStringVal) {
+            sHypernym = get<string>(trSearch.right.val);
+        }
+        else {
+            cerr << "Syntax error in search. For hypernym, the hypernym must be a var or a string const.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if (pTheEnv == NULL) {
+            cerr << "Hypernym search error. Pointer to TheEnv not initialized\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if (pTheEnv->WordNetIsHypernym(sHyponym, sHypernym, SynetName[0])) {
+            // no new variables are bound for ntIsHypernym, so the var table is simply put on the stack as is
+            VarTblStackNew.push_back(VarTbl);
+            cerr << "Test for " << sHyponym << " being a hyponym of " << sHypernym << " passed!\n";
+        }
+        else {
+            cerr << "Test for " << sHyponym << " being a hyponym of " << sHypernym << " failed!\n";
+            return false;
+        }
+        return true;;
+    }
+    else if (trSearch.head.nt == ntExtract) {
 
-bool NlpieTest::DoTest()
+        //fix extract
+        if ((trSearch.left.nt != ntVar) ||  (trSearch.right.nt != ntVar)) {
+            cerr << "Syntax error in search. For extract, left must be a node and right a string var.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        string SrcVarName = get<string>(trSearch.left.val);
+        int iSrcVar = -1;
+        if (!GetVarIndex(iSrcVar, SrcVarName, VarTbl)) {
+            cerr << "Syntax error in search. For extract, left requests unknown var.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        string DestVarName = get<string>(trSearch.right.val);
+        int iDestVar = -1;
+        if (!GetVarIndex(iDestVar, DestVarName, VarTbl)) {
+            cerr << "Syntax error in search. For extract, right requests unknown var.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if ((VarTbl[iSrcVar].nvt != nvtNode) ||  (VarTbl[iDestVar].nvt != nvtString)) {
+            cerr << "Syntax error in search. For extract, left VAR must be a node and right a string var.\n";
+            bFailWithErr = true;
+            return false;
+        }
+         if (!VarTbl[iSrcVar].bBound || VarTbl[iDestVar].bBound) {
+           return true; // silent fail. Not an error
+        }
+        // we know that the iSrcVar is an entry in the var table bound to a node ID in the TripleTbl
+        // We now access the node on the TripleTbl as nodeBound
+        // it could be an SRec node which points to the SRecs
+        // or it could be a plain old string
+        vector<NlpieVar> NewVarTbl = VarTbl; 
+        pair<int, int> NodeID = get<pair<int, int> >(VarTbl[iSrcVar].val);
+        NlpieTriple& trBoundNode = TripleTbl[NodeID.first];
+        NlpieNode& nodeBound =      ((NodeID.second == NODE_LEFT) 
+                                ?   trBoundNode.left 
+                                :   trBoundNode.right);
+            // should check for ntString in bound node
+        string sVal;
+        if (nodeBound.nt == ntSRec)  {
+            NlpieSRecKey SRecKey(trSearch.head);
+            if (SRecKey.getType() == nmteInvalid) {
+                cerr << "Error in specifying query. unknown match type " << get<string>(trSearch.head.val) << endl;
+                bFailWithErr = true;
+                return false;
+            }
+            pair<int, int> SRecID = get<pair<int, int> >(nodeBound.val);
+            SSentenceRec& rec = SRecs[SRecID.first];
+            WordRec wrec = rec.OneWordRec[SRecID.second];
+            if (!SRecKey.getVal(sVal, wrec)) {
+                cerr << "Error in query. Cannot access SRec data\n";
+                bFailWithErr = true;
+                return false;
+            }
+        }
+        else if (nodeBound.nt == ntStringVal ) {
+            sVal = get<string>(nodeBound.val);
+        }
+       else {
+            cerr << "Error: Extract accesses a node in TripleTble which is neither a string nor SRec.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        // either way, the data extracted is a string to the new
+        // binding in the var table will be a nvtString
+        NlpieVar BoundVal(  DestVarName, nvtString, sVal); 
+        NewVarTbl[iDestVar] = BoundVal;
+        VarTblStackNew.push_back(NewVarTbl);
+        cerr << "Extract succeeded. Var " << DestVarName << " bound to string '" << sVal << "'.\n";
+        return true;
+
+
+    }
+    else if (trSearch.head.nt == ntTestStringEq) {
+        string sOnLeft;
+        if (trSearch.left.nt == ntVar) {
+            string VarName = get<string>(trSearch.left.val);
+            int iVar = -1;
+            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                cerr << "Syntax error in search. For hypernym, left requests unknown var.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (VarTbl[iVar].nvt != nvtString) {
+                cerr << "Syntax error in search. For hypernym, searching a var that is not nvtString.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (!VarTbl[iVar].bBound) {
+                return true; // fail silently
+            }
+            sOnLeft = get<string>(VarTbl[iVar].val);
+        }
+        else if (trSearch.left.nt == ntStringVal) {
+            sOnLeft = get<string>(trSearch.left.val);
+        }
+        else {
+            cerr << "Syntax error in search. For hypernym, the hyponym must be a var or a string const.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        string sOnRight;
+        if (trSearch.right.nt == ntVar) {
+            string VarName = get<string>(trSearch.right.val);
+            int iVar = -1;
+            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                cerr << "Syntax error in search. For hypernym, right requests unknown var.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (VarTbl[iVar].nvt != nvtString) {
+                cerr << "Syntax error in search. For hypernym, right searching a var that is not nvtString.\n";
+                bFailWithErr = true;
+                return false;
+            }
+            if (!VarTbl[iVar].bBound) {
+                return false; // fail silently
+            }
+            sOnRight = get<string>(VarTbl[iVar].val);
+        }
+        else if (trSearch.right.nt == ntStringVal) {
+            sOnRight = get<string>(trSearch.right.val);
+        }
+        else {
+            cerr << "Syntax error in search. For hypernym, the hypernym must be a var or a string const.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if (sOnRight == sOnLeft) {
+            // no new variables are bound for ntIsHypernym, so the var table is simply put on the stack as is
+            VarTblStackNew.push_back(VarTbl);
+            cerr << "ntTestStringEq for " << sOnLeft << " passed!\n";
+        }
+        else {
+            cerr << "ntTestStringEq for " << sOnLeft << " equal to " << sOnRight << " failed!\n";
+            return false;
+        }
+        return true;
+    }
+    else if (trSearch.head.nt == ntSRecMatch) { // match against node in TripleDB but ulimately against its SRec value
+        NlpieSRecKey SRecKey(trSearch.head);
+        if (SRecKey.getType() == nmteInvalid) {
+            cerr << "Error in specifying query. unknown match type " << get<string>(trSearch.head.val) << endl;
+            return false;
+        }
+        bool bSearchStringValid = false;
+        if (trSearch.right.nt == ntStringVal) {
+            SearchString = get<string>(trSearch.right.val);
+            OtherNode = trSearch.left;
+            bSearchStringValid = true;
+        }
+        else if (trSearch.right.nt == ntVar) {
+            string VarName = get<string>(trSearch.right.val);
+            int iVar = -1;
+            if (GetVarIndex(iVar, VarName, VarTbl)) {
+                NlpieVar& Var = VarTbl[iVar];
+                if (Var.nvt == nvtString && Var.bBound) {
+                    bSearchStringValid = true;
+                    OtherNode = trSearch.left;
+                    SearchString = get<string>(Var.val);
+                }
+            }
+            else {
+                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                bFailWithErr = true;
+                return false;
+            }
+
+        }
+        if (!bSearchStringValid) {
+            cerr << "Badly formed query. Right side of ntEqual must be ntStringVar or ntVar with bound var of type nvtString.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        int iVar = -1;
+        string VarName;
+        if (OtherNode.nt == ntVar) {
+            VarName = get<string>(OtherNode.val);
+            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                bFailWithErr = true;
+                return false;
+            }
+        }
+        else {
+            cerr << "Badly formed query. Left side of ntEqual must be ntVar.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        int itrDB = -1;
+        bool bMatchFound = false;
+        for (auto& trDB : TripleTbl) {
+            bool bThisTripleMatched = false;
+            vector<NlpieVar> NewVarTbl = VarTbl; 
+            itrDB++;
+            NlpieNode& nodeDB = trDB.left;
+            auto MatchFn = [&] (NlpieNode& nodeDB, int NodeType) {
+                string sVal;
+                if (nodeDB.nt == ntSRec) {
+                    pair<int, int> SRecID = get<pair<int, int> >(nodeDB.val);
+                    SSentenceRec& rec = SRecs[SRecID.first];
+                    string sVal; 
+                    WordRec wrec = rec.OneWordRec[SRecID.second];
+                    if (!SRecKey.getVal(sVal, wrec)) {
+                        cerr << "Error in query. Cannot access SRec data\n";
+                        return false;
+                    }
+                    if (SearchString == sVal) {
+                        bThisTripleMatched = true;
+                    }
+                }
+                if ((nodeDB.nt == ntStringVal) && (SearchString == get<string>(nodeDB.val))) {
+                    bThisTripleMatched = true;
+                }
+                if (bThisTripleMatched) {
+                    NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
+                                        make_pair(itrDB, NodeType)); // the node being bound is on the left of the db triple
+                    NewVarTbl[iVar] = BoundVal;
+                    VarTblStackNew.push_back(NewVarTbl);
+                    bMatchFound = true;
+                }
+            };
+            MatchFn(trDB.left, NODE_LEFT);
+            if (!bMatchFound) {
+                MatchFn(trDB.right, NODE_RIGHT);
+            }
+
+        }
+        if (bMatchFound) {
+            cerr << "Test El scored. Bound a node to " << VarName << " that matched string '" << SearchString << "'\n";
+//                            bAllTestElsPassedSoFar = true;
+        }
+        return true;
+    }
+    // very specific search for ntDepRel and two vars, exactly one of which is bound
+    // expand to evolve code
+    else if (trSearch.head.nt = ntDepRel) {
+        if (    (trSearch.left.nt != ntVar)
+            ||  (trSearch.right.nt != ntVar)) {
+            cerr << "For now, ntDepRel only dealing with two vars, each a node. Test will fail.\n";
+            bFailWithErr = true;
+            return false; // not resetting bAllTestElsPassedSoFar, so test will fail.
+        }
+        int iLeftVar = -1, iRightVar = -1;
+        string VarName = get<string>(trSearch.left.val);
+        if (!GetVarIndex(iLeftVar, VarName, VarTbl)) {
+            cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        VarName = get<string>(trSearch.right.val);
+        if (!GetVarIndex(iRightVar, VarName, VarTbl)) {
+            cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if (VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+            cerr << "Test will fail because code not written for this situation.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        if (!VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+            // for now we won't allow open-ended search
+            cerr << "Test will fail because code not written for this situation.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        NlpieTriple trDB;
+        int iBoundVar, iUnboundVar;
+        bool bSearchBoundOnLeft = true;
+        if (!VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+            iBoundVar = iRightVar;
+            iUnboundVar = iLeftVar;
+            bSearchBoundOnLeft = false;
+        }
+        if (VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+            iBoundVar = iLeftVar;
+            iUnboundVar = iRightVar;                
+        }
+        if (VarTbl[iBoundVar].nvt != nvtNode) {
+            cerr << "Test will fail because fr now the only type of bound var is nvtNode.\n";
+            bFailWithErr = true;
+            return false;
+        }
+        pair<int, int> BoundNodeID = get<pair<int, int> >(VarTbl[iBoundVar].val);
+        string UnboundVarName = VarTbl[iUnboundVar].VarName;
+         bool bBoundNodeOnLeft = (BoundNodeID.second == 1);
+        trDB = TripleTbl[BoundNodeID.first];
+        if (bSearchBoundOnLeft) {
+            if (TestLeftDep(trDB, trSearch, 
+                            BoundNodeID.first, bBoundNodeOnLeft, 
+                            iUnboundVar, bFailWithErr, SRecs )) {
+    //                            bAllTestElsPassedSoFar = true;
+                return true;
+            }
+        }
+        else {
+            if (TestRightDep(trDB, trSearch, 
+                            BoundNodeID.first, bBoundNodeOnLeft, 
+                            iUnboundVar, bFailWithErr )) {
+    //                            bAllTestElsPassedSoFar = true;
+                return true;
+            }
+        }
+    }
+    if (bFailWithErr) {
+        return false;
+    }
+    return  true;
+}
+
+
+bool NlpieTest::DoTest(vector<SSentenceRec>& SRecs)
 {
     //vector<vector<NlpieVar> > VarTblOptions;
     bool bFailWithErr = false;
@@ -778,11 +1332,13 @@ bool NlpieTest::DoTest()
         string TestName;
         int LastTestElIdx;
         vector<VarTblCand > VarTblCands; 
+        vector<VarTblCand > VarTblCandsNew;  // where bTestHybridsAND was OR, we will need both the source Cands and the NewCands created so far
         vector<pair<string, string> > PushingVarMap; // belongs to the new not the pushed
     };
     list<ImportStackEl> ImportStack;
     string CurrTestName = TestName;
     int iTestAndImport = 0; 
+    bool bTestHybridsAND = bAND;
     
     //for (int iTestAndImport = 0; /* no test */; iTestAndImport++ ) { // convert to Hybrid please
     while (true) {
@@ -795,13 +1351,25 @@ bool NlpieTest::DoTest()
                 cerr << "Error in search map definition. Test " << NewTestName << " not found.\n";
                 return false;
             }
+            cerr << "Importing test " << NewTestName << endl;
             ImportStack.push_back(ImportStackEl());
             ImportStackEl& StackEl = ImportStack.back();
             StackEl.TestName = CurrTestName;
             StackEl.LastTestElIdx = iTestAndImport;
             StackEl.VarTblCands = VarTblTestElCands;
             StackEl.PushingVarMap = pTestOrImportEl->VarMap;
+            // for bTestHybridsAND, the New Cands become the Cands after every TestImportHybrid
+            // but otherwise, both must be maintained separately. One is the source and the 
+            // other is the accumulated results; these results often feature new bindings
+            // in the VarTbl
+            // N.B!!!! The following if uses the OLD value of bTestHybridsAND
+            // BEFORE being changed
+            if (!bTestHybridsAND) { 
+                // inside an if for performance reasons only - to save a copy
+                StackEl.VarTblCandsNew = VarTblTestElCandsNew;
+            }
             NlpieTest NewTest = AllTests[itAllTestsMap->second];
+            bTestHybridsAND = NewTest.bAND;
             CurrTestName = NewTestName;
             VarTblTestElCands.clear();
             for (int iCand = 0; iCand < StackEl.VarTblCands.size(); iCand++) {
@@ -844,277 +1412,40 @@ bool NlpieTest::DoTest()
             TestsAndImportsEls.clear();
             TestsAndImportsEls = NewTest.TestsAndImportsList;
             iTestAndImport = 0;
-            pTestOrImportEl = &(TestsAndImportsEls[0]);
+            //pTestOrImportEl = &(TestsAndImportsEls[0]);
+            continue; // restart the loop now with a new test and iTestAndImport at 0
         }
         if (bFailWithErr) return false;
         bool bLastElCand;
         for (auto VarTblElCand : VarTblTestElCands) {
-            VarTblStackNew.clear();
-            VarTblStackNew.push_back(VarTblElCand.VarTbl);
-            // do the stuff
-        //bAllTestElsPassedSoFar = false;
-        //bool bAllTestElsPassedSoFar = true;
-            for (auto& trSearch : pTestOrImportEl->TestTripleVec) {
-                VarTblStack.clear();
-                VarTblStack = VarTblStackNew;
+            if (pTestOrImportEl->bAND) {
                 VarTblStackNew.clear();
-                while (!VarTblStack.empty() ) {
-                    VarTbl = VarTblStack.front();
-                    VarTblStack.pop_front();
+                VarTblStackNew.push_back(VarTblElCand.VarTbl);
+                for (auto& trSearch : pTestOrImportEl->TestTripleVec) {
+                    VarTblStack.clear();
+                    VarTblStack = VarTblStackNew;
+                    VarTblStackNew.clear();
+                    while (!VarTblStack.empty() ) {
+                        VarTbl = VarTblStack.front();
+                        VarTblStack.pop_front();
+                        TestTripleAgainstVarTbl(trSearch, SRecs, bFailWithErr);
+                        if (bFailWithErr) {
+                            return false;
+                        }
+                    }
 
-                    bool bSearchingOnLeft = false;
-                    string SearchString;
-                    NlpieNode OtherNode;
-                    NlpieNode SearchHeadNode;
-                    SearchHeadNode = trSearch.head;
-                    if (trSearch.head.nt == ntIsHypernym) {
-                        string SynetName = get<string>(trSearch.head.val);
-                        string sHyponym;
-                        if (trSearch.left.nt == ntVar) {
-                            string VarName = get<string>(trSearch.left.val);
-                            int iVar = -1;
-                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
-                                cerr << "Syntax error in search. For hypernym, left requests unknown var.\n";
-                                return false;
-                            }
-                            if (VarTbl[iVar].nvt != nvtString) {
-                                cerr << "Syntax error in search. For hypernym, searching a var that is not nvtString.\n";
-                                return false;
-                            }
-                            if (!VarTbl[iVar].bBound) {
-                                continue; // fail silently
-                            }
-                            sHyponym = get<string>(VarTbl[iVar].val);
-                        }
-                        else if (trSearch.left.nt == ntStringVal) {
-                            sHyponym = get<string>(trSearch.left.val);
-                        }
-                        else {
-                            cerr << "Syntax error in search. For hypernym, the hyponym must be a var or a string const.\n";
-                            return false;
-                        }
-                        string sHypernym;
-                        if (trSearch.right.nt == ntVar) {
-                            string VarName = get<string>(trSearch.right.val);
-                            int iVar = -1;
-                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
-                                cerr << "Syntax error in search. For hypernym, right requests unknown var.\n";
-                                return false;
-                            }
-                            if (VarTbl[iVar].nvt != nvtString) {
-                                cerr << "Syntax error in search. For hypernym, right searching a var that is not nvtString.\n";
-                                return false;
-                            }
-                            if (!VarTbl[iVar].bBound) {
-                                continue; // fail silently
-                            }
-                            sHypernym = get<string>(VarTbl[iVar].val);
-                        }
-                        else if (trSearch.right.nt == ntStringVal) {
-                            sHypernym = get<string>(trSearch.right.val);
-                        }
-                        else {
-                            cerr << "Syntax error in search. For hypernym, the hypernym must be a var or a string const.\n";
-                            return false;
-                        }
-                        if (pTheEnv == NULL) {
-                            cerr << "Hypernym search error. Pointer to TheEnv not initialized\n";
-                            return false;
-                        }
-                        if (pTheEnv->WordNetIsHypernym(sHyponym, sHypernym, SynetName[0])) {
-                            // no new variables are bound for ntIsHypernym, so the var table is simply put on the stack as is
-                            VarTblStackNew.push_back(VarTbl);
-                        }
-                        continue;
-                    }
-                    else if (    (trSearch.head.nt == ntExtract) 
-                        &&  (get<string>(trSearch.head.val) == "string")) {
-                        if ((trSearch.left.nt != ntVar) ||  (trSearch.right.nt != ntVar)) {
-                            cerr << "Syntax error in search. For extract, left must be a node and right a string var.\n";
-                            return false;
-                        }
-                        string SrcVarName = get<string>(trSearch.left.val);
-                        int iSrcVar = -1;
-                        if (!GetVarIndex(iSrcVar, SrcVarName, VarTbl)) {
-                            cerr << "Syntax error in search. For extract, left requests unknown var.\n";
-                            return false;
-                        }
-                        string DestVarName = get<string>(trSearch.right.val);
-                        int iDestVar = -1;
-                        if (!GetVarIndex(iDestVar, DestVarName, VarTbl)) {
-                            cerr << "Syntax error in search. For extract, right requests unknown var.\n";
-                            return false;
-                        }
-                        if ((VarTbl[iSrcVar].nvt != nvtNode) ||  (VarTbl[iDestVar].nvt != nvtString)) {
-                            cerr << "Syntax error in search. For extract, left VAR must be a node and right a string var.\n";
-                            return false;
-                        }
-                         if (!VarTbl[iSrcVar].bBound || VarTbl[iDestVar].bBound) {
-                            continue; // silent fail. Not an error
-                        }
-                        vector<NlpieVar> NewVarTbl = VarTbl; 
-                        pair<int, int> NodeID = get<pair<int, int> >(VarTbl[iSrcVar].val);
-                        NlpieTriple& trBoundNode = TripleTbl[NodeID.first];
-                        string sVal;
-                        // should check for ntString in bound node
-                        if (NodeID.second == NODE_LEFT) {
-                            sVal = get<string>(trBoundNode.left.val);
-                        }
-                        else {
-                            sVal = get<string>(trBoundNode.right.val);
-                        }
-                        NlpieVar BoundVal(  DestVarName, nvtString, sVal); 
-                        NewVarTbl[iDestVar] = BoundVal;
-                        VarTblStackNew.push_back(NewVarTbl);
-                        continue;
-
-                        
-                    }
-                    else if (   (trSearch.head.nt == ntEqual) 
-                            &&  (get<string>(trSearch.head.val) == "string")) {
-                        bool bSearchStringValid = false;
-                        if (trSearch.right.nt == ntStringVal) {
-                            SearchString = get<string>(trSearch.right.val);
-                            OtherNode = trSearch.left;
-                            bSearchStringValid = true;
-                        }
-                        else if (trSearch.right.nt == ntVar) {
-                            string VarName = get<string>(trSearch.right.val);
-                            int iVar = -1;
-                            if (GetVarIndex(iVar, VarName, VarTbl)) {
-                                NlpieVar& Var = VarTbl[iVar];
-                                if (Var.nvt == nvtString && Var.bBound) {
-                                    bSearchStringValid = true;
-                                    OtherNode = trSearch.left;
-                                    SearchString = get<string>(Var.val);
-                                }
-                            }
-                            else {
-                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
-                                return false;
-                            }
-                            
-                        }
-                        if (!bSearchStringValid) {
-                            cerr << "Badly formed query. Right side of ntEqual must be ntStringVar or ntVar with bount var of type nvtString.\n";
-                            bFailWithErr = true;
-                            return false;
-                        }
-                        int iVar = -1;
-                        string VarName;
-                        if (OtherNode.nt == ntVar) {
-                            VarName = get<string>(OtherNode.val);
-                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
-                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
-                                bFailWithErr = true;
-                                return false;
-                            }
-                        }
-                        else {
-                            cerr << "Badly formed query. Left side of ntEqual must be ntVar.\n";
-                            bFailWithErr = true;
-                            return false;
-                        }
-                        int itrDB = -1;
-                        bool bMatchFound = false;
-                        for (auto& trDB : TripleTbl) {
-                            vector<NlpieVar> NewVarTbl = VarTbl; 
-                            itrDB++;
-                            if ((trDB.left.nt == ntStringVal) && (SearchString == get<string>(trDB.left.val))) {
-                                NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
-                                                    make_pair(itrDB, NODE_LEFT)); // the node being bound is on the left of the db triple
-                                NewVarTbl[iVar] = BoundVal;
-                                VarTblStackNew.push_back(NewVarTbl);
-                                bMatchFound = true;
-                            }
-                            if ((trDB.right.nt == ntStringVal) && (SearchString == get<string>(trDB.right.val))) {
-                                NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
-                                                    make_pair(itrDB, NODE_RIGHT)); 
-                                NewVarTbl[iVar] = BoundVal;
-                                VarTblStackNew.push_back(NewVarTbl);
-                                bMatchFound = true;
-                            }
-
-                        }
-                        if (bMatchFound) {
-                            cerr << "Test El scored. Bound a node to " << VarName << " that matched string '" << SearchString << "'\n";
-//                            bAllTestElsPassedSoFar = true;
-                        }
-                        continue;
-                    }
-                    // very specific search for ntDepRel and two vars, exactly one of which is bound
-                    // expand to evolve code
-                    if (!(      (trSearch.head.nt = ntDepRel) 
-                            &&  (trSearch.left.nt == ntVar)
-                            &&  (trSearch.right.nt == ntVar))) {
-                        cerr << "For now, only dealing with Dep and two vars. Test will fail.\n";
-                        bFailWithErr = true;
-                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail.
-                    }
-                    int iLeftVar = -1, iRightVar = -1;
-                    string VarName = get<string>(trSearch.left.val);
-                    if (!GetVarIndex(iLeftVar, VarName, VarTbl)) {
-                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
-                        bFailWithErr = true;
-                        return false;
-                    }
-                    VarName = get<string>(trSearch.right.val);
-                    if (!GetVarIndex(iRightVar, VarName, VarTbl)) {
-                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
-                        bFailWithErr = true;
-                        return false;
-                    }
-                    if (VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
-                        cerr << "Test will fail because code not written for this situation.\n";
-                        continue;
-                    }
-                    if (!VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
-                        // for now we won't allow open-ended search
-                        cerr << "Test will fail because code not written for this situation.\n";
-                        continue;
-                    }
-                    NlpieTriple trDB;
-                    int iBoundVar, iUnboundVar;
-                    bool bSearchBoundOnLeft = true;
-                    if (!VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
-                        iBoundVar = iRightVar;
-                        iUnboundVar = iLeftVar;
-                        bSearchBoundOnLeft = false;
-                    }
-                    if (VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
-                        iBoundVar = iLeftVar;
-                        iUnboundVar = iRightVar;                
-                    }
-                    if (VarTbl[iBoundVar].nvt != nvtNode) {
-                        cerr << "Test will fail because fr now the only type of bound var is nvtNode.\n";
-                        bFailWithErr = true;
-                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail
-                    }
-                    pair<int, int> BoundNodeID = get<pair<int, int> >(VarTbl[iBoundVar].val);
-                    string UnboundVarName = VarTbl[iUnboundVar].VarName;
-                     bool bBoundNodeOnLeft = (BoundNodeID.second == 1);
-                    trDB = TripleTbl[BoundNodeID.first];
-                    if (bSearchBoundOnLeft) {
-                        if (TestLeftDep(trDB, trSearch, 
-                                        BoundNodeID.first, bBoundNodeOnLeft, 
-                                        iUnboundVar, bFailWithErr )) {
-//                            bAllTestElsPassedSoFar = true;
-                            continue;
-                        }
-                    }
-                    else {
-                        if (TestRightDep(trDB, trSearch, 
-                                        BoundNodeID.first, bBoundNodeOnLeft, 
-                                        iUnboundVar, bFailWithErr )) {
-//                            bAllTestElsPassedSoFar = true;
-                            continue;
-                        }
-                    }
+                } // End triples in test el loop
+            }
+            else { // bOR 
+                for (auto& trSearch : pTestOrImportEl->TestTripleVec) {
+                    VarTbl.clear();
+                    VarTbl = VarTblElCand.VarTbl;
+                    TestTripleAgainstVarTbl(trSearch, SRecs, bFailWithErr);
                     if (bFailWithErr) {
                         return false;
                     }
                 }
-            } // End triples in test el loop
+            }
             // post-processing of test el loop
             if (pTestOrImportEl->bMust) {
                 if (!VarTblStackNew.empty()) {
@@ -1131,15 +1462,25 @@ bool NlpieTest::DoTest()
                 
             }
         } // end for VarTblTestElCands 
-        VarTblTestElCands.clear();
-        VarTblTestElCands = VarTblTestElCandsNew;
-        VarTblTestElCandsNew.clear();
+        if (bTestHybridsAND) {
+            VarTblTestElCands.clear();
+            VarTblTestElCands = VarTblTestElCandsNew;
+            VarTblTestElCandsNew.clear();
+            if (VarTblTestElCands.empty()) {
+                break; // no point going to the next test el or up the stack
+            }
+        }
         iTestAndImport++;
         bool bEndOfTestEls = false;
         while (iTestAndImport >= TestsAndImportsEls.size() ) {
-            if (VarTblTestElCands.empty()) {
-                bEndOfTestEls = true;
-                break; // no point going up the stack
+            if (!bTestHybridsAND) {
+                VarTblTestElCands.clear();
+                VarTblTestElCands = VarTblTestElCandsNew;
+                VarTblTestElCandsNew.clear();
+                if (VarTblTestElCands.empty()) {
+                    break; // no point going to the next test el or up the stack
+                }
+
             }
             if (ImportStack.empty()) {
                 bEndOfTestEls = true;
@@ -1150,7 +1491,9 @@ bool NlpieTest::DoTest()
             iTestAndImport = StackEl.LastTestElIdx + 1;
             vector<VarTblCand > StackVarTblCands  = StackEl.VarTblCands;
             vector<pair<string, string> > VarMap = StackEl.PushingVarMap;
+            vector<VarTblCand > StackVarTblCandsNew  = StackEl.VarTblCandsNew;
             ImportStack.pop_back();
+            cerr << "Ending test import. Returning to test " << CurrTestName << ".\n";
             vector<VarTblCand > RecreatedVarTblCands;
             for (auto& PushingCand : VarTblTestElCands) {
                 VarTblCand& StackCand = StackVarTblCands[PushingCand.CandSrcIdx];
@@ -1163,6 +1506,7 @@ bool NlpieTest::DoTest()
                 return false;
             }
             NlpieTest StackTest = AllTests[itAllTestsMap->second];
+            bTestHybridsAND = StackTest.bAND;
             for (auto VarTrans : VarMap) {
                 int iSrcVar = -1;
                 // first of the pair is the name of the var in the importED var tbl
@@ -1190,8 +1534,26 @@ bool NlpieTest::DoTest()
             TestsAndImportsEls.clear();
             TestsAndImportsEls = StackTest.TestsAndImportsList;
             //pTestOrImportEl = &(TestsAndImportsEls[iTestAndImport]);
-            VarTblTestElCands.clear();
-            VarTblTestElCands = RecreatedVarTblCands ;
+            if (bTestHybridsAND) {
+                VarTblTestElCands.clear();
+                VarTblTestElCands = RecreatedVarTblCands ;
+            }
+            else {
+                VarTblTestElCandsNew.clear();
+                if (StackEl.VarTblCandsNew.size() > 0) {
+                    VarTblTestElCandsNew = StackVarTblCandsNew;
+                    VarTblTestElCandsNew.insert(VarTblTestElCandsNew.end(), 
+                                                RecreatedVarTblCands.begin(),
+                                                RecreatedVarTblCands.end());
+                }
+                else {
+                    VarTblTestElCandsNew = RecreatedVarTblCands;
+                }
+                // for OR, the Cands are the source so they stay as they were
+                VarTblTestElCands.clear();
+                VarTblTestElCands = StackVarTblCands ;
+                
+            }
         }
         if (bEndOfTestEls) {
             break; 
@@ -1215,7 +1577,7 @@ bool NlpieTest::DoTest()
     return false;
 }
 
-void DisplayTripleTree() {
+void DisplayTripleTree(vector<SSentenceRec>& SRecs) {
     vector<string> TreeDisplay;
     struct TStackEl {
         TStackEl(int aiTriple, int aiLeftChar, int LineStart) {
@@ -1239,6 +1601,11 @@ void DisplayTripleTree() {
             case ntDepRel: 
             {
                 s = get<string>(nl.val);
+                return -1;
+            }
+            case ntSRec: {
+                pair<int, int> SRecVal = get<pair<int, int> >(nl.val);
+                s = SRecs[SRecVal.first].OneWordRec[SRecVal.second].Word;
                 return -1;
             }
             case ntAddCont: {
@@ -1346,7 +1713,7 @@ void DisplayTripleTree() {
 
 void CGotitEnv::OMA()
 {
-    WordNetDBLoad(); // Major performance hit. Run only if you need it.
+    //WordNetDBLoad(); // Major performance hit. Run only if you need it.
     
     AllTestMap.clear();
     for (int itest = 0; itest <  AllTests.size(); itest++) {
@@ -1354,7 +1721,7 @@ void CGotitEnv::OMA()
     }
 	//int i_curr_rec = 0;
 	const int c_srec_keep_size = 3;
-    const bool bSearchForWord = false;
+    const bool bSearchForWord = true;
     const string cSearchWord = "hit";
 	string lw;
     vector<SSentenceRec> KeySentences;
@@ -1411,6 +1778,7 @@ void CGotitEnv::OMA()
         for (int ir = 0; ir < KeySentences.size(); ir++) {
             TripleTbl.clear(); // for now, we take each sentence separately
             SSentenceRec rec = KeySentences[ir];    
+            cerr << "Sentence is: " << rec.Sentence << endl;
             int FoundIndex = KeyIndex[ir];
             auto& deps = rec.Deps;
 
@@ -1464,9 +1832,11 @@ void CGotitEnv::OMA()
                         GovsForCurr.push_back(idep);
                     }
                 }
-                //TripleTblPrint();
+                TripleTblPrint(KeySentences);
+                NlpieVal SRecVal = NlpieVal(make_pair(0, iCurrWord));
                 if (GovsForCurr.size() == 0) {
-                    *(getNode(CurrNode)) = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+//                    *(getNode(CurrNode)) = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+                    *(getNode(CurrNode)) = NlpieNode(ntSRec, SRecVal);
                 }
                 else if (GovsForCurr.size() == 1) {
                     int iNewTriple = TripleTbl.size();
@@ -1474,7 +1844,8 @@ void CGotitEnv::OMA()
                     TripleTbl.push_back(NlpieTriple());
                     NlpieTriple& CurrTriple = TripleTbl.back();
                     CurrTriple.head = NlpieNode(ntDepRel, DepNames[deps[GovsForCurr[0]].iDep]);
-                    CurrTriple.left = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+//                    CurrTriple.left = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+                    CurrTriple.left = NlpieNode(ntSRec, SRecVal);
                     BuildStack.push_back(BuildStackEl(iNewTriple, false, deps[GovsForCurr[0]].Dep));
                     //BuildStack.push_back(make_pair(&(CurrTriple.right), deps[GovsForCurr[0]].Dep));
 //                    pCurrNode = &(CurrTriple.right);
@@ -1486,7 +1857,8 @@ void CGotitEnv::OMA()
                     TripleTbl.push_back(NlpieTriple());
                     //NlpieTriple& NewTriple = TripleTbl.back();
                     TripleTbl[iNewTriple].head = NlpieNode(ntAddStart, -1);
-                    TripleTbl[iNewTriple].left = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+//                    TripleTbl[iNewTriple].left = NlpieNode(ntStringVal, rec.OneWordRec[iCurrWord].Word);
+                    TripleTbl[iNewTriple].left = NlpieNode(ntSRec, SRecVal);
                     //pCurrNode = &(CurrTriple.right);
                     CurrNode = make_pair(iNewTriple, NODE_RIGHT);
                     for (int iGovCurr = 0; iGovCurr < GovsForCurr.size(); iGovCurr++) {
@@ -1523,8 +1895,8 @@ void CGotitEnv::OMA()
                     
                 }
             }
-            TripleTblPrint();
-            DisplayTripleTree();
+            TripleTblPrint(KeySentences);
+            DisplayTripleTree(KeySentences);
 
 //            auto itTestMap = AllTestMap.find("VerbGet");
             auto itTestMap = AllTestMap.find("HTest");
@@ -1539,7 +1911,7 @@ void CGotitEnv::OMA()
 //                cerr << "Error: Binding var failed.\n";
 //                return ;
 //            }
-            TheTest.DoTest();
+            TheTest.DoTest(KeySentences);
             
 #ifdef OLD_CODE
             bool bNsubjFound = false;
@@ -1572,3 +1944,311 @@ void CGotitEnv::OMA()
 	
 
 }
+
+#ifdef REMOVE_THIS                    
+                    bool bSearchingOnLeft = false;
+                    string SearchString;
+                    NlpieNode OtherNode;
+                    NlpieNode SearchHeadNode;
+                    SearchHeadNode = trSearch.head;
+                    if (trSearch.head.nt == ntIsHypernym) {
+                        string SynetName = get<string>(trSearch.head.val);
+                        string sHyponym;
+                        if (trSearch.left.nt == ntVar) {
+                            string VarName = get<string>(trSearch.left.val);
+                            int iVar = -1;
+                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Syntax error in search. For hypernym, left requests unknown var.\n";
+                                return false;
+                            }
+                            if (VarTbl[iVar].nvt != nvtString) {
+                                cerr << "Syntax error in search. For hypernym, searching a var that is not nvtString.\n";
+                                return false;
+                            }
+                            if (!VarTbl[iVar].bBound) {
+                                continue; // fail silently
+                            }
+                            sHyponym = get<string>(VarTbl[iVar].val);
+                        }
+                        else if (trSearch.left.nt == ntStringVal) {
+                            sHyponym = get<string>(trSearch.left.val);
+                        }
+                        else {
+                            cerr << "Syntax error in search. For hypernym, the hyponym must be a var or a string const.\n";
+                            return false;
+                        }
+                        string sHypernym;
+                        if (trSearch.right.nt == ntVar) {
+                            string VarName = get<string>(trSearch.right.val);
+                            int iVar = -1;
+                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Syntax error in search. For hypernym, right requests unknown var.\n";
+                                return false;
+                            }
+                            if (VarTbl[iVar].nvt != nvtString) {
+                                cerr << "Syntax error in search. For hypernym, right searching a var that is not nvtString.\n";
+                                return false;
+                            }
+                            if (!VarTbl[iVar].bBound) {
+                                continue; // fail silently
+                            }
+                            sHypernym = get<string>(VarTbl[iVar].val);
+                        }
+                        else if (trSearch.right.nt == ntStringVal) {
+                            sHypernym = get<string>(trSearch.right.val);
+                        }
+                        else {
+                            cerr << "Syntax error in search. For hypernym, the hypernym must be a var or a string const.\n";
+                            return false;
+                        }
+                        if (pTheEnv == NULL) {
+                            cerr << "Hypernym search error. Pointer to TheEnv not initialized\n";
+                            return false;
+                        }
+                        if (pTheEnv->WordNetIsHypernym(sHyponym, sHypernym, SynetName[0])) {
+                            // no new variables are bound for ntIsHypernym, so the var table is simply put on the stack as is
+                            VarTblStackNew.push_back(VarTbl);
+                            cerr << "Test for " << sHyponym << " being a hyponym of " << sHypernym << " passed!\n";
+                        }
+                        else {
+                            cerr << "Test for " << sHyponym << " being a hyponym of " << sHypernym << " failed!\n";
+                        }
+                        continue;
+                    }
+                    else if (trSearch.head.nt == ntExtract) {
+                        
+                        //fix extract
+                        if ((trSearch.left.nt != ntVar) ||  (trSearch.right.nt != ntVar)) {
+                            cerr << "Syntax error in search. For extract, left must be a node and right a string var.\n";
+                            return false;
+                        }
+                        string SrcVarName = get<string>(trSearch.left.val);
+                        int iSrcVar = -1;
+                        if (!GetVarIndex(iSrcVar, SrcVarName, VarTbl)) {
+                            cerr << "Syntax error in search. For extract, left requests unknown var.\n";
+                            return false;
+                        }
+                        string DestVarName = get<string>(trSearch.right.val);
+                        int iDestVar = -1;
+                        if (!GetVarIndex(iDestVar, DestVarName, VarTbl)) {
+                            cerr << "Syntax error in search. For extract, right requests unknown var.\n";
+                            return false;
+                        }
+                        if ((VarTbl[iSrcVar].nvt != nvtNode) ||  (VarTbl[iDestVar].nvt != nvtString)) {
+                            cerr << "Syntax error in search. For extract, left VAR must be a node and right a string var.\n";
+                            return false;
+                        }
+                         if (!VarTbl[iSrcVar].bBound || VarTbl[iDestVar].bBound) {
+                            continue; // silent fail. Not an error
+                        }
+                        // we know that the iSrcVar is an entry in the var table bound to a node ID in the TripleTbl
+                        // We now access the node on the TripleTbl as nodeBound
+                        // it could be an SRec node which points to the SRecs
+                        // or it could be a plain old string
+                        vector<NlpieVar> NewVarTbl = VarTbl; 
+                        pair<int, int> NodeID = get<pair<int, int> >(VarTbl[iSrcVar].val);
+                        NlpieTriple& trBoundNode = TripleTbl[NodeID.first];
+                        NlpieNode& nodeBound =      ((NodeID.second == NODE_LEFT) 
+                                                ?   trBoundNode.left 
+                                                :   trBoundNode.right);
+                            // should check for ntString in bound node
+                        string sVal;
+                        if (nodeBound.nt == ntSRec)  {
+                            NlpieSRecKey SRecKey(trSearch.head);
+                            if (SRecKey.getType() == nmteInvalid) {
+                                cerr << "Error in specifying query. unknown match type " << get<string>(trSearch.head.val) << endl;
+                                return false;
+                            }
+                            pair<int, int> SRecID = get<pair<int, int> >(nodeBound.val);
+                            SSentenceRec& rec = SRecs[SRecID.first];
+                            WordRec wrec = rec.OneWordRec[SRecID.second];
+                            if (!SRecKey.getVal(sVal, wrec)) {
+                                cerr << "Error in query. Cannot access SRec data\n";
+                                return false;
+                            }
+                        }
+                        else if (nodeBound.nt == ntStringVal ) {
+                            sVal = get<string>(nodeBound.val);
+                        }
+                       else {
+                            cerr << "Error: Extract accesses a node in TripleTble which is neither a string nor SRec.\n";
+                            return false;
+                        }
+                        // either way, the data extracted is a string to the new
+                        // binding in the var table will be a nvtString
+                        NlpieVar BoundVal(  DestVarName, nvtString, sVal); 
+                        NewVarTbl[iDestVar] = BoundVal;
+                        VarTblStackNew.push_back(NewVarTbl);
+                        cerr << "Extract succeeded. Var " << DestVarName << " bound to string '" << sVal << "'.\n";
+                        continue;
+
+                        
+                    }
+                    else if (trSearch.head.nt == ntSRecMatch) { // match against node in TripleDB but ulimately against its SRec value
+                            //&&  (get<string>(trSearch.head.val) == "string")) {
+                        //bool bFoundNmte = false;
+                        NlpieSRecKey SRecKey(trSearch.head);
+                        if (SRecKey.getType() == nmteInvalid) {
+                            cerr << "Error in specifying query. unknown match type " << get<string>(trSearch.head.val) << endl;
+                            return false;
+                        }
+                        bool bSearchStringValid = false;
+                        if (trSearch.right.nt == ntStringVal) {
+                            SearchString = get<string>(trSearch.right.val);
+                            OtherNode = trSearch.left;
+                            bSearchStringValid = true;
+                        }
+                        else if (trSearch.right.nt == ntVar) {
+                            string VarName = get<string>(trSearch.right.val);
+                            int iVar = -1;
+                            if (GetVarIndex(iVar, VarName, VarTbl)) {
+                                NlpieVar& Var = VarTbl[iVar];
+                                if (Var.nvt == nvtString && Var.bBound) {
+                                    bSearchStringValid = true;
+                                    OtherNode = trSearch.left;
+                                    SearchString = get<string>(Var.val);
+                                }
+                            }
+                            else {
+                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                                return false;
+                            }
+                            
+                        }
+                        if (!bSearchStringValid) {
+                            cerr << "Badly formed query. Right side of ntEqual must be ntStringVar or ntVar with bound var of type nvtString.\n";
+                            bFailWithErr = true;
+                            return false;
+                        }
+                        int iVar = -1;
+                        string VarName;
+                        if (OtherNode.nt == ntVar) {
+                            VarName = get<string>(OtherNode.val);
+                            if (!GetVarIndex(iVar, VarName, VarTbl)) {
+                                cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                                bFailWithErr = true;
+                                return false;
+                            }
+                        }
+                        else {
+                            cerr << "Badly formed query. Left side of ntEqual must be ntVar.\n";
+                            bFailWithErr = true;
+                            return false;
+                        }
+                        int itrDB = -1;
+                        bool bMatchFound = false;
+                        for (auto& trDB : TripleTbl) {
+                            bool bThisTripleMatched = false;
+                            vector<NlpieVar> NewVarTbl = VarTbl; 
+                            itrDB++;
+                            NlpieNode& nodeDB = trDB.left;
+                            auto MatchFn = [&] (NlpieNode& nodeDB, int NodeType) {
+                                string sVal;
+                                if (nodeDB.nt == ntSRec) {
+                                    pair<int, int> SRecID = get<pair<int, int> >(nodeDB.val);
+                                    SSentenceRec& rec = SRecs[SRecID.first];
+                                    string sVal; 
+                                    WordRec wrec = rec.OneWordRec[SRecID.second];
+                                    if (!SRecKey.getVal(sVal, wrec)) {
+                                        cerr << "Error in query. Cannot access SRec data\n";
+                                        return false;
+                                    }
+                                    if (SearchString == sVal) {
+                                        bThisTripleMatched = true;
+                                    }
+                                }
+                                if ((nodeDB.nt == ntStringVal) && (SearchString == get<string>(nodeDB.val))) {
+                                    bThisTripleMatched = true;
+                                }
+                                if (bThisTripleMatched) {
+                                    NlpieVar BoundVal(  get<string>(OtherNode.val), nvtNode, 
+                                                        make_pair(itrDB, NodeType)); // the node being bound is on the left of the db triple
+                                    NewVarTbl[iVar] = BoundVal;
+                                    VarTblStackNew.push_back(NewVarTbl);
+                                    bMatchFound = true;
+                                }
+                            };
+                            MatchFn(trDB.left, NODE_LEFT);
+                            if (!bMatchFound) {
+                                MatchFn(trDB.right, NODE_RIGHT);
+                            }
+
+                        }
+                        if (bMatchFound) {
+                            cerr << "Test El scored. Bound a node to " << VarName << " that matched string '" << SearchString << "'\n";
+//                            bAllTestElsPassedSoFar = true;
+                        }
+                        continue;
+                    }
+                    // very specific search for ntDepRel and two vars, exactly one of which is bound
+                    // expand to evolve code
+                    if (!(      (trSearch.head.nt = ntDepRel) 
+                            &&  (trSearch.left.nt == ntVar)
+                            &&  (trSearch.right.nt == ntVar))) {
+                        cerr << "For now, only dealing with Dep and two vars. Test will fail.\n";
+                        bFailWithErr = true;
+                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail.
+                    }
+                    int iLeftVar = -1, iRightVar = -1;
+                    string VarName = get<string>(trSearch.left.val);
+                    if (!GetVarIndex(iLeftVar, VarName, VarTbl)) {
+                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                        bFailWithErr = true;
+                        return false;
+                    }
+                    VarName = get<string>(trSearch.right.val);
+                    if (!GetVarIndex(iRightVar, VarName, VarTbl)) {
+                        cerr << "Error in query. Variable " << VarName << " accessed but not declared.\n";
+                        bFailWithErr = true;
+                        return false;
+                    }
+                    if (VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+                        cerr << "Test will fail because code not written for this situation.\n";
+                        continue;
+                    }
+                    if (!VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+                        // for now we won't allow open-ended search
+                        cerr << "Test will fail because code not written for this situation.\n";
+                        continue;
+                    }
+                    NlpieTriple trDB;
+                    int iBoundVar, iUnboundVar;
+                    bool bSearchBoundOnLeft = true;
+                    if (!VarTbl[iLeftVar].bBound && VarTbl[iRightVar].bBound) {
+                        iBoundVar = iRightVar;
+                        iUnboundVar = iLeftVar;
+                        bSearchBoundOnLeft = false;
+                    }
+                    if (VarTbl[iLeftVar].bBound && !VarTbl[iRightVar].bBound) {
+                        iBoundVar = iLeftVar;
+                        iUnboundVar = iRightVar;                
+                    }
+                    if (VarTbl[iBoundVar].nvt != nvtNode) {
+                        cerr << "Test will fail because fr now the only type of bound var is nvtNode.\n";
+                        bFailWithErr = true;
+                        continue; // not resetting bAllTestElsPassedSoFar, so test will fail
+                    }
+                    pair<int, int> BoundNodeID = get<pair<int, int> >(VarTbl[iBoundVar].val);
+                    string UnboundVarName = VarTbl[iUnboundVar].VarName;
+                     bool bBoundNodeOnLeft = (BoundNodeID.second == 1);
+                    trDB = TripleTbl[BoundNodeID.first];
+                    if (bSearchBoundOnLeft) {
+                        if (TestLeftDep(trDB, trSearch, 
+                                        BoundNodeID.first, bBoundNodeOnLeft, 
+                                        iUnboundVar, bFailWithErr, SRecs )) {
+//                            bAllTestElsPassedSoFar = true;
+                            continue;
+                        }
+                    }
+                    else {
+                        if (TestRightDep(trDB, trSearch, 
+                                        BoundNodeID.first, bBoundNodeOnLeft, 
+                                        iUnboundVar, bFailWithErr )) {
+//                            bAllTestElsPassedSoFar = true;
+                            continue;
+                        }
+                    }
+                    if (bFailWithErr) {
+                        return false;
+                    }
+#endif // REMOVE_THIS                    

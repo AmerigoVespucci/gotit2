@@ -147,6 +147,7 @@ const int CaffeGenSeed::kNumAccuracyCandidatesFieldNumber;
 CaffeGenSeed::CaffeGenSeed()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:CaffeGenSeed)
 }
 
 void CaffeGenSeed::InitAsDefaultInstance() {
@@ -156,36 +157,39 @@ CaffeGenSeed::CaffeGenSeed(const CaffeGenSeed& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:CaffeGenSeed)
 }
 
 void CaffeGenSeed::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  test_list_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  train_list_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  test_list_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  train_list_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   num_test_cases_ = 0;
   net_end_type_ = 1;
   num_output_nodes_ = 0;
-  proto_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  model_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  proto_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  model_file_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   num_accuracy_candidates_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 CaffeGenSeed::~CaffeGenSeed() {
+  // @@protoc_insertion_point(destructor:CaffeGenSeed)
   SharedDtor();
 }
 
 void CaffeGenSeed::SharedDtor() {
-  if (test_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (test_list_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete test_list_file_name_;
   }
-  if (train_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (train_list_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete train_list_file_name_;
   }
-  if (proto_file_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (proto_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete proto_file_name_;
   }
-  if (model_file_name_ != &::google::protobuf::internal::kEmptyString) {
+  if (model_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete model_file_name_;
   }
   if (this != default_instance_) {
@@ -214,53 +218,70 @@ CaffeGenSeed* CaffeGenSeed::New() const {
 }
 
 void CaffeGenSeed::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<CaffeGenSeed*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(num_output_nodes_, num_accuracy_candidates_);
     if (has_test_list_file_name()) {
-      if (test_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (test_list_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         test_list_file_name_->clear();
       }
     }
     if (has_train_list_file_name()) {
-      if (train_list_file_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (train_list_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         train_list_file_name_->clear();
       }
     }
     num_test_cases_ = 0;
     net_end_type_ = 1;
-    num_output_nodes_ = 0;
     if (has_proto_file_name()) {
-      if (proto_file_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (proto_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         proto_file_name_->clear();
       }
     }
     if (has_model_file_name()) {
-      if (model_file_name_ != &::google::protobuf::internal::kEmptyString) {
+      if (model_file_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         model_file_name_->clear();
       }
     }
-    num_accuracy_candidates_ = 0;
   }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool CaffeGenSeed::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:CaffeGenSeed)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required string test_list_file_name = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_test_list_file_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->test_list_file_name().data(), this->test_list_file_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "test_list_file_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(18)) goto parse_train_list_file_name;
         break;
@@ -268,16 +289,16 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // required string train_list_file_name = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 18) {
          parse_train_list_file_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_train_list_file_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->train_list_file_name().data(), this->train_list_file_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "train_list_file_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(24)) goto parse_num_test_cases;
         break;
@@ -285,15 +306,14 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // required int32 num_test_cases = 3;
       case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 24) {
          parse_num_test_cases:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &num_test_cases_)));
           set_has_num_test_cases();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(32)) goto parse_net_end_type;
         break;
@@ -301,8 +321,7 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // required .CaffeGenSeed.NetEndType net_end_type = 4;
       case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 32) {
          parse_net_end_type:
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
@@ -314,7 +333,7 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
             mutable_unknown_fields()->AddVarint(4, value);
           }
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(40)) goto parse_num_output_nodes;
         break;
@@ -322,15 +341,14 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // optional int32 num_output_nodes = 5;
       case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 40) {
          parse_num_output_nodes:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &num_output_nodes_)));
           set_has_num_output_nodes();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(50)) goto parse_proto_file_name;
         break;
@@ -338,16 +356,16 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // required string proto_file_name = 6;
       case 6: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 50) {
          parse_proto_file_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_proto_file_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->proto_file_name().data(), this->proto_file_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "proto_file_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(58)) goto parse_model_file_name;
         break;
@@ -355,16 +373,16 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // required string model_file_name = 7;
       case 7: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 58) {
          parse_model_file_name:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_model_file_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
             this->model_file_name().data(), this->model_file_name().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "model_file_name");
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(64)) goto parse_num_accuracy_candidates;
         break;
@@ -372,25 +390,25 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
 
       // optional int32 num_accuracy_candidates = 8;
       case 8: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 64) {
          parse_num_accuracy_candidates:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &num_accuracy_candidates_)));
           set_has_num_accuracy_candidates();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -398,27 +416,35 @@ bool CaffeGenSeed::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:CaffeGenSeed)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:CaffeGenSeed)
+  return false;
 #undef DO_
 }
 
 void CaffeGenSeed::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:CaffeGenSeed)
   // required string test_list_file_name = 1;
   if (has_test_list_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->test_list_file_name().data(), this->test_list_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "test_list_file_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->test_list_file_name(), output);
   }
 
   // required string train_list_file_name = 2;
   if (has_train_list_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->train_list_file_name().data(), this->train_list_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "train_list_file_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->train_list_file_name(), output);
   }
 
@@ -440,19 +466,21 @@ void CaffeGenSeed::SerializeWithCachedSizes(
 
   // required string proto_file_name = 6;
   if (has_proto_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->proto_file_name().data(), this->proto_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "proto_file_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       6, this->proto_file_name(), output);
   }
 
   // required string model_file_name = 7;
   if (has_model_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->model_file_name().data(), this->model_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "model_file_name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       7, this->model_file_name(), output);
   }
 
@@ -465,15 +493,18 @@ void CaffeGenSeed::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:CaffeGenSeed)
 }
 
 ::google::protobuf::uint8* CaffeGenSeed::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:CaffeGenSeed)
   // required string test_list_file_name = 1;
   if (has_test_list_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->test_list_file_name().data(), this->test_list_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "test_list_file_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->test_list_file_name(), target);
@@ -481,9 +512,10 @@ void CaffeGenSeed::SerializeWithCachedSizes(
 
   // required string train_list_file_name = 2;
   if (has_train_list_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->train_list_file_name().data(), this->train_list_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "train_list_file_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         2, this->train_list_file_name(), target);
@@ -507,9 +539,10 @@ void CaffeGenSeed::SerializeWithCachedSizes(
 
   // required string proto_file_name = 6;
   if (has_proto_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->proto_file_name().data(), this->proto_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "proto_file_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         6, this->proto_file_name(), target);
@@ -517,9 +550,10 @@ void CaffeGenSeed::SerializeWithCachedSizes(
 
   // required string model_file_name = 7;
   if (has_model_file_name()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->model_file_name().data(), this->model_file_name().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "model_file_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         7, this->model_file_name(), target);
@@ -534,6 +568,7 @@ void CaffeGenSeed::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:CaffeGenSeed)
   return target;
 }
 
